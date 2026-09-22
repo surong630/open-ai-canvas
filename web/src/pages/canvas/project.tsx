@@ -28,6 +28,7 @@ import { useAssetStore } from "@/stores/use-asset-store";
 import { flushCanvasStorePersistence } from "@/stores/canvas/use-canvas-store";
 import { ensureCanvasNodeAsset } from "@/services/project-asset-sync";
 import { useCanvasThemeStore, useCanvasThemeScope } from "@/stores/canvas/use-canvas-theme-store";
+import { useThemeStore } from "@/stores/use-theme-store";
 import { useUserStore } from "@/stores/use-user-store";
 import { App, Button } from "antd";
 import { ArrowLeftRight } from "lucide-react";
@@ -269,6 +270,7 @@ function InfiniteCanvasPage() {
     const assetsHydrated = useAssetStore((state) => state.hydrated);
     const cleanupAssetImages = useAssetStore((state) => state.cleanupImages);
     const colorTheme = useCanvasThemeStore((state) => state.theme);
+    const workspaceTheme = useThemeStore((state) => state.theme);
     const setTheme = useCanvasThemeStore((state) => state.setTheme);
     const theme = canvasThemes[colorTheme];
     const defaultDrawingEngine = useUserStore((state) => state.drawingEngine.defaultEngine);
@@ -301,6 +303,12 @@ function InfiniteCanvasPage() {
     const [mediaPerformanceMode, setMediaPerformanceMode] = useState<CanvasMediaPerformanceMode>(readCanvasMediaPerformanceMode);
     const [hideNodeConnections, setHideNodeConnections] = useState(readCanvasHideNodeConnections);
     const [projectLoaded, setProjectLoaded] = useState(false);
+    useEffect(() => {
+        if (!projectLoaded || canvasAppearance.userSelected || canvasAppearance.mode === "custom") return;
+        if (canvasAppearance.mode === workspaceTheme && colorTheme === workspaceTheme) return;
+        setCanvasAppearance(canvasAppearanceForTheme(workspaceTheme));
+        setTheme(workspaceTheme);
+    }, [workspaceTheme, colorTheme, projectLoaded, canvasAppearance.userSelected, canvasAppearance.mode, setTheme]);
     const workspaceMode: CanvasWorkspaceMode = "professional";
     const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
     const [shareModalOpen, setShareModalOpen] = useState(false);

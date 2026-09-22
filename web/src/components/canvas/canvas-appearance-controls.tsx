@@ -37,12 +37,12 @@ export function CanvasAppearanceControls({
     useEffect(() => setDraft(appearance), [appearance]);
 
     const selectFixedTheme = (target: CanvasColorTheme) => {
-        const next = canvasAppearanceForTheme(target, draft);
+        const next = { ...canvasAppearanceForTheme(target, draft), userSelected: true };
         setDraft(next);
         onAppearanceChange(next);
     };
     const selectCustomTheme = () => {
-        const next = enterCustomCanvasAppearance(draft, colorTheme);
+        const next = { ...enterCustomCanvasAppearance(draft, colorTheme), userSelected: true };
         setDraft(next);
         onAppearanceChange(next);
     };
@@ -50,19 +50,20 @@ export function CanvasAppearanceControls({
         const current = draft.mode === "custom" && draft.custom
             ? draft
             : enterCustomCanvasAppearance(draft, colorTheme);
-        const next: CanvasAppearance = { mode: "custom", custom: { ...current.custom!, ...patch } };
+        const next: CanvasAppearance = { mode: "custom", custom: { ...current.custom!, ...patch }, userSelected: true };
         setDraft(next);
         onAppearanceChange(next);
     };
     const resetCustom = () => {
         const baseTheme = draft.custom?.baseTheme || colorTheme;
-        const next = customCanvasAppearanceFromTheme(baseTheme);
+        const next = { ...customCanvasAppearanceFromTheme(baseTheme), userSelected: true };
         setDraft(next);
         onAppearanceChange(next);
     };
     const saveAsDefault = () => {
-        onAppearanceChange(draft);
-        onSaveAppearanceDefault(draft);
+        const next = { ...draft, userSelected: true };
+        onAppearanceChange(next);
+        onSaveAppearanceDefault(next);
     };
     const presets = draft.custom?.baseTheme === "dark" ? DARK_PRESETS : LIGHT_PRESETS;
 

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState, type Dispatch, type MutableRe
 import { App } from "antd";
 import { useNavigate } from "react-router";
 
-import { canvasAppearanceBaseTheme, canvasAppearanceForTheme, DEFAULT_CANVAS_BACKGROUND_MODE, normalizeCanvasAppearance, type CanvasAppearance } from "@/lib/canvas/canvas-appearance";
+import { canvasAppearanceBaseTheme, canvasAppearanceForWorkspace, DEFAULT_CANVAS_BACKGROUND_MODE, type CanvasAppearance } from "@/lib/canvas/canvas-appearance";
 import type { CanvasBackgroundMode } from "@/lib/canvas-theme";
 import { removeCanvasDrawing } from "@/lib/canvas/canvas-drawing-storage";
 import { normalizeCanvasNodeTimestamps } from "@/lib/canvas/canvas-node-timestamps";
@@ -12,6 +12,7 @@ import { listAddedSkills, type Skill } from "@/services/api/skills";
 import { createCanvasProjectWithRemoteSync, deleteCanvasProjectsWithRemoteSync, forceOverwriteRemoteCanvasSync, loadCanvasProjectForEditing, saveRemoteUserDataNow, subscribeAgentCanvasRefresh } from "@/services/user-data-sync";
 import { flushCanvasStorePersistence, useCanvasStore, type CanvasProject } from "@/stores/canvas/use-canvas-store";
 import { useCanvasThemeStore } from "@/stores/canvas/use-canvas-theme-store";
+import { useThemeStore } from "@/stores/use-theme-store";
 import { useSyncProgressStore } from "@/stores/use-sync-progress-store";
 import { readCanvasSyncDrafts } from "@/services/canvas-sync-drafts";
 import { useUserStore } from "@/stores/use-user-store";
@@ -117,10 +118,8 @@ export function useCanvasProjectLifecycle({
         }
         const applyRestoredProject = (targetProject: CanvasProject) => {
             if (cancelled) return;
-            const fallbackTheme = useCanvasThemeStore.getState().theme;
-            const restoredAppearance = targetProject.appearance
-                ? normalizeCanvasAppearance(targetProject.appearance, fallbackTheme)
-                : canvasAppearanceForTheme(fallbackTheme);
+            const fallbackTheme = useThemeStore.getState().theme;
+            const restoredAppearance = canvasAppearanceForWorkspace(targetProject.appearance, fallbackTheme);
             const initialNodes = normalizeCanvasNodeTimestamps(resetInterruptedGeneration(targetProject.nodes), {
                 createdAt: targetProject.createdAt,
                 updatedAt: targetProject.updatedAt,

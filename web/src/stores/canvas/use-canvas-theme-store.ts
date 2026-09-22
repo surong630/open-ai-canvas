@@ -21,7 +21,7 @@ export const useCanvasThemeStore = create<CanvasThemeStore>()(
 /** 编辑器卸载后自动恢复工作台的主题偏好；包括 body 上的 AntD 浮层。 */
 export function useCanvasThemeScope() {
     useLayoutEffect(() => {
-        useCanvasThemeStore.setState({ active: true });
+        useCanvasThemeStore.setState({ theme: useThemeStore.getState().theme, active: true });
         return () => { useCanvasThemeStore.setState({ active: false }); };
     }, []);
 }

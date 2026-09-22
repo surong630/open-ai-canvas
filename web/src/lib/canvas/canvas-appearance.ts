@@ -14,6 +14,7 @@ export type CanvasCustomAppearance = {
 export type CanvasAppearance = {
     mode: CanvasAppearanceMode;
     custom?: CanvasCustomAppearance;
+    userSelected?: boolean;
 };
 
 export type CanvasAppearanceDefault = {
@@ -69,7 +70,13 @@ export function normalizeCanvasAppearance(value: unknown, fallback: CanvasColorT
     const mode = candidate.mode === "light" || candidate.mode === "dark" || candidate.mode === "custom" ? candidate.mode : fallback;
     const custom = normalizeCustomAppearance(candidate.custom);
     if (mode === "custom" && !custom) return customCanvasAppearanceFromTheme(fallback);
-    return custom ? { mode, custom } : { mode };
+    return { mode, ...(custom ? { custom } : {}), ...(candidate.userSelected === true ? { userSelected: true } : {}) };
+}
+
+export function canvasAppearanceForWorkspace(value: CanvasAppearance | undefined, workspaceTheme: CanvasColorTheme): CanvasAppearance {
+    return value?.userSelected || value?.mode === "custom"
+        ? normalizeCanvasAppearance(value, workspaceTheme)
+        : canvasAppearanceForTheme(workspaceTheme);
 }
 
 export function resolveCanvasAppearance(appearance: CanvasAppearance | undefined, fallback: CanvasColorTheme): ResolvedCanvasAppearance {
