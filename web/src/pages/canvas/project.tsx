@@ -841,6 +841,8 @@ function InfiniteCanvasPage() {
         openPortraitTextureEditor,
         cropImageNode,
         cropNodeId,
+        rotateImageNode,
+        rotateNodeId,
         closeFrameDialog,
         closeSegmentDialog,
         extractAudioFromVideo,
@@ -878,6 +880,7 @@ function InfiniteCanvasPage() {
         setAnnotationNodeId,
         setAnnotationEditNodeId,
         setCropNodeId,
+        setRotateNodeId,
         setMaskEditNodeId,
         setImageEditNodeId,
         setImageEditPreset,
@@ -2960,6 +2963,7 @@ function InfiniteCanvasPage() {
                             }}
                             onPortraitTexture={openPortraitTextureEditor}
                             onCrop={(node) => setCropNodeId(node.id)}
+                            onRotate={(node) => setRotateNodeId(node.id)}
                             onSplit={(node, params) => void splitImageNode(node, params)}
                             onUpscale={(node) => setUpscaleNodeId(node.id)}
                             onSuperResolve={(node) => setSuperResolveNodeId(node.id)}
@@ -3268,6 +3272,7 @@ function InfiniteCanvasPage() {
 
                         <CanvasProjectMediaDialogs
                             cropNode={cropNode}
+                            rotateNode={rotateNodeId ? nodeById.get(rotateNodeId) || null : null}
                             annotationNode={annotationNode}
                             annotationEditNode={annotationEditNodeId ? nodeById.get(annotationEditNodeId) || null : null}
                             maskEditNode={maskEditNode}
@@ -3277,6 +3282,7 @@ function InfiniteCanvasPage() {
                             imageEditPreset={imageEditPreset}
                             upscaleNode={upscaleNode}
                             onCloseCrop={() => setCropNodeId(null)}
+                            onCloseRotate={() => setRotateNodeId(null)}
                             onCloseAnnotation={() => setAnnotationNodeId(null)}
                             onCloseAnnotationEdit={() => setAnnotationEditNodeId(null)}
                             onCloseMaskEdit={() => setMaskEditNodeId(null)}
@@ -3285,6 +3291,7 @@ function InfiniteCanvasPage() {
                             onCloseTextEdit={() => setTextEditNodeId(null)}
                             onCloseUpscale={() => setUpscaleNodeId(null)}
                             onCrop={(node, crop) => void cropImageNode(node, crop)}
+                            onRotate={rotateImageNode}
                             onAnnotate={(node, dataUrl) => void saveAnnotatedImageNode(node, dataUrl)}
                             onAnnotationEdit={(node, payload) => void editAnnotatedImageNode(node, payload)}
                             onMaskEdit={(node, payload) => void maskEditImageNode(node, payload)}

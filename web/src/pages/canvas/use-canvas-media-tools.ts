@@ -117,6 +117,7 @@ export function useCanvasMediaTools({
     const extractingVideoFramesNodeIdRef = useRef<string | null>(null);
     const mergeVideoRunningRef = useRef(false);
     const [cropNodeId, setCropNodeId] = useState<string | null>(null);
+    const [rotateNodeId, setRotateNodeId] = useState<string | null>(null);
     const [annotationNodeId, setAnnotationNodeId] = useState<string | null>(null);
     const [annotationEditNodeId, setAnnotationEditNodeId] = useState<string | null>(null);
     const [maskEditNodeId, setMaskEditNodeId] = useState<string | null>(null);
@@ -231,6 +232,29 @@ export function useCanvasMediaTools({
         setCropNodeId(null);
         await persistMediaNodes([child]);
     }, [persistMediaNodes, setConnections, setDialogNodeId, setNodes, setSelectedNodeIds]);
+
+    const rotateImageNode = useCallback(async (node: CanvasNodeData, dataUrl: string) => {
+        const image = await uploadImage(dataUrl);
+        const size = fitNodeSize(image.width, image.height, node.width, node.height);
+        const childId = nanoid();
+        const child: CanvasNodeData = {
+            id: childId,
+            type: CanvasNodeType.Image,
+            title: `${node.title || "图片"} · 旋转与镜像`,
+            position: { x: node.position.x + node.width + 96, y: node.position.y },
+            width: size.width,
+            height: size.height,
+            metadata: { ...imageMetadata(image), prompt: node.metadata?.prompt },
+        };
+        setNodes((current) => [...current, child]);
+        setConnections((current) => [...current, { id: nanoid(), fromNodeId: node.id, toNodeId: childId }]);
+        setSelectedNodeIds(new Set([childId]));
+        setSelectedConnectionId(null);
+        setRotateNodeId(null);
+        await persistMediaNodes([child]);
+        if (image.pendingRemoteUpload) message.warning("新图片已保存在本机，上传到服务器将在后台重试");
+        else message.success("旋转后的图片已保存为新节点");
+    }, [message, persistMediaNodes, setConnections, setNodes, setSelectedConnectionId, setSelectedNodeIds]);
 
     const saveAnnotatedImageNode = useCallback(async (node: CanvasNodeData, dataUrl: string) => {
         const image = await uploadImage(dataUrl);
@@ -1221,6 +1245,8 @@ export function useCanvasMediaTools({
         openPortraitTextureEditor,
         cropImageNode,
         cropNodeId,
+        rotateImageNode,
+        rotateNodeId,
         closeFrameDialog,
         closeSegmentDialog,
         extractAudioFromVideo,
@@ -1258,6 +1284,7 @@ export function useCanvasMediaTools({
         setAnnotationNodeId,
         setAnnotationEditNodeId,
         setCropNodeId,
+        setRotateNodeId,
         setMaskEditNodeId,
         setImageEditNodeId,
         setImageEditPreset,

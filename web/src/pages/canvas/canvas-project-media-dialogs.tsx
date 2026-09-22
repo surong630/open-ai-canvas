@@ -1,5 +1,6 @@
 import { CanvasNodeAnnotationDialog, type CanvasImageAnnotationPayload } from "@/components/canvas/canvas-node-annotation-dialog";
 import { CanvasNodeCropDialog, type CanvasImageCropRect } from "@/components/canvas/canvas-node-crop-dialog";
+import { CanvasNodeRotateDialog } from "@/components/canvas/canvas-node-rotate-dialog";
 import { CanvasNodeMaskEditDialog, type CanvasImageMaskEditPayload } from "@/components/canvas/canvas-node-mask-edit-dialog";
 import { CanvasNodeUpscaleDialog, type CanvasImageUpscaleParams } from "@/components/canvas/canvas-node-upscale-dialog";
 import { CanvasNodeImageEditDialog, type CanvasImageEditPayload } from "@/components/canvas/canvas-node-image-edit-dialog";
@@ -10,6 +11,7 @@ import type { AiConfig } from "@/stores/use-config-store";
 
 type CanvasProjectMediaDialogsProps = {
     cropNode: CanvasNodeData | null;
+    rotateNode: CanvasNodeData | null;
     annotationNode: CanvasNodeData | null;
     annotationEditNode: CanvasNodeData | null;
     maskEditNode: CanvasNodeData | null;
@@ -19,6 +21,7 @@ type CanvasProjectMediaDialogsProps = {
     imageEditPreset?: "remove-background" | null;
     upscaleNode: CanvasNodeData | null;
     onCloseCrop: () => void;
+    onCloseRotate: () => void;
     onCloseAnnotation: () => void;
     onCloseAnnotationEdit: () => void;
     onCloseMaskEdit: () => void;
@@ -27,6 +30,7 @@ type CanvasProjectMediaDialogsProps = {
     onCloseLayerDecomposition: () => void;
     onCloseTextEdit: () => void;
     onCrop: (node: CanvasNodeData, crop: CanvasImageCropRect) => void;
+    onRotate: (node: CanvasNodeData, dataUrl: string) => Promise<void>;
     onAnnotate: (node: CanvasNodeData, dataUrl: string) => void;
     onAnnotationEdit: (node: CanvasNodeData, payload: CanvasImageAnnotationPayload) => void;
     onMaskEdit: (node: CanvasNodeData, payload: CanvasImageMaskEditPayload) => void;
@@ -40,6 +44,7 @@ type CanvasProjectMediaDialogsProps = {
 
 export function CanvasProjectMediaDialogs({
     cropNode,
+    rotateNode,
     annotationNode,
     annotationEditNode,
     maskEditNode,
@@ -49,6 +54,7 @@ export function CanvasProjectMediaDialogs({
     imageEditPreset,
     upscaleNode,
     onCloseCrop,
+    onCloseRotate,
     onCloseAnnotation,
     onCloseAnnotationEdit,
     onCloseMaskEdit,
@@ -57,6 +63,7 @@ export function CanvasProjectMediaDialogs({
     onCloseLayerDecomposition,
     onCloseTextEdit,
     onCrop,
+    onRotate,
     onAnnotate,
     onAnnotationEdit,
     onMaskEdit,
@@ -70,6 +77,7 @@ export function CanvasProjectMediaDialogs({
     return (
         <>
             {cropNode?.metadata?.content ? <CanvasNodeCropDialog dataUrl={cropNode.metadata.content} open onClose={onCloseCrop} onConfirm={(crop) => onCrop(cropNode, crop)} /> : null}
+            {rotateNode?.metadata?.content ? <CanvasNodeRotateDialog dataUrl={rotateNode.metadata.content} open onClose={onCloseRotate} onConfirm={(dataUrl) => onRotate(rotateNode, dataUrl)} /> : null}
             {annotationNode?.metadata?.content ? <CanvasNodeAnnotationDialog image={{ url: annotationNode.metadata.content, storageKey: annotationNode.metadata.storageKey }} open onClose={onCloseAnnotation} onConfirm={(dataUrl) => { if (typeof dataUrl === "string") onAnnotate(annotationNode, dataUrl); }} /> : null}
             {annotationEditNode?.metadata?.content ? <CanvasNodeAnnotationDialog image={{ url: annotationEditNode.metadata.content, storageKey: annotationEditNode.metadata.storageKey }} editMode open onClose={onCloseAnnotationEdit} onConfirm={(payload) => { if (typeof payload !== "string") onAnnotationEdit(annotationEditNode, payload); }} /> : null}
             {maskEditNode?.metadata?.content ? <CanvasNodeMaskEditDialog dataUrl={maskEditNode.metadata.content} config={{ ...config, model: maskEditNode.metadata.model || config.model, imageModel: maskEditNode.metadata.model || config.imageModel, size: maskEditNode.metadata.size || config.size, quality: maskEditNode.metadata.quality || config.quality, count: String(maskEditNode.metadata.count || config.count) }} open onClose={onCloseMaskEdit} onConfirm={(payload) => onMaskEdit(maskEditNode, payload)} /> : null}

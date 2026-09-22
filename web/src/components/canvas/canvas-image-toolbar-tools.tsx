@@ -1,10 +1,10 @@
 import { isValidElement, type ReactNode } from "react";
-import { Brush, Camera, Clapperboard, Contrast, Copy, FastForward, FileText, Globe2, Grid2x2, Grid3x3, Layers3, Lock, LockOpen, Maximize2, Package, PencilLine, PersonStanding, Crop, Rewind, ScanFace, SlidersHorizontal, Smile, Sun, Upload, Scaling, WandSparkles } from "lucide-react";
+import { Brush, Camera, Clapperboard, Contrast, Copy, FastForward, FileText, Globe2, Grid2x2, Grid3x3, Layers3, Lock, LockOpen, Maximize2, Package, PencilLine, PersonStanding, Crop, Rewind, RotateCw, ScanFace, SlidersHorizontal, Smile, Sun, Upload, Scaling, WandSparkles } from "lucide-react";
 
 import type { CanvasNodeData } from "@/types/canvas";
 import type { NodeToolbarGroup } from "@/lib/canvas/tool-registry";
 
-type ImageNodeActionToolId = "copyPrompt" | "reversePrompt" | "replace" | "resize" | "annotation" | "annotationEdit" | "textEdit" | "maskEdit" | "removeBackground" | "layerDecomposition" | "emotion" | "portraitTexture" | "crop" | "split" | "upscale" | "superResolve" | "angle" | "lighting" | "panorama" | "view" | "multi_camera_nine_grid" | "story_pitch_four_grid" | "character_face_three_view" | "product_three_view" | "storyboard_25_grid" | "character_three_view_generation" | "cinematic_light_correction" | "image_projection_after_3s" | "image_projection_before_5s";
+type ImageNodeActionToolId = "copyPrompt" | "reversePrompt" | "replace" | "resize" | "annotation" | "annotationEdit" | "textEdit" | "maskEdit" | "removeBackground" | "layerDecomposition" | "emotion" | "portraitTexture" | "crop" | "rotate" | "split" | "upscale" | "superResolve" | "angle" | "lighting" | "panorama" | "view" | "multi_camera_nine_grid" | "story_pitch_four_grid" | "character_face_three_view" | "product_three_view" | "storyboard_25_grid" | "character_three_view_generation" | "cinematic_light_correction" | "image_projection_after_3s" | "image_projection_before_5s";
 
 type ImageToolHandlers = {
     onUpload: (node: CanvasNodeData) => void;
@@ -18,6 +18,7 @@ type ImageToolHandlers = {
     onEmotion: (node: CanvasNodeData) => void;
     onPortraitTexture: (node: CanvasNodeData) => void;
     onCrop: (node: CanvasNodeData) => void;
+    onRotate: (node: CanvasNodeData) => void;
     onUpscale: (node: CanvasNodeData) => void;
     onSuperResolve: (node: CanvasNodeData) => void;
     onAngle: (node: CanvasNodeData) => void;
@@ -180,6 +181,16 @@ const imageToolDefinitions: ImageToolDefinition[] = [
         group: "process",
         order: 10,
         run: (node, handlers) => handlers.onCrop(node),
+    },
+    {
+        id: "rotate",
+        label: "旋转与镜像",
+        section: "构图与尺寸",
+        description: "旋转或镜像图片，保存为新图片",
+        icon: () => <RotateCw className="size-3.5" />,
+        group: "process",
+        order: 15,
+        run: (node, handlers) => handlers.onRotate(node),
     },
     {
         id: "split",

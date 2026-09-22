@@ -32,6 +32,32 @@ export type ImageSplitPiece = {
     dataUrl: string;
 };
 
+export type ImageRotateParams = {
+    degrees: 0 | 90 | 180 | 270;
+    flipHorizontal: boolean;
+    flipVertical: boolean;
+};
+
+export function rotatedImageSize(width: number, height: number, degrees: ImageRotateParams["degrees"]) {
+    return degrees === 90 || degrees === 270 ? { width: height, height: width } : { width, height };
+}
+
+export async function rotateImageDataUrl(dataUrl: string, params: ImageRotateParams) {
+    if (params.degrees === 0 && !params.flipHorizontal && !params.flipVertical) return dataUrl;
+    const image = await loadImage(dataUrl);
+    const canvas = document.createElement("canvas");
+    const size = rotatedImageSize(image.naturalWidth, image.naturalHeight, params.degrees);
+    canvas.width = size.width;
+    canvas.height = size.height;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("无法处理图片：浏览器画布不可用");
+    context.translate(size.width / 2, size.height / 2);
+    context.scale(params.flipHorizontal ? -1 : 1, params.flipVertical ? -1 : 1);
+    context.rotate((params.degrees * Math.PI) / 180);
+    context.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
+    return canvas.toDataURL("image/png");
+}
+
 export async function cropDataUrl(dataUrl: string, crop?: ImageCropRect) {
     const image = await loadImage(dataUrl);
     if (crop) {
@@ -159,9 +185,10 @@ function drawResizeCanvas(source: CanvasImageSource, sourceWidth: number, source
 }
 
 function loadImage(dataUrl: string) {
-    return new Promise<HTMLImageElement>((resolve) => {
+    return new Promise<HTMLImageElement>((resolve, reject) => {
         const image = new Image();
         image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error("图片加载失败"));
         image.src = dataUrl;
     });
 }
