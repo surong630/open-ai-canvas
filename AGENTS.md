@@ -138,3 +138,56 @@
 - Git 提交说明使用 `<type>(<scope>): <业务模块> - <变更摘要>`，`type` 为 `feat|fix|refactor|perf|docs|test|build|ci|chore|revert`。
 
 交付前至少检查：改动是否聚焦、调用方和类型是否同步、错误/权限/数据归属是否完整、必要文档是否同步、验证是否如实说明、是否留下密钥或本地数据。
+
+## 10. 二开分支与上游同步
+
+本仓库同时跟踪官方项目和产品二开，Git 远程与分支职责固定如下：
+
+- `upstream` 指向官方 `ddcat-ai/open-ai-canvas`，只用于拉取官方提交和标签，不向其推送。
+- `origin` 指向当前二开仓库，用于保存产品分支、功能分支和同步分支。
+- `main` 是官方基线镜像，只允许快进同步 `upstream/main`；不得提交品牌、业务或部署定制。
+- `product/main` 是可部署的二开主线，承载已完成验证的产品改动；不得直接在该分支长期开发未完成需求。
+- `feature/<scope>`、`fix/<scope>` 从 `product/main` 创建，单个分支只处理一个明确主题。
+- `sync/upstream-<version-or-date>` 是吸收官方更新的临时分支，从 `product/main` 创建，完成冲突处理和验证后通过合并进入 `product/main`。
+
+### 同步流程
+
+同步官方更新使用 merge 保留历史，不对已共享的 `product/main` 执行 rebase 或强制推送：
+
+```bash
+git fetch upstream --tags
+git switch main
+git merge --ff-only upstream/main
+git push origin main
+
+git switch product/main
+git pull --ff-only origin product/main
+git switch -c sync/upstream-<version-or-date>
+git merge --no-ff main
+```
+
+冲突必须按业务语义逐个解决：先阅读共同基线、官方改动和二开改动，再决定组合结果；禁止对一组冲突文件整体使用 `ours` 或 `theirs`。解决后检查 `git diff --check`，按受影响范围执行最小充分验证，并记录上游起止提交、冲突文件、处理决策、数据库迁移和未完成验收项。同步提交使用 `chore(upstream): 上游同步 - <版本或范围>`。
+
+Git 的冲突复用记录应在仓库级启用：
+
+```bash
+git config rerere.enabled true
+git config rerere.autoupdate true
+```
+
+### 降低上游冲突
+
+- 二开优先新增独立页面、组件、领域包、API 模块、插件、注册表项和 feature flag，只在公共入口做最小注册。
+- 团队空间等产品差异使用明确的 scope / context / policy 层隔离，不在大量既有页面散落产品分支判断。
+- 不复制画布、任务、素材或生成核心形成二开副本；通过适配器、领域服务和稳定合同复用现有实现。
+- 不修改已经发布的数据库迁移，只追加新版本，并同时覆盖 SQLite、PostgreSQL、存量数据迁移和数据库文档。
+- 对 `web/src/pages/canvas/project.tsx`、`backend/internal/app/`、共享路由、全局样式和数据库主迁移等高冲突区域，修改前必须先确认是否能通过外围扩展点实现。
+
+### Codex 操作约束
+
+- 开始代码任务前确认当前分支；功能开发默认应位于对应的 `feature/*` 或 `fix/*`，不在 `main` 上实现二开需求。
+- 用户要求“同步上游”时，先确认工作树干净、读取远程与分支关系，再创建 `sync/upstream-*`；不得在存在未提交改动时直接合并。
+- 未经用户明确要求，不自动提交、推送、删除远程分支、强制推送或合并到 `product/main`。
+- 遇到冲突时保留双方意图，并结合调用方、类型、测试、迁移和文档确定最终实现；不能仅以“能编译”作为解决依据。
+- 上游同步和产品功能不得混在同一提交；同步中发现的产品修复另建提交或功能分支。
+- 交付时明确报告当前分支、相对 `main` 的提交差异、未提交文件、已运行验证和仍需人工验收的项目。
