@@ -62,7 +62,7 @@ export const CANVAS_SHORTCUTS: CanvasShortcutItem[] = [
         category: "navigation",
         title: "平移视图",
         description: "触控板双指滑动，按住空格键 / 中键拖动，或切到抓手工具后拖动画布",
-        keys: [["触控板双指"], ["Space", "左键拖动"], ["中键拖动"]],
+        keys: [["H"], ["触控板双指"], ["Space", "左键拖动"], ["中键拖动"]],
         keywords: ["移动", "画布", "触控板", "pan"],
     },
     {
@@ -108,9 +108,9 @@ export const CANVAS_SHORTCUTS: CanvasShortcutItem[] = [
     {
         id: "box-select-tool",
         category: "selection",
-        title: "使用区域选择工具",
-        description: "底部工具栏的胶囊开关切到区域选择后，空白处拖动可连续框选",
-        keys: [["区域选择", "拖动"]],
+        title: "使用移动工具",
+        description: "按 V 或使用底部工具栏切到移动工具；拖动节点可移动，空白处拖动可框选",
+        keys: [["V"], ["移动工具", "拖动"]],
         keywords: ["工具栏", "多选", "selection"],
     },
     {

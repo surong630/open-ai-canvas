@@ -1716,6 +1716,7 @@ function InfiniteCanvasPage() {
         toggleFocusMode,
         onOpenSearch: () => setNodeSearchOpen(true),
         beginBatchConnection: () => beginBatchConnectionMode(Array.from(selectedNodeIdsRef.current)),
+        onToolChange: setCanvasTool,
     });
 
     const handleAssistantSessionsChange = useCallback((sessions: CanvasAssistantSession[], activeId: string | null) => {

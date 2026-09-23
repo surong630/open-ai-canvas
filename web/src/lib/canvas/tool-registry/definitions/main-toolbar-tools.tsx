@@ -4,7 +4,7 @@ import { registerToolbarTools, type ToolDefinition } from "@/lib/canvas/tool-reg
 import type { CanvasToolMode } from "@/types/canvas";
 
 const canvasModeOptions = [
-    { id: "box-select", label: "区域选择", icon: <MousePointer2 />, value: "box-select" },
+    { id: "box-select", label: "移动工具", icon: <MousePointer2 />, value: "box-select" },
     { id: "move", label: "抓手工具", icon: <Hand />, value: "move" },
 ];
 
@@ -14,7 +14,7 @@ export const mainToolbarTools: ToolDefinition[] = [
         id: "tool-canvas-mode",
         toolbar: "main",
         category: "navigation",
-        label: "抓手 / 框选",
+        label: "抓手 / 移动",
         icon: <MousePointer2 />,
         defaultVisible: true,
         defaultOrder: 10,
