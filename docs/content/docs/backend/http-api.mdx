@@ -13,6 +13,10 @@ description: 信封、错误码与 OpenAPI
 
 模型 HTTP 失败及经过 Provider 错误转换的业务失败，在通用提示后追加经过过滤的 `；上游：具体原因`，供任务错误和画布卡片展示内容安全、提示词、尺寸等可操作信息。只读取上游 `error` / `message` / `msg` / `detail` 消息字段，不回传整个 JSON；消息中的 HTTP(S) URL 隐藏，包含余额、账务、凭据、请求诊断或 HTML 的消息不追加原文，保留通用分类提示。后台响应拦截规则仍对最终用户文案生效；不会修改历史任务错误或改变重试、退款策略。
 
+## 用户积分明细
+
+`GET /api/wallet` 的 `type` 支持 `income`、`consume`、`refund` 和 `all`，分页参数仍为 `page` / `pageSize`。可选 `startTime`、`endTime` 必须是 RFC 3339 时间，筛选区间为左闭右开；前端选择结束日期时传递次日零点作为 `endTime`。响应除 `entries`、`total` 和账户余额外，返回当前筛选范围的 `totalAmountMicrocredits`，金额单位仍为整数微积分。`income` 包含兑换、在线充值、管理员发放/调整、注册赠送和签到奖励。
+
 ## 资源访问与 OSS/CDN 分发
 
 资源展示、播放、下载、复制地址和模型输入统一消费资源访问合同，不在客户端通过 `direct=1`、`proxy=1` 或存储厂商规则选择出口。

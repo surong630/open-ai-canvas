@@ -16,6 +16,8 @@ export type CreditLedgerEntry = {
     userId: string;
     type: "redeem" | "payment_topup" | "admin_grant" | "consume" | "refund" | "admin_adjustment" | "signup_bonus" | "checkin_bonus";
     amountMicrocredits: number;
+    availableDeltaMicrocredits: number;
+    reservedDeltaMicrocredits: number;
     availableAfterMicrocredits: number;
     reservedAfterMicrocredits: number;
     billingOrderId?: string;
@@ -31,6 +33,7 @@ export type WalletSummary = {
     account: CreditAccount;
     entries: CreditLedgerEntry[];
     total: number;
+    totalAmountMicrocredits: number;
     page: number;
     pageSize: number;
     policy: {
@@ -242,8 +245,8 @@ export type BillingOrder = {
     updatedAt: string;
 };
 
-export function getWallet(page = 1, pageSize = 30, type = "all") {
-    return http.get<WalletSummary>("/wallet", { params: { type, page, pageSize } });
+export function getWallet(page = 1, pageSize = 30, type = "all", range: { startTime?: string; endTime?: string } = {}) {
+    return http.get<WalletSummary>("/wallet", { params: { type, page, pageSize, ...range } });
 }
 
 export function redeemCredits(code: string) {

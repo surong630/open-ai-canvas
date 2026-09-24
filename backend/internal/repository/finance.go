@@ -393,19 +393,37 @@ func (r *Repository) CreditAccounts(userIDs []string) ([]model.CreditAccount, er
 }
 
 func (r *Repository) CreditLedger(userID string, entryType string, limit int, offset int) ([]model.CreditLedgerEntry, int64, error) {
+	items, total, _, err := r.CreditLedgerFiltered(userID, entryType, limit, offset, nil, nil)
+	return items, total, err
+}
+
+func (r *Repository) CreditLedgerFiltered(userID string, entryType string, limit int, offset int, startTime *time.Time, endTime *time.Time) ([]model.CreditLedgerEntry, int64, int64, error) {
 	var items []model.CreditLedgerEntry
 	var total int64
-	query := r.db.Model(&model.CreditLedgerEntry{}).Where("user_id = ? AND type <> ?", userID, model.CreditLedgerReserve)
-	switch entryType {
-	case "income":
-		query = query.Where("type IN ?", []model.CreditLedgerType{model.CreditLedgerRedeem, model.CreditLedgerAdminGrant, model.CreditLedgerAdminAdjust, model.CreditLedgerSignupBonus, model.CreditLedgerCheckinBonus})
-	case "consume":
-		query = query.Where("type = ?", model.CreditLedgerConsume)
-	case "refund":
-		query = query.Where("type = ?", model.CreditLedgerRefund)
+	filteredQuery := func() *gorm.DB {
+		query := r.db.Model(&model.CreditLedgerEntry{}).Where("user_id = ? AND type <> ?", userID, model.CreditLedgerReserve)
+		switch entryType {
+		case "income":
+			query = query.Where("type IN ?", []model.CreditLedgerType{model.CreditLedgerRedeem, model.CreditLedgerPaymentTopup, model.CreditLedgerAdminGrant, model.CreditLedgerAdminAdjust, model.CreditLedgerSignupBonus, model.CreditLedgerCheckinBonus})
+		case "consume":
+			query = query.Where("type = ?", model.CreditLedgerConsume)
+		case "refund":
+			query = query.Where("type = ?", model.CreditLedgerRefund)
+		}
+		if startTime != nil {
+			query = query.Where("created_at >= ?", *startTime)
+		}
+		if endTime != nil {
+			query = query.Where("created_at < ?", *endTime)
+		}
+		return query
 	}
-	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, err
+	if err := filteredQuery().Count(&total).Error; err != nil {
+		return nil, 0, 0, err
+	}
+	var totalAmount int64
+	if err := filteredQuery().Select("COALESCE(SUM(amount_microcredits), 0)").Row().Scan(&totalAmount); err != nil {
+		return nil, 0, 0, err
 	}
 	if limit <= 0 || limit > 100 {
 		limit = 30
@@ -413,8 +431,8 @@ func (r *Repository) CreditLedger(userID string, entryType string, limit int, of
 	if offset < 0 {
 		offset = 0
 	}
-	err := query.Order("created_at desc").Limit(limit).Offset(offset).Find(&items).Error
-	return items, total, err
+	err := filteredQuery().Order("created_at desc").Limit(limit).Offset(offset).Find(&items).Error
+	return items, total, totalAmount, err
 }
 
 func (r *Repository) CreditLedgerReferenceExists(referenceKey string) (bool, error) {

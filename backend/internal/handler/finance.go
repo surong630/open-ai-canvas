@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"infinite-canvas/backend/internal/service"
@@ -21,7 +22,17 @@ func RegisterFinanceRoutes(r *gin.RouterGroup, svc *service.Service) {
 			fail(c, http.StatusBadRequest, err)
 			return
 		}
-		wallet, err := svc.Wallet(user, c.Query("type"), page, limit)
+		startTime, err := parseOptionalWalletTime(c.Query("startTime"))
+		if err != nil {
+			fail(c, http.StatusBadRequest, err)
+			return
+		}
+		endTime, err := parseOptionalWalletTime(c.Query("endTime"))
+		if err != nil {
+			fail(c, http.StatusBadRequest, err)
+			return
+		}
+		wallet, err := svc.WalletFiltered(user, c.Query("type"), page, limit, startTime, endTime)
 		if err != nil {
 			failService(c, err)
 			return
@@ -508,6 +519,18 @@ func RegisterFinanceRoutes(r *gin.RouterGroup, svc *service.Service) {
 		}
 		ok(c, gin.H{"order": order})
 	})
+}
+
+func parseOptionalWalletTime(value string) (*time.Time, error) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return nil, nil
+	}
+	parsed, err := time.Parse(time.RFC3339, value)
+	if err != nil {
+		return nil, err
+	}
+	return &parsed, nil
 }
 
 func saveChannelModel(c *gin.Context, svc *service.Service, id string) {

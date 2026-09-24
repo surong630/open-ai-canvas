@@ -21,12 +21,13 @@ import (
 const CreditScale int64 = 1_000_000
 
 type WalletSummary struct {
-	Account model.CreditAccount       `json:"account"`
-	Entries []model.CreditLedgerEntry `json:"entries"`
-	Total   int64                     `json:"total"`
-	Page    int                       `json:"page"`
-	Limit   int                       `json:"pageSize"`
-	Policy  PublicCreditPolicy        `json:"policy"`
+	Account                 model.CreditAccount       `json:"account"`
+	Entries                 []model.CreditLedgerEntry `json:"entries"`
+	Total                   int64                     `json:"total"`
+	TotalAmountMicrocredits int64                     `json:"totalAmountMicrocredits"`
+	Page                    int                       `json:"page"`
+	Limit                   int                       `json:"pageSize"`
+	Policy                  PublicCreditPolicy        `json:"policy"`
 }
 
 type RedeemBatchPage struct {
@@ -112,6 +113,10 @@ type tokenBillingEstimate struct {
 }
 
 func (s *Service) Wallet(user *model.User, entryType string, page int, limit int) (*WalletSummary, error) {
+	return s.WalletFiltered(user, entryType, page, limit, nil, nil)
+}
+
+func (s *Service) WalletFiltered(user *model.User, entryType string, page int, limit int, startTime *time.Time, endTime *time.Time) (*WalletSummary, error) {
 	if user == nil {
 		return nil, Unauthorized("请先登录")
 	}
@@ -128,7 +133,7 @@ func (s *Service) Wallet(user *model.User, entryType string, page int, limit int
 	if err != nil {
 		return nil, err
 	}
-	entries, total, err := s.repo.CreditLedger(user.ID, strings.TrimSpace(entryType), limit, (page-1)*limit)
+	entries, total, totalAmount, err := s.repo.CreditLedgerFiltered(user.ID, strings.TrimSpace(entryType), limit, (page-1)*limit, startTime, endTime)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +141,7 @@ func (s *Service) Wallet(user *model.User, entryType string, page int, limit int
 	if err != nil {
 		return nil, err
 	}
-	return &WalletSummary{Account: *account, Entries: entries, Total: total, Page: page, Limit: limit, Policy: policy}, nil
+	return &WalletSummary{Account: *account, Entries: entries, Total: total, TotalAmountMicrocredits: totalAmount, Page: page, Limit: limit, Policy: policy}, nil
 }
 
 func (s *Service) RedeemCredits(user *model.User, code string, redeemedIP string) (*model.CreditAccount, error) {
