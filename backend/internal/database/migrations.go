@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-const CurrentSchemaVersion int64 = 34
+const CurrentSchemaVersion int64 = 35
 
 const baselineSchemaChecksum = "sha256:open-ai-canvas-schema-v1-20260830"
 const schemaMigrationAppliedAtIndexChecksum = "sha256:schema-migrations-applied-at-index-v2-20260830"
@@ -117,6 +117,20 @@ var schemaMigrations = []migration{
 		}
 		return nil
 	}},
+	{version: 35, name: "auth_notification_channels", checksum: "sha256:auth-notification-channels-v35", apply: migrateAuthNotificationChannels},
+}
+
+func migrateAuthNotificationChannels(tx *gorm.DB) error {
+	if err := tx.AutoMigrate(
+		&model.User{},
+		&model.AuthVerification{},
+		&model.NotificationQuota{},
+		&model.SMSChannel{},
+		&model.SMSRecord{},
+	); err != nil {
+		return fmt.Errorf("创建认证通知结构：%w", err)
+	}
+	return tx.Exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_phone_nonempty ON users(phone) WHERE phone <> ''").Error
 }
 
 func migrateChannelModelTags(tx *gorm.DB) error {

@@ -66,8 +66,47 @@ func TestMigrateSchemaRecordsAndValidatesVersion(t *testing.T) {
 	if !db.Migrator().HasColumn(&model.BannerAnnouncement{}, "notice_type") {
 		t.Fatal("schema migration v22 did not create banner announcements notice_type")
 	}
+	if !db.Migrator().HasTable(&model.SMSChannel{}) || !db.Migrator().HasTable(&model.SMSRecord{}) {
+		t.Fatal("schema migration v35 did not create SMS notification tables")
+	}
+	if !db.Migrator().HasTable(&model.AuthVerification{}) || !db.Migrator().HasTable(&model.NotificationQuota{}) {
+		t.Fatal("schema migration v35 did not create auth verification tables")
+	}
+	if !db.Migrator().HasColumn(&model.User{}, "Phone") || !db.Migrator().HasIndex(&model.User{}, "idx_users_phone_nonempty") {
+		t.Fatal("schema migration v35 did not add user phone identity")
+	}
 	if err := MigrateSchema(db); err != nil {
 		t.Fatalf("migration should be idempotent: %v", err)
+	}
+}
+
+func TestMigrateSchemaV35UpgradesExistingDatabase(t *testing.T) {
+	db, err := Open(Config{Driver: "sqlite", DSN: "file:migration-auth-notifications-v35?mode=memory&cache=shared"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := MigrateSchema(db); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.Migrator().DropTable(&model.AuthVerification{}, &model.NotificationQuota{}, &model.SMSChannel{}, &model.SMSRecord{}); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.Migrator().DropIndex(&model.User{}, "idx_users_phone_nonempty"); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.Where("version = ?", 35).Delete(&schemaMigration{}).Error; err != nil {
+		t.Fatal(err)
+	}
+	if err := MigrateSchema(db); err != nil {
+		t.Fatalf("upgrade from v34: %v", err)
+	}
+	for _, entity := range []any{&model.AuthVerification{}, &model.NotificationQuota{}, &model.SMSChannel{}, &model.SMSRecord{}} {
+		if !db.Migrator().HasTable(entity) {
+			t.Fatalf("v35 upgrade did not create table for %T", entity)
+		}
+	}
+	if !db.Migrator().HasIndex(&model.User{}, "idx_users_phone_nonempty") {
+		t.Fatal("v35 upgrade did not create non-empty phone index")
 	}
 }
 
