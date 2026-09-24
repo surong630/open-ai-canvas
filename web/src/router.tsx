@@ -69,8 +69,9 @@ function fullScreenDeferred(element: ReactNode) {
 function AuthenticatedWorkspaceLayout() {
     const { pathname } = useLocation();
     const isCanvasProjectRoute = pathname.startsWith("/canvas/");
+    const usesEmailCodeLogin = pathname === "/canvas" || isCanvasProjectRoute || pathname === "/assets";
     const fallback = isCanvasProjectRoute ? <CanvasRefreshShell /> : <FullScreenLoader label="正在打开创作空间" detail="准备当前页面" />;
-    return <RequireAuth><Suspense fallback={fallback}><UserLayout><Outlet /></UserLayout></Suspense></RequireAuth>;
+    return <RequireAuth loginPath={usesEmailCodeLogin ? "/email-login" : "/login"}><Suspense fallback={fallback}><UserLayout><Outlet /></UserLayout></Suspense></RequireAuth>;
 }
 
 /**
@@ -92,7 +93,7 @@ function devRoutes() {
 
 export const router = createBrowserRouter([
     { path: "/email-login", element: fullScreenDeferred(<EmailCodeLoginPage />), errorElement: <RouteErrorPage /> },
-    { path: "/home", element: <RequireAuth>{fullScreenDeferred(<ProductHomePage />)}</RequireAuth>, errorElement: <RouteErrorPage /> },
+    { path: "/home", element: fullScreenDeferred(<ProductHomePage />), errorElement: <RouteErrorPage /> },
     { path: "/credits", element: <RequireAuth>{fullScreenDeferred(<CreditsPage />)}</RequireAuth>, errorElement: <RouteErrorPage /> },
     {
         element: <AuthScene />,
