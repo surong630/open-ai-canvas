@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router";
 
 import { getAuthSession, getAuthSettings } from "@/services/api/auth";
 import { emptyVerification, loginVerification, startVerification } from "@/services/api/verification";
-import { brandStudioLabel, useAppearanceStore } from "@/stores/use-appearance-store";
+import { useAppearanceStore } from "@/stores/use-appearance-store";
 import { useUserStore } from "@/stores/use-user-store";
 
 import "./email-code-login.css";
@@ -137,25 +137,12 @@ export default function EmailCodeLoginPage() {
                         <span>视频播放区域</span>
                     </div>
                 )}
-                <div className="email-code-login__media-shade" aria-hidden />
-                <div className="email-code-login__brand">
-                    <span className="email-code-login__brand-mark" aria-hidden />
-                    <span><strong>{appearance.brandName}</strong><small>{brandStudioLabel(appearance)}</small></span>
-                </div>
-                <div className="email-code-login__media-copy">
-                    <span>AI CREATIVE WORKSPACE</span>
-                    <h2>{appearance.authHeroTitle || "让灵感进入创作现场"}</h2>
-                    {appearance.authHeroDescription ? <p>{appearance.authHeroDescription}</p> : null}
-                </div>
             </section>
 
             <section className="email-code-login__panel">
-                <div className="email-code-login__ambient" aria-hidden><i /><i /><i /></div>
                 <form className="email-code-login__form" onSubmit={submit}>
                     <header className="email-code-login__heading">
-                        <span><i /> SECURE ACCESS</span>
-                        <h1>登录创作空间</h1>
-                        <p>使用邮箱验证码安全进入工作台</p>
+                        <h1>欢迎登录</h1>
                     </header>
 
                     <label className="email-code-login__field" htmlFor="email-code-login-account">
@@ -192,13 +179,11 @@ export default function EmailCodeLoginPage() {
                     </label>
 
                     <button className="email-code-login__submit" type="submit" disabled={submitting || emailLoginEnabled !== true}>
-                        <span>{submitting ? "正在验证身份…" : "进入工作台"}</span>
-                        <i aria-hidden>→</i>
+                        <span>{submitting ? "正在验证身份…" : "登录/注册"}</span>
                     </button>
 
-                    {emailLoginEnabled === false ? <p className="email-code-login__status" role="status">管理员暂未开启邮箱验证码登录</p> : null}
+                    {/* {emailLoginEnabled === false ? <p className="email-code-login__status" role="status">管理员暂未开启邮箱验证码登录</p> : null} */}
                 </form>
-                <p className="email-code-login__security"><i aria-hidden /> 验证信息经加密通道传输</p>
             </section>
         </main>
     );
