@@ -3,7 +3,7 @@ import { CircleUserRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { LocalUser } from "@/stores/use-user-store";
 
-export function UserAvatar({ user, className }: { user: LocalUser; className?: string }) {
+export function UserAvatar({ user, className, fallbackVariant = "icon" }: { user: LocalUser; className?: string; fallbackVariant?: "icon" | "product" }) {
     const [failed, setFailed] = useState(false);
     const avatarUrl = /^https?:\/\//i.test(user.avatarUrl || "") ? user.avatarUrl : "";
 
@@ -14,6 +14,8 @@ export function UserAvatar({ user, className }: { user: LocalUser; className?: s
         <span className={cn("grid shrink-0 place-items-center overflow-hidden", className)}>
             {avatarUrl && !failed ? (
                 <img src={avatarUrl} alt="" referrerPolicy="no-referrer" className="size-full object-cover" onError={() => setFailed(true)} />
+            ) : fallbackVariant === "product" ? (
+                <span className="product-account-avatar-fallback" aria-hidden />
             ) : (
                 <CircleUserRound className="size-full" aria-hidden />
             )}

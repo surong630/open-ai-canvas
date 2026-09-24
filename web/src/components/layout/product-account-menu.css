@@ -1,59 +1,110 @@
 .product-account-menu-popover .ant-popover-container {
-    width: 382px;
+    width: 400px;
     max-width: calc(100vw - var(--space-6));
-    border: var(--stroke-1) solid color-mix(in srgb, var(--color-neutral-0) 18%, transparent) !important;
-    border-radius: var(--r-lg) !important;
-    background: #1d1e1e !important;
+    border: 1px solid #444444 !important;
+    border-radius: 12px !important;
+    background: #1b1b1b !important;
     background-image: none !important;
-    padding: var(--space-3) !important;
-    box-shadow: var(--shadow-lg) !important;
+    padding: 10px !important;
+    box-shadow: 0 16px 48px #00000052 !important;
 }
 
 .product-account-menu {
     display: grid;
-    gap: var(--space-5);
-    color: var(--color-neutral-50);
+    gap: 8px;
+    color: #ffffff;
 }
 
 .product-account-menu__identity {
     display: flex;
-    min-height: 72px;
+    min-height: 48px;
     align-items: center;
-    gap: var(--space-3);
-    border-radius: var(--r-md);
-    background: color-mix(in srgb, var(--color-neutral-0) 6%, transparent);
-    padding: 0 var(--space-4);
+    gap: 10px;
+    border-radius: 9px;
+    background: #262626;
+    padding: 16px;
 }
 
 .product-account-menu__identity strong {
     min-width: 0;
     overflow: hidden;
-    font-size: var(--fs-body);
-    font-weight: 500;
+    flex: 1;
+    font-size: 14px;
+    font-weight: 400;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .product-account-menu__avatar {
-    width: var(--space-6);
-    height: var(--space-6);
+    width: 26px;
+    height: 26px;
     flex: 0 0 auto;
+}
+
+.product-account-avatar-fallback {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #eef2ff 4%, #91a9ff 52%, #806ee8 100%);
+    box-shadow: inset 0 0 0 1px #ffffff80;
+}
+
+.product-account-avatar-fallback::before {
+    position: absolute;
+    top: 20%;
+    left: 36%;
+    width: 28%;
+    height: 28%;
+    border-radius: 50%;
+    background: #f6f7ff;
+    content: "";
+}
+
+.product-account-avatar-fallback::after {
+    position: absolute;
+    right: 22%;
+    bottom: 8%;
+    left: 22%;
+    height: 42%;
+    border-radius: 50% 50% 34% 34%;
+    background: #e2e7ff;
+    content: "";
 }
 
 .product-account-menu .ant-btn {
     width: max-content;
-    min-height: var(--space-10);
+    min-height: 36px;
     justify-content: flex-start;
-    color: var(--color-neutral-50);
-    padding-inline: var(--space-2);
+    color: #ffffff;
+    padding-inline: 8px;
+    font-size: 14px;
 }
 
 .product-account-menu .ant-btn:hover {
-    background: color-mix(in srgb, var(--color-neutral-0) 7%, transparent) !important;
-    color: var(--color-neutral-50) !important;
+    background: #262626 !important;
+    color: #ffffff !important;
 }
 
 .product-account-menu .ant-btn svg {
     width: var(--space-4);
     height: var(--space-4);
 }
+
+.product-account-menu .product-account-menu__logout-icon {
+    width: 16px;
+    height: auto;
+    object-fit: contain;
+}
+
+.product-account-menu .product-account-menu__team {
+    min-height: 30px;
+    flex: 0 0 auto;
+    padding-inline: 4px;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.product-account-menu .product-account-menu__team svg { width: 14px; height: 14px; }
