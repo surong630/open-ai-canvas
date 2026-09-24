@@ -36,7 +36,10 @@ const SystemPerformancePage = lazy(() => import("@/pages/admin/settings/system-p
 const StoryboardPromptsPage = lazy(() => import("@/pages/admin/storyboard-prompts/storyboard-prompts-page"));
 const UsersPage = lazy(() => import("@/pages/admin/users/users-page"));
 const AssetsPage = lazy(loadAssetsPage);
+const ProductHomePage = lazy(() => import("@/pages/product-home"));
+const CreditsPage = lazy(() => import("@/pages/credits"));
 const LoginPage = lazy(() => import("@/pages/auth/login"));
+const EmailCodeLoginPage = lazy(() => import("@/pages/auth/email-code-login"));
 const RegisterPage = lazy(() => import("@/pages/auth/register"));
 const ForgotPasswordPage = lazy(() => import("@/pages/auth/forgot-password"));
 const CanvasPage = lazy(loadCanvasPage);
@@ -88,6 +91,9 @@ function devRoutes() {
 }
 
 export const router = createBrowserRouter([
+    { path: "/email-login", element: fullScreenDeferred(<EmailCodeLoginPage />), errorElement: <RouteErrorPage /> },
+    { path: "/home", element: <RequireAuth>{fullScreenDeferred(<ProductHomePage />)}</RequireAuth>, errorElement: <RouteErrorPage /> },
+    { path: "/credits", element: <RequireAuth>{fullScreenDeferred(<CreditsPage />)}</RequireAuth>, errorElement: <RouteErrorPage /> },
     {
         element: <AuthScene />,
         errorElement: <RouteErrorPage />,
