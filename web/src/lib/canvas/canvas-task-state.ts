@@ -36,3 +36,19 @@ export function resetGenerationTaskMetadata(metadata: CanvasNodeMetadata | undef
     delete next.taskUpdatedAt;
     return next;
 }
+
+/**
+ * Builds a stable retry operation key without Web Crypto. `crypto.subtle` is
+ * unavailable on non-secure LAN origins, which must not prevent a retry from
+ * reaching the backend.
+ */
+export function generationRetryOperationId(retryOf: string, attemptGroupId = retryOf) {
+    const input = `generation-retry\0${attemptGroupId}\0${retryOf}`;
+    const seeds = [2166136261, 2166136261 ^ 0x9e3779b9, 2166136261 ^ 0x85ebca6b, 2166136261 ^ 0xc2b2ae35];
+    const fingerprint = seeds.map((seed) => {
+        let hash = seed;
+        for (let index = 0; index < input.length; index += 1) hash = Math.imul(hash ^ input.charCodeAt(index), 16777619);
+        return (hash >>> 0).toString(16).padStart(8, "0");
+    }).join("");
+    return `retry:${fingerprint}`;
+}

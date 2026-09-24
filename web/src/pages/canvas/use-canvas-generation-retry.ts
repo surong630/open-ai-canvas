@@ -15,6 +15,7 @@ import {
     generationWorkflowMetadata,
     isGenerationCanceled,
     canvasImageReferenceLimitError,
+    resetGenerationTaskMetadata,
     resolveMetadataReferences,
     resolveStoredReferenceImages,
     runBackendCanvasGenerationTask,
@@ -248,10 +249,18 @@ export function useCanvasGenerationRetry({
                       }
                     : undefined;
 
-            setRunningNodeId(node.id);
-            setNodes((current) => current.map((item) => (item.id === node.id ? { ...item, metadata: { ...item.metadata, status: NODE_STATUS_LOADING, errorDetails: undefined, generationErrorCode: undefined, resourceReloadAvailable: undefined, failedPromptFingerprint: undefined } } : item)));
-            const controller = startGenerationRequest(node.id, sourceNode.id, node.id);
             const retryContext = node.metadata?.taskId ? await createGenerationRetryContext(node.metadata.taskId, node.metadata.attemptGroupId) : {};
+            setRunningNodeId(node.id);
+            setNodes((current) => current.map((item) => (item.id === node.id ? {
+                ...item,
+                metadata: {
+                    ...resetGenerationTaskMetadata(item.metadata, NODE_STATUS_LOADING),
+                    taskStage: "正在创建任务",
+                    taskProgress: 0,
+                    taskCreatedAt: new Date().toISOString(),
+                },
+            } : item)));
+            const controller = startGenerationRequest(node.id, sourceNode.id, node.id);
             const runAndConsumeRetry = async (input: Parameters<typeof runBackendCanvasGenerationTask>[0]) => {
                 await runCanvasGenerationTaskToConsumer(
                     { ...input, ...retryContext },

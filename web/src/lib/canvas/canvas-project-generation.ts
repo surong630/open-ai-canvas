@@ -18,6 +18,7 @@ import { CanvasNodeType, type CanvasAssistantSession, type CanvasConnection, typ
 import type { ReferenceImage } from "@/types/image";
 import type { ReferenceAudio, ReferenceVideo } from "@/types/media";
 import { generationSpecMetadata, readNodeGenerationSpec, resolveGenerationSelection } from "@/lib/canvas/generation-contract";
+import { generationRetryOperationId } from "@/lib/canvas/canvas-task-state";
 
 export async function runBackendCanvasGenerationTask(
     {
@@ -138,10 +139,7 @@ export type GenerationRetryContext = {
 };
 
 export async function createGenerationRetryContext(retryOf: string, attemptGroupId = retryOf): Promise<GenerationRetryContext> {
-    const bytes = new TextEncoder().encode(`generation-retry\0${attemptGroupId}\0${retryOf}`);
-    const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
-    const hex = Array.from(digest, (byte) => byte.toString(16).padStart(2, "0")).join("");
-    return { retryOf, attemptGroupId, clientOperationId: `retry:${hex}` };
+    return { retryOf, attemptGroupId, clientOperationId: generationRetryOperationId(retryOf, attemptGroupId) };
 }
 
 export function createGenerationBatchRetryContexts(taskIds: readonly string[], attemptGroupId: string) {
