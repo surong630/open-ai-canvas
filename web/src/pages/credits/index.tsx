@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { DatePicker, Pagination, Table, type TableColumnsType } from "antd";
 import dayjs from "dayjs";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 
 import calendarIcon from "@/assets/credits/box-icon-time@2x.png";
@@ -17,7 +17,7 @@ import navProjectsSelected from "@/assets/credits/nav-projects-selected@2x.png";
 import pageLeftDisabled from "@/assets/credits/page-left-disabled@2x.png";
 import pageRight from "@/assets/credits/page-right@2x.png";
 import { formatCredits } from "@/constant/credits";
-import { ProductAccountMenu } from "@/components/layout/product-account-menu";
+import { ProductPageHeader } from "@/components/layout/product-page-header";
 import { getWallet, type CreditLedgerEntry } from "@/services/api/wallet";
 import { useAppearanceStore } from "@/stores/use-appearance-store";
 import { useUserStore } from "@/stores/use-user-store";
@@ -40,6 +40,7 @@ export default function CreditsPage() {
     const [tab, setTab] = useState<LedgerTab>("income");
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(20);
+    const [jumpPage, setJumpPage] = useState("1");
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const range = useMemo(() => ({
@@ -56,10 +57,26 @@ export default function CreditsPage() {
     const wallet = walletQuery.data;
     const balance = wallet ? formatCredits(wallet.account.availableMicrocredits, 6) : "--";
     const emptyText = !creditsEnabled ? "积分功能当前未启用" : walletQuery.isError ? (walletQuery.error instanceof Error ? walletQuery.error.message : "积分明细加载失败") : "当前筛选范围内没有积分记录";
+    const totalPages = Math.max(1, Math.ceil((wallet?.total || 0) / pageSize));
+
+    useEffect(() => {
+        setJumpPage(String(page));
+    }, [page]);
 
     const selectTab = (next: LedgerTab) => {
         setTab(next);
         setPage(1);
+    };
+
+    const jumpToPage = () => {
+        const requestedPage = Number.parseInt(jumpPage, 10);
+        if (!Number.isFinite(requestedPage)) {
+            setJumpPage(String(page));
+            return;
+        }
+        const nextPage = Math.min(totalPages, Math.max(1, requestedPage));
+        setJumpPage(String(nextPage));
+        setPage(nextPage);
     };
 
     return (
@@ -74,10 +91,7 @@ export default function CreditsPage() {
             </aside>
 
             <section className="credits-page__workspace">
-                <header className="credits-page__topbar">
-                    <span className="credits-page__balance"><img src={balanceIcon} alt="" />{balance}</span>
-                    <ProductAccountMenu triggerClassName="credits-page__avatar" />
-                </header>
+                <ProductPageHeader className="credits-page__topbar" balanceText={balance} />
 
                 <div className="credits-page__content">
                     <button type="button" className="credits-page__back" onClick={() => navigate("/home")}><img src={backIcon} alt="" />积分明细</button>
@@ -90,6 +104,7 @@ export default function CreditsPage() {
                     <div className="credits-page__filters">
                         <DatePicker.RangePicker
                             className="credits-page__date-range"
+                            classNames={{ popup: { root: "credits-page__date-popup" } }}
                             allowClear
                             format="YYYY-MM-DD"
                             placeholder={["开始时间", "结束时间"]}
@@ -123,8 +138,11 @@ export default function CreditsPage() {
                             pageSizeOptions={[20, 50, 100]}
                             total={wallet?.total || 0}
                             disabled={walletQuery.isFetching}
-                            showQuickJumper
-                            showSizeChanger={{ suffixIcon: <img src={pageDropIcon} alt="" /> }}
+                            showSizeChanger={{
+                                className: "credits-page__size-select",
+                                suffixIcon: <img src={pageDropIcon} alt="" />,
+                                classNames: { popup: { root: "credits-page__size-menu" } },
+                            }}
                             showTotal={(total) => `共${total}笔`}
                             itemRender={(_, type, originalElement) => type === "prev" ? <img className="credits-page__page-arrow" src={pageLeftDisabled} alt="上一页" /> : type === "next" ? <img className="credits-page__page-arrow" src={pageRight} alt="下一页" /> : originalElement}
                             onChange={(nextPage, nextPageSize) => {
@@ -132,6 +150,24 @@ export default function CreditsPage() {
                                 setPageSize(nextPageSize);
                             }}
                         />
+                        <label className="credits-page__quick-jumper">
+                            <span>跳至</span>
+                            <input
+                                type="text"
+                                inputMode="numeric"
+                                aria-label="跳转页码"
+                                value={jumpPage}
+                                onChange={(event) => setJumpPage(event.target.value.replace(/\D/g, ""))}
+                                onBlur={jumpToPage}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Enter") {
+                                        event.preventDefault();
+                                        jumpToPage();
+                                    }
+                                }}
+                            />
+                            <span>页</span>
+                        </label>
                     </footer>
                 </div>
             </section>

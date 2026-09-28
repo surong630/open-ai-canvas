@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { App, Button, Dropdown, Input, type MenuProps } from "antd";
-import { FolderPlus, Image as ImageIcon, LoaderCircle, MoreHorizontal, Plus, Search, SquarePlus, Trash2, Zap } from "lucide-react";
+import { FolderPlus, Image as ImageIcon, LoaderCircle, MoreHorizontal, Plus, Search, SquarePlus, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { NavLink, useNavigate, useParams } from "react-router";
 
@@ -16,9 +16,8 @@ import navAssetsSelected from "@/assets/product-home/nav-assets-selected@2x.png"
 import navHomeSelected from "@/assets/product-home/nav-home@2x.png";
 import navProjectsNormal from "@/assets/product-home/nav-projects@2x.png";
 import { ProjectPreview, projectPreviewMedia } from "@/components/canvas/canvas-project-card";
-import { ProductAccountMenu } from "@/components/layout/product-account-menu";
+import { ProductPageHeader } from "@/components/layout/product-page-header";
 import { AppModal } from "@/components/ui/product/app-modal";
-import { useWalletBalance } from "@/hooks/use-wallet-balance";
 import { loadCanvasProjectPage } from "@/lib/workspace-route-modules";
 import { listRemoteCanvasProjectsPage, type CanvasLibrarySummary } from "@/services/api/user-data";
 import { createCanvasProjectWithRemoteSync, loadCanvasProjectForEditing, saveRemoteUserDataNow } from "@/services/user-data-sync";
@@ -60,8 +59,6 @@ export default function CanvasProjectsPage() {
     const appearance = useAppearanceStore((state) => state.appearance);
     const user = useUserStore((state) => state.user);
     const renameStoredCanvasProject = useCanvasStore((state) => state.renameProject);
-    const creditsEnabled = useUserStore((state) => state.features.creditsEnabled);
-    const { availableMicrocredits } = useWalletBalance(user?.id, creditsEnabled);
     const projectsQuery = useQuery({
         queryKey: ["canvas-projects-page", user?.id],
         queryFn: ({ signal }) => loadAllCanvasProjects(signal),
@@ -82,7 +79,6 @@ export default function CanvasProjectsPage() {
     const activeFolder = folderId ? folderStylePreviews.find((folder) => folder.id === folderId) : undefined;
     const isFolderView = Boolean(folderId);
     const folderTitle = activeFolder?.title || "未命名项目";
-    const balance = availableMicrocredits === null ? "--" : (availableMicrocredits / 1_000_000).toLocaleString("zh-CN", { maximumFractionDigits: 2 });
 
     const createCanvas = async () => {
         if (creating) return;
@@ -124,8 +120,8 @@ export default function CanvasProjectsPage() {
     return (
         <main className="canvas-projects-page grid h-dvh min-h-dvh grid-cols-[241px_minmax(0,1fr)] overflow-hidden bg-[#191919] text-[#FFFFFF]">
             <aside className="min-h-dvh border-r border-[#303030] bg-[#191919] px-[14px] py-[22px]">
-                <h1 className="m-0 max-w-[190px] overflow-hidden px-2 text-ellipsis whitespace-nowrap text-[20px] leading-7 font-bold text-[#FFFFFF]">{appearance.brandName || "系统名称"}</h1>
-                <nav className="mt-[15px] grid gap-[10px] border-t border-[#303030] pt-[9px]" aria-label="首页导航">
+                <h1 className="m-0 max-w-[190px] overflow-hidden px-2 text-ellipsis whitespace-nowrap text-[20px] leading-7 !font-bold text-[#FFFFFF]">{appearance.brandName || "系统名称"}</h1>
+                <nav className="mt-[15px] grid gap-[10px] pt-[9px]" aria-label="首页导航">
                     <ProductNavLink to="/home" label="首页" normalIcon={navHomeNormal} selectedIcon={navHomeSelected} />
                     <ProductNavLink to="/canvas-projects" label="项目" normalIcon={navProjectsNormal} selectedIcon={navProjectsSelected} end={false} />
                     <ProductNavLink to="/assets" label="资产" normalIcon={navAssetsNormal} selectedIcon={navAssetsSelected} />
@@ -133,10 +129,7 @@ export default function CanvasProjectsPage() {
             </aside>
 
             <section className="flex min-h-0 min-w-0 flex-col bg-[#191919]">
-                <header className="flex h-16 shrink-0 items-center justify-end gap-3 bg-[#191919] px-10">
-                    {creditsEnabled ? <button type="button" className="flex h-8 min-w-[57px] items-center justify-center gap-[7px] rounded-lg border border-[#292929] bg-[#202020] px-[10px] text-[14px] leading-5 text-[#FFFFFF]" onClick={() => navigate("/credits")}><Zap className="size-3 fill-[#FFFFFF]" /><span>{balance}</span></button> : null}
-                    <ProductAccountMenu triggerClassName="canvas-projects-page__avatar" showCreateTeam />
-                </header>
+                <ProductPageHeader />
 
                 <div className="canvas-projects-page__content min-h-0 flex-1 overflow-y-auto pt-[10px] pr-10 pb-12 pl-[41px]">
                     <div className="flex min-h-9 items-center justify-between gap-8 pl-[18px]">
@@ -145,7 +138,7 @@ export default function CanvasProjectsPage() {
                                 <button type="button" className="text-[#969799] font-bold hover:text-[#FFFFFF]" onClick={() => navigate("/canvas-projects")}>全部项目</button>
                                 <span>&nbsp;/&nbsp;<span className="text-[#F5F5F5] font-bold">{folderTitle}</span></span>
                             </h2>
-                        ) : <h2 className="m-0 text-[16px] leading-6 font-bold text-[#F5F5F5]">全部项目</h2>}
+                        ) : <h2 className="m-0 text-[16px] leading-6 !font-bold text-[#F5F5F5]">全部项目</h2>}
                         <div className="flex items-center gap-3">
                             <Input
                                 allowClear
@@ -325,6 +318,7 @@ function CanvasProjectItem({ project, onOpen, onRename, insideFolder }: { projec
             : {
                 key: "move",
                 label: "移动文件夹",
+                popupClassName: "canvas-projects-submenu",
                 children: [
                     { key: "folder-1", label: "文件夹1", onClick: unavailable },
                     { key: "folder-2", label: "文件夹2", onClick: unavailable },

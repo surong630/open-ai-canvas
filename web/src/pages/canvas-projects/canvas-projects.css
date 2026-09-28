@@ -2,26 +2,6 @@
     font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
 }
 
-.canvas-projects-page__avatar {
-    display: grid;
-    width: 30px;
-    height: 30px;
-    overflow: hidden;
-    place-items: center;
-    border: 0;
-    border-radius: 50%;
-    background: transparent;
-    padding: 0;
-    cursor: pointer;
-}
-
-.canvas-projects-page__avatar > span,
-.canvas-projects-page__avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
 .canvas-projects-page .canvas-projects-page__nav-link,
 .canvas-projects-page .canvas-projects-page__nav-link:hover,
 .canvas-projects-page .canvas-projects-page__nav-link:focus-visible,
@@ -32,7 +12,7 @@
 
 .canvas-projects-page__search.ant-input-affix-wrapper {
     height: 28px;
-    border: 1px solid #303030;
+    border: 1px solid #272727 !important;
     border-radius: 8px;
     background: transparent;
     padding: 0 10px;
@@ -50,7 +30,7 @@
     font-size: 13px;
 }
 
-.canvas-projects-page__search .ant-input::placeholder { color: #929292; }
+.canvas-projects-page__search .ant-input::placeholder { color: #929292 !important; opacity: 1; }
 .canvas-projects-page__search .ant-input-clear-icon { color: #929292; }
 
 .canvas-projects-page__toolbar-button.ant-btn {
@@ -184,16 +164,39 @@ body .canvas-projects-menu .ant-dropdown-menu-submenu-active > .ant-dropdown-men
 body .canvas-projects-menu .ant-dropdown-menu-submenu-arrow,
 body .canvas-projects-menu .ant-dropdown-menu-submenu-expand-icon { color: #FFFFFF !important; }
 
-body .canvas-projects-menu.ant-dropdown-menu-submenu-popup .ant-dropdown-menu,
-body .canvas-projects-menu .ant-dropdown-menu-submenu-popup .ant-dropdown-menu {
+body .canvas-projects-submenu .ant-dropdown-menu {
     box-sizing: border-box !important;
-    width: 140px !important;
-    min-width: 140px !important;
-    padding: 7px !important;
-    border: 1px solid #535353 !important;
+    width: 151px !important;
+    min-width: 151px !important;
+    padding: 8px 7px !important;
+    border: 0 !important;
     border-radius: 10px !important;
     background: #363636 !important;
     box-shadow: 0 4px 10px #0000004D !important;
+}
+
+body .canvas-projects-submenu .ant-dropdown-menu-item {
+    display: flex;
+    box-sizing: border-box;
+    height: 36px;
+    min-height: 36px;
+    align-items: center;
+    margin: 0 !important;
+    border-radius: 6px !important;
+    color: #FFFFFF !important;
+    padding: 8px 10px !important;
+    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 20px !important;
+}
+
+body .canvas-projects-submenu .ant-dropdown-menu-title-content { color: #FFFFFF !important; }
+
+body .canvas-projects-submenu .ant-dropdown-menu-item:hover,
+body .canvas-projects-submenu .ant-dropdown-menu-item-active {
+    background: #4A4A4A !important;
+    color: #FFFFFF !important;
 }
 
 .canvas-projects-recycle-modal .ant-modal-mask {

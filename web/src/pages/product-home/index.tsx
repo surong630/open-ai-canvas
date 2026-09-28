@@ -1,13 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { App } from "antd";
-import { ChevronRight, Image as ImageIcon, LoaderCircle, Zap } from "lucide-react";
+import { ChevronRight, Image as ImageIcon, LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 
 import { ProjectPreview } from "@/components/canvas/canvas-project-card";
-import { ProductAccountMenu } from "@/components/layout/product-account-menu";
+import { ProductPageHeader } from "@/components/layout/product-page-header";
 import { NODE_DEFAULT_SIZE } from "@/constant/canvas";
-import { useWalletBalance } from "@/hooks/use-wallet-balance";
 import { createCanvasNode } from "@/lib/canvas/canvas-project-domain";
 import { loadCanvasProjectPage } from "@/lib/workspace-route-modules";
 import { listRemoteCanvasProjectsPage } from "@/services/api/user-data";
@@ -48,8 +47,6 @@ export default function ProductHomePage() {
     const [creating, setCreating] = useState(false);
     const appearance = useAppearanceStore((state) => state.appearance);
     const user = useUserStore((state) => state.user);
-    const creditsEnabled = useUserStore((state) => state.features.creditsEnabled);
-    const { availableMicrocredits } = useWalletBalance(user?.id, creditsEnabled);
     const recentQuery = useQuery({
         queryKey: ["product-home", "recent-canvases", user?.id],
         queryFn: () => listRemoteCanvasProjectsPage({ page: 1, pageSize: 4, sort: "updated" }),
@@ -58,7 +55,6 @@ export default function ProductHomePage() {
         refetchOnMount: "always",
     });
     const recentProjects = recentQuery.data?.projects || [];
-    const balance = availableMicrocredits === null ? "--" : (availableMicrocredits / 1_000_000).toLocaleString("zh-CN", { maximumFractionDigits: 2 });
 
     const createCanvas = async (starter?: { nodeType: CanvasNodeType; nodeTitle: string; projectTitle: string }) => {
         if (!user) {
@@ -101,14 +97,7 @@ export default function ProductHomePage() {
             </aside>
 
             <section className="product-home__workspace">
-                <header className="product-home__topbar">
-                    {user ? (
-                        <>
-                            {creditsEnabled ? <button type="button" className="product-home__credits" onClick={() => navigate("/credits")}><Zap /><span>{balance}</span></button> : null}
-                            <ProductAccountMenu triggerClassName="product-home__avatar" showCreateTeam />
-                        </>
-                    ) : <button type="button" className="product-home__login" onClick={() => navigate("/email-login")}>注册/登录</button>}
-                </header>
+                <ProductPageHeader className="product-home__topbar" />
 
                 <div className="product-home__content">
                     <section className="product-home__hero">
