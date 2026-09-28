@@ -37,6 +37,7 @@ const StoryboardPromptsPage = lazy(() => import("@/pages/admin/storyboard-prompt
 const UsersPage = lazy(() => import("@/pages/admin/users/users-page"));
 const AssetsPage = lazy(loadAssetsPage);
 const ProductHomePage = lazy(() => import("@/pages/product-home"));
+const CanvasProjectsPage = lazy(() => import("@/pages/canvas-projects"));
 const CreditsPage = lazy(() => import("@/pages/credits"));
 const LoginPage = lazy(() => import("@/pages/auth/login"));
 const EmailCodeLoginPage = lazy(() => import("@/pages/auth/email-code-login"));
@@ -94,6 +95,8 @@ function devRoutes() {
 export const router = createBrowserRouter([
     { path: "/email-login", element: fullScreenDeferred(<EmailCodeLoginPage />), errorElement: <RouteErrorPage /> },
     { path: "/home", element: fullScreenDeferred(<ProductHomePage />), errorElement: <RouteErrorPage /> },
+    { path: "/canvas-projects", element: <RequireAuth loginPath="/email-login">{fullScreenDeferred(<CanvasProjectsPage />)}</RequireAuth>, errorElement: <RouteErrorPage /> },
+    { path: "/canvas-projects/folders/:folderId", element: <RequireAuth loginPath="/email-login">{fullScreenDeferred(<CanvasProjectsPage />)}</RequireAuth>, errorElement: <RouteErrorPage /> },
     { path: "/credits", element: <RequireAuth>{fullScreenDeferred(<CreditsPage />)}</RequireAuth>, errorElement: <RouteErrorPage /> },
     {
         element: <AuthScene />,

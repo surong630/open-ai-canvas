@@ -6,12 +6,15 @@ import { NavLink, useNavigate } from "react-router";
 
 import { ProjectPreview } from "@/components/canvas/canvas-project-card";
 import { ProductAccountMenu } from "@/components/layout/product-account-menu";
+import { NODE_DEFAULT_SIZE } from "@/constant/canvas";
 import { useWalletBalance } from "@/hooks/use-wallet-balance";
+import { createCanvasNode } from "@/lib/canvas/canvas-project-domain";
 import { loadCanvasProjectPage } from "@/lib/workspace-route-modules";
 import { listRemoteCanvasProjectsPage } from "@/services/api/user-data";
 import { createCanvasProjectWithRemoteSync } from "@/services/user-data-sync";
 import { useAppearanceStore } from "@/stores/use-appearance-store";
 import { useUserStore } from "@/stores/use-user-store";
+import { CanvasNodeType } from "@/types/canvas";
 
 import cardAudio from "@/assets/product-home/card-audio@2x.png";
 import cardImage from "@/assets/product-home/card-image@2x.png";
@@ -24,16 +27,19 @@ import iconImage from "@/assets/product-home/icon-image@2x.png";
 import iconText from "@/assets/product-home/icon-text@2x.png";
 import iconVideo from "@/assets/product-home/icon-video@2x.png";
 import navAssets from "@/assets/product-home/nav-assets@2x.png";
+import navAssetsSelected from "@/assets/product-home/nav-assets-selected@2x.png";
 import navHome from "@/assets/product-home/nav-home@2x.png";
+import navHomeNormal from "@/assets/product-home/nav-home-normal@2x.png";
 import navProjects from "@/assets/product-home/nav-projects@2x.png";
+import navProjectsSelected from "@/assets/product-home/nav-projects-selected@2x.png";
 
 import "./product-home.css";
 
 const creationEntries = [
-    { key: "video", label: "视频生成", description: "让想法成为动态画面", background: cardVideo, icon: iconVideo },
-    { key: "image", label: "图片生成", description: "将文字灵感变成图像", background: cardImage, icon: iconImage },
-    { key: "audio", label: "音频生成", description: "为作品生成声音", background: cardAudio, icon: iconAudio },
-    { key: "text", label: "文本生成", description: "从创意到文案，开启写作", background: cardText, icon: iconText },
+    { key: "video", label: "视频生成", projectTitle: "视频创作", nodeTitle: "视频", nodeType: CanvasNodeType.Video, description: "让想法成为动态画面", background: cardVideo, icon: iconVideo },
+    { key: "image", label: "图片生成", projectTitle: "图片创作", nodeTitle: "图片", nodeType: CanvasNodeType.Image, description: "将文字灵感变成图像", background: cardImage, icon: iconImage },
+    { key: "audio", label: "音频生成", projectTitle: "音频创作", nodeTitle: "音频", nodeType: CanvasNodeType.Audio, description: "为作品生成声音", background: cardAudio, icon: iconAudio },
+    { key: "text", label: "文本生成", projectTitle: "文本创作", nodeTitle: "文本", nodeType: CanvasNodeType.Text, description: "从创意到文案，开启写作", background: cardText, icon: iconText },
 ] as const;
 
 export default function ProductHomePage() {
@@ -49,20 +55,26 @@ export default function ProductHomePage() {
         queryFn: () => listRemoteCanvasProjectsPage({ page: 1, pageSize: 4, sort: "updated" }),
         enabled: Boolean(user?.id),
         staleTime: 30_000,
+        refetchOnMount: "always",
     });
     const recentProjects = recentQuery.data?.projects || [];
     const balance = availableMicrocredits === null ? "--" : (availableMicrocredits / 1_000_000).toLocaleString("zh-CN", { maximumFractionDigits: 2 });
 
-    const createCanvas = async () => {
+    const createCanvas = async (starter?: { nodeType: CanvasNodeType; nodeTitle: string; projectTitle: string }) => {
         if (!user) {
-            navigate("/email-login");
+            navigate("/email-login?next=%2Fhome");
             return;
         }
         if (creating) return;
         setCreating(true);
         try {
             const count = recentQuery.data?.total || 0;
-            const { id, syncError } = await createCanvasProjectWithRemoteSync(`自由画布 ${count + 1}`);
+            const starterNode = starter ? createHomeStarterNode(starter.nodeType, starter.nodeTitle) : undefined;
+            const { id, syncError } = await createCanvasProjectWithRemoteSync(
+                `${starter?.projectTitle || "自由画布"} ${count + 1}`,
+                undefined,
+                starterNode ? { nodes: [starterNode] } : undefined,
+            );
             if (syncError) message.warning(syncError instanceof Error ? `画布已在本地创建，云端同步失败：${syncError.message}` : "画布已在本地创建，云端同步失败");
             void loadCanvasProjectPage();
             navigate(`/canvas/${id}`);
@@ -82,9 +94,9 @@ export default function ProductHomePage() {
             <aside className="product-home__sidebar">
                 <div className="product-home__brand"><h1>{appearance.brandName || "系统名称"}</h1></div>
                 <nav aria-label="首页导航">
-                    <NavLink to="/home" end><img src={navHome} alt="" />首页</NavLink>
-                    <NavLink to={user ? "/canvas" : "/email-login?next=%2Fcanvas"}><img src={navProjects} alt="" />项目</NavLink>
-                    <NavLink to={user ? "/assets" : "/email-login?next=%2Fassets"}><img src={navAssets} alt="" />资产</NavLink>
+                    <NavLink to="/home" end><NavIcon normal={navHomeNormal} selected={navHome} />首页</NavLink>
+                    <NavLink to={user ? "/canvas-projects" : "/email-login?next=%2Fcanvas-projects"}><NavIcon normal={navProjects} selected={navProjectsSelected} />项目</NavLink>
+                    <NavLink to={user ? "/assets" : "/email-login?next=%2Fassets"}><NavIcon normal={navAssets} selected={navAssetsSelected} />资产</NavLink>
                 </nav>
             </aside>
 
@@ -112,8 +124,8 @@ export default function ProductHomePage() {
                     </section>
 
                     <section className="product-home__creation-grid" aria-label="创作类型">
-                        {creationEntries.map(({ key, label, description, background, icon }) => (
-                            <button key={key} type="button" onClick={() => navigate(user ? "/create" : "/email-login")}>
+                        {creationEntries.map(({ key, label, projectTitle, nodeTitle, nodeType, description, background, icon }) => (
+                            <button key={key} type="button" disabled={creating} onClick={() => void createCanvas({ nodeType, nodeTitle, projectTitle })}>
                                 <img className="product-home__creation-background" src={background} alt="" />
                                 <span className="product-home__creation-copy"><span><img src={icon} alt="" /><strong>{label}</strong></span><small>{description}</small></span>
                                 <img className="product-home__creation-arrow" src={iconArrow} alt="" />
@@ -124,7 +136,7 @@ export default function ProductHomePage() {
                     {user ? <section className="product-home__recent" aria-labelledby="product-home-recent-title">
                         <header>
                             <h2 id="product-home-recent-title">最近项目</h2>
-                            <button type="button" onClick={() => navigate("/canvas")}>查看全部<ChevronRight /></button>
+                            <button type="button" onClick={() => navigate("/canvas-projects")}>查看全部<ChevronRight /></button>
                         </header>
 
                         {recentQuery.isLoading ? (
@@ -162,8 +174,20 @@ export default function ProductHomePage() {
     );
 }
 
+function NavIcon({ normal, selected }: { normal: string; selected: string }) {
+    return <span className="product-home__nav-icon" aria-hidden="true"><img className="is-normal" src={normal} alt="" /><img className="is-selected" src={selected} alt="" /></span>;
+}
+
 function formatDate(value: string) {
     const timestamp = Date.parse(value);
     if (!Number.isFinite(timestamp)) return "时间不可用";
     return new Date(timestamp).toLocaleDateString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit" });
+}
+
+function createHomeStarterNode(type: CanvasNodeType, title: string) {
+    const size = NODE_DEFAULT_SIZE[type];
+    return {
+        ...createCanvasNode(type, { x: 120 + size.width / 2, y: 120 + size.height / 2 }),
+        title,
+    };
 }

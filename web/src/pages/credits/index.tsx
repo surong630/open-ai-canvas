@@ -1,8 +1,21 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, Coins, LoaderCircle, RefreshCw, UserRound, UsersRound, Zap } from "lucide-react";
+import { DatePicker, Pagination, Table, type TableColumnsType } from "antd";
+import dayjs from "dayjs";
 import { useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
 
+import calendarIcon from "@/assets/credits/box-icon-time@2x.png";
+import balanceIcon from "@/assets/credits/core-icon-number@2x.png";
+import backIcon from "@/assets/credits/icon-core-back@2x.png";
+import pageDropIcon from "@/assets/credits/icon-page-drop@2x.png";
+import navAssets from "@/assets/credits/nav-assets@2x.png";
+import navAssetsSelected from "@/assets/credits/nav-assets-selected@2x.png";
+import navHome from "@/assets/credits/nav-home@2x.png";
+import navHomeNormal from "@/assets/credits/nav-home-normal@2x.png";
+import navProjects from "@/assets/credits/nav-projects@2x.png";
+import navProjectsSelected from "@/assets/credits/nav-projects-selected@2x.png";
+import pageLeftDisabled from "@/assets/credits/page-left-disabled@2x.png";
+import pageRight from "@/assets/credits/page-right@2x.png";
 import { formatCredits } from "@/constant/credits";
 import { ProductAccountMenu } from "@/components/layout/product-account-menu";
 import { getWallet, type CreditLedgerEntry } from "@/services/api/wallet";
@@ -41,8 +54,8 @@ export default function CreditsPage() {
         staleTime: 15_000,
     });
     const wallet = walletQuery.data;
-    const totalPages = Math.max(1, Math.ceil((wallet?.total || 0) / pageSize));
     const balance = wallet ? formatCredits(wallet.account.availableMicrocredits, 6) : "--";
+    const emptyText = !creditsEnabled ? "积分功能当前未启用" : walletQuery.isError ? (walletQuery.error instanceof Error ? walletQuery.error.message : "积分明细加载失败") : "当前筛选范围内没有积分记录";
 
     const selectTab = (next: LedgerTab) => {
         setTab(next);
@@ -53,54 +66,72 @@ export default function CreditsPage() {
         <main className="credits-page">
             <aside className="credits-page__sidebar">
                 <h1>{appearance.brandName || "系统名称"}</h1>
-                <nav aria-label="账户管理">
-                    <NavLink to="/settings"><UsersRound />成员管理</NavLink>
-                    <NavLink to="/credits" className="active"><Coins />积分管理</NavLink>
+                <nav aria-label="首页导航">
+                    <NavLink to="/home" className="active"><NavIcon normal={navHomeNormal} selected={navHome} />首页</NavLink>
+                    <NavLink to="/canvas-projects"><NavIcon normal={navProjects} selected={navProjectsSelected} />项目</NavLink>
+                    <NavLink to="/assets"><NavIcon normal={navAssets} selected={navAssetsSelected} />资产</NavLink>
                 </nav>
             </aside>
 
             <section className="credits-page__workspace">
                 <header className="credits-page__topbar">
-                    <span className="credits-page__balance"><Zap />{balance}</span>
+                    <span className="credits-page__balance"><img src={balanceIcon} alt="" />{balance}</span>
                     <ProductAccountMenu triggerClassName="credits-page__avatar" />
                 </header>
 
                 <div className="credits-page__content">
-                    <button type="button" className="credits-page__back" onClick={() => navigate("/home")}><ChevronLeft />积分明细</button>
-                    <div className="credits-page__account"><Zap /><strong>{balance}</strong><span>当前账户总余额</span></div>
+                    <button type="button" className="credits-page__back" onClick={() => navigate("/home")}><img src={backIcon} alt="" />积分明细</button>
+                    <div className="credits-page__account"><img src={balanceIcon} alt="" /><strong>{balance}</strong><span>当前账户总余额</span></div>
 
                     <div className="credits-page__tabs" role="tablist" aria-label="积分明细类型">
                         {tabs.map((item) => <button key={item.id} type="button" role="tab" aria-selected={tab === item.id} onClick={() => selectTab(item.id)}>{item.label}</button>)}
                     </div>
 
                     <div className="credits-page__filters">
-                        <label><span>{tabLabel(tab)}时间：</span><input type="date" value={startDate} max={endDate || undefined} onChange={(event) => { setStartDate(event.target.value); setPage(1); }} /></label>
-                        <i>–</i>
-                        <label className="is-end"><input type="date" value={endDate} min={startDate || undefined} onChange={(event) => { setEndDate(event.target.value); setPage(1); }} /></label>
-                        <button type="button" className="credits-page__refresh" onClick={() => void walletQuery.refetch()} disabled={walletQuery.isFetching}><RefreshCw className={walletQuery.isFetching ? "is-spinning" : undefined} />刷新</button>
-                        <span className="credits-page__total">累计{tabLabel(tab)}：<strong>{wallet ? formatCredits(Math.abs(wallet.totalAmountMicrocredits), 6) : "--"}</strong>积分</span>
+                        <DatePicker.RangePicker
+                            className="credits-page__date-range"
+                            allowClear
+                            format="YYYY-MM-DD"
+                            placeholder={["开始时间", "结束时间"]}
+                            separator="-"
+                            suffixIcon={<img src={calendarIcon} alt="" />}
+                            value={startDate && endDate ? [dayjs(startDate), dayjs(endDate)] : null}
+                            onChange={(dates) => {
+                                setStartDate(dates?.[0]?.format("YYYY-MM-DD") || "");
+                                setEndDate(dates?.[1]?.format("YYYY-MM-DD") || "");
+                                setPage(1);
+                            }}
+                        />
+                        <span className="credits-page__total">累计获取：<strong>{wallet ? formatCredits(Math.abs(wallet.totalAmountMicrocredits), 6) : "--"}</strong>积分</span>
                     </div>
 
-                    <div className="credits-page__table-wrap">
-                        <table>
-                            <thead><LedgerHeader tab={tab} /></thead>
-                            <tbody>
-                                {!creditsEnabled ? <StateRow tab={tab} text="积分功能当前未启用" /> : walletQuery.isLoading ? <StateRow tab={tab} loading text="正在加载积分明细" /> : walletQuery.isError ? <StateRow tab={tab} text={walletQuery.error instanceof Error ? walletQuery.error.message : "积分明细加载失败"} /> : wallet?.entries.length ? wallet.entries.map((entry) => <LedgerRow key={entry.id} tab={tab} entry={entry} />) : <StateRow tab={tab} text="当前筛选范围内没有积分记录" />}
-                            </tbody>
-                        </table>
-                    </div>
+                    <Table<CreditLedgerEntry>
+                        className="credits-page__table"
+                        columns={ledgerColumns(tab)}
+                        dataSource={wallet?.entries || []}
+                        loading={walletQuery.isFetching}
+                        locale={{ emptyText }}
+                        pagination={false}
+                        rowKey="id"
+                        tableLayout="fixed"
+                    />
 
                     <footer className="credits-page__footer">
-                        <span>共{wallet?.total || 0}笔{tab === "consume" ? <>　合计消耗 <strong>{wallet ? formatCredits(Math.abs(wallet.totalAmountMicrocredits), 6) : "--"}</strong> 积分</> : null}</span>
-                        <div className="credits-page__pagination">
-                            <button type="button" aria-label="上一页" disabled={page <= 1 || walletQuery.isFetching} onClick={() => setPage((value) => Math.max(1, value - 1))}><ChevronLeft /></button>
-                            <strong>{page}</strong>
-                            <button type="button" aria-label="下一页" disabled={page >= totalPages || walletQuery.isFetching} onClick={() => setPage((value) => Math.min(totalPages, value + 1))}><ChevronRight /></button>
-                            <select value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }} aria-label="每页条数">
-                                {[20, 50, 100].map((size) => <option key={size} value={size}>{size}条/页</option>)}
-                            </select>
-                            <span>跳至</span><input type="number" min={1} max={totalPages} value={page} onChange={(event) => setPage(Math.min(totalPages, Math.max(1, Number(event.target.value) || 1)))} aria-label="跳转页码" /><span>页</span>
-                        </div>
+                        <Pagination
+                            current={page}
+                            pageSize={pageSize}
+                            pageSizeOptions={[20, 50, 100]}
+                            total={wallet?.total || 0}
+                            disabled={walletQuery.isFetching}
+                            showQuickJumper
+                            showSizeChanger={{ suffixIcon: <img src={pageDropIcon} alt="" /> }}
+                            showTotal={(total) => `共${total}笔`}
+                            itemRender={(_, type, originalElement) => type === "prev" ? <img className="credits-page__page-arrow" src={pageLeftDisabled} alt="上一页" /> : type === "next" ? <img className="credits-page__page-arrow" src={pageRight} alt="下一页" /> : originalElement}
+                            onChange={(nextPage, nextPageSize) => {
+                                setPage(nextPageSize !== pageSize ? 1 : nextPage);
+                                setPageSize(nextPageSize);
+                            }}
+                        />
                     </footer>
                 </div>
             </section>
@@ -108,18 +139,29 @@ export default function CreditsPage() {
     );
 }
 
-function LedgerHeader({ tab }: { tab: LedgerTab }) {
-    if (tab === "income") return <tr><th>获取时间</th><th>获取方式</th><th className="is-number">积分值</th></tr>;
-    return <tr><th>{tab === "consume" ? "消耗时间" : "返还时间"}</th><th>模型</th><th>所属项目</th><th className="is-number">{tab === "consume" ? "消耗积分" : "返还积分"}</th></tr>;
+function NavIcon({ normal, selected }: { normal: string; selected: string }) {
+    return <span className="credits-page__nav-icon" aria-hidden="true"><img className="is-normal" src={normal} alt="" /><img className="is-selected" src={selected} alt="" /></span>;
 }
 
-function LedgerRow({ tab, entry }: { tab: LedgerTab; entry: CreditLedgerEntry }) {
-    if (tab === "income") return <tr><td>{formatDateTime(entry.createdAt)}</td><td>{incomeLabel(entry)}</td><td className="is-number">{formatCredits(Math.abs(entry.amountMicrocredits), 6)}</td></tr>;
-    return <tr><td>{formatDateTime(entry.createdAt)}</td><td>{entry.model || "—"}</td><td>{entry.scene || "—"}</td><td className="is-number">{formatCredits(Math.abs(entry.amountMicrocredits), 6)}</td></tr>;
-}
-
-function StateRow({ tab, text, loading = false }: { tab: LedgerTab; text: string; loading?: boolean }) {
-    return <tr><td colSpan={tab === "income" ? 3 : 4} className="credits-page__state">{loading ? <LoaderCircle className="is-spinning" /> : <UserRound />}{text}</td></tr>;
+function ledgerColumns(tab: LedgerTab): TableColumnsType<CreditLedgerEntry> {
+    const pointsColumn = {
+        title: tab === "income" ? "积分值" : tab === "consume" ? "消耗积分" : "返还积分",
+        key: "points",
+        width: tab === "income" ? "7%" : "15%",
+        align: "right" as const,
+        render: (_: unknown, entry: CreditLedgerEntry) => formatCredits(Math.abs(entry.amountMicrocredits), 6),
+    };
+    if (tab === "income") return [
+        { title: "获取时间", dataIndex: "createdAt", key: "createdAt", width: "45.6%", render: formatDateTime },
+        { title: "获取方式", key: "source", width: "47.4%", render: (_: unknown, entry) => incomeLabel(entry) },
+        pointsColumn,
+    ];
+    return [
+        { title: tab === "consume" ? "消耗时间" : "返还时间", dataIndex: "createdAt", key: "createdAt", width: "20%", render: formatDateTime },
+        { title: "模型", dataIndex: "model", key: "model", width: "25%", render: (value?: string) => value || "—" },
+        { title: "所属项目", dataIndex: "scene", key: "scene", width: "25%", render: (value?: string) => value || "—" },
+        pointsColumn,
+    ];
 }
 
 function incomeLabel(entry: CreditLedgerEntry) {
@@ -127,10 +169,6 @@ function incomeLabel(entry: CreditLedgerEntry) {
         redeem: "兑换码充值", payment_topup: "在线充值", admin_grant: "系统发放", consume: "模型消费", refund: "消费返还", admin_adjustment: "系统调整", signup_bonus: "注册赠送", checkin_bonus: "签到奖励",
     };
     return labels[entry.type] || entry.note || "积分获取";
-}
-
-function tabLabel(tab: LedgerTab) {
-    return tab === "income" ? "获取" : tab === "consume" ? "消耗" : "返还";
 }
 
 function formatDateTime(value: string) {
