@@ -64,9 +64,6 @@
 .canvas-projects-page__card button:disabled { cursor: wait; opacity: .72; }
 .canvas-projects-page :where(button, a):focus-visible { outline: 2px solid #A998FF; outline-offset: 2px; }
 
-.canvas-projects-page__more:hover,
-.canvas-projects-page__more:focus-visible { background: #2A2A2A; color: #FFFFFF; }
-
 .canvas-projects-page__editable-title {
     height: 20px;
     margin-top: 8px;
@@ -107,88 +104,6 @@
     background: transparent;
     box-shadow: none;
     outline: 0;
-}
-
-body .canvas-projects-menu {
-    background: transparent !important;
-    box-shadow: none !important;
-}
-
-body .canvas-projects-menu .canvas-projects-menu__list.ant-dropdown-menu {
-    box-sizing: border-box !important;
-    width: 151px !important;
-    min-width: 151px !important;
-    padding: 8px 7px !important;
-    border: 0 !important;
-    border-radius: 10px !important;
-    background: #363636 !important;
-    box-shadow: 0 4px 10px #0000004D !important;
-}
-
-body .canvas-projects-menu .ant-dropdown-menu-item,
-body .canvas-projects-menu .ant-dropdown-menu-submenu-title {
-    display: flex;
-    box-sizing: border-box;
-    height: 36px;
-    min-height: 36px;
-    align-items: center;
-    margin: 0 !important;
-    border-radius: 6px !important;
-    color: #FFFFFF !important;
-    padding: 8px 10px !important;
-    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
-    font-size: 14px !important;
-    font-weight: 400 !important;
-    line-height: 20px !important;
-}
-
-body .canvas-projects-menu .ant-dropdown-menu-title-content,
-body .canvas-projects-menu .ant-dropdown-menu-submenu-title { color: #FFFFFF !important; }
-
-body .canvas-projects-menu .ant-dropdown-menu-item:hover,
-body .canvas-projects-menu .ant-dropdown-menu-item-active,
-body .canvas-projects-menu .ant-dropdown-menu-submenu-title:hover,
-body .canvas-projects-menu .ant-dropdown-menu-submenu-active > .ant-dropdown-menu-submenu-title {
-    background: #4A4A4A !important;
-    color: #FFFFFF !important;
-}
-
-body .canvas-projects-menu .ant-dropdown-menu-submenu-arrow,
-body .canvas-projects-menu .ant-dropdown-menu-submenu-expand-icon { color: #FFFFFF !important; }
-
-body .canvas-projects-submenu .ant-dropdown-menu {
-    box-sizing: border-box !important;
-    width: 151px !important;
-    min-width: 151px !important;
-    padding: 8px 7px !important;
-    border: 0 !important;
-    border-radius: 10px !important;
-    background: #363636 !important;
-    box-shadow: 0 4px 10px #0000004D !important;
-}
-
-body .canvas-projects-submenu .ant-dropdown-menu-item {
-    display: flex;
-    box-sizing: border-box;
-    height: 36px;
-    min-height: 36px;
-    align-items: center;
-    margin: 0 !important;
-    border-radius: 6px !important;
-    color: #FFFFFF !important;
-    padding: 8px 10px !important;
-    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
-    font-size: 14px !important;
-    font-weight: 400 !important;
-    line-height: 20px !important;
-}
-
-body .canvas-projects-submenu .ant-dropdown-menu-title-content { color: #FFFFFF !important; }
-
-body .canvas-projects-submenu .ant-dropdown-menu-item:hover,
-body .canvas-projects-submenu .ant-dropdown-menu-item-active {
-    background: #4A4A4A !important;
-    color: #FFFFFF !important;
 }
 
 .canvas-projects-recycle-modal .ant-modal-mask {
