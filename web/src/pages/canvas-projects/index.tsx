@@ -2,26 +2,20 @@ import { useQuery } from "@tanstack/react-query";
 import { App, Button, Dropdown, Input, type MenuProps } from "antd";
 import { FolderPlus, Image as ImageIcon, LoaderCircle, MoreHorizontal, Plus, Search, SquarePlus, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { NavLink, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 import folderCover from "@/assets/canvas-projects/folder-cover@2x.png";
-import navAssetsNormal from "@/assets/canvas-projects/nav-assets-normal@2x.png";
-import navHomeNormal from "@/assets/canvas-projects/nav-home-normal@2x.png";
-import navProjectsSelected from "@/assets/canvas-projects/nav-projects-selected@2x.png";
 import projectCover from "@/assets/canvas-projects/project-cover@2x.png";
 import recycleCheckboxNormal from "@/assets/canvas-projects/recycle-checkbox-normal@2x.png";
 import recycleCheckboxSelected from "@/assets/canvas-projects/recycle-checkbox-selected@2x.png";
 import recycleSelectAll from "@/assets/canvas-projects/recycle-select-all@2x.png";
-import navAssetsSelected from "@/assets/product-home/nav-assets-selected@2x.png";
-import navHomeSelected from "@/assets/product-home/nav-home@2x.png";
-import navProjectsNormal from "@/assets/product-home/nav-projects@2x.png";
 import { ProjectPreview, projectPreviewMedia } from "@/components/canvas/canvas-project-card";
 import { ProductPageHeader } from "@/components/layout/product-page-header";
+import { ProductPrimarySidebar } from "@/components/layout/product-primary-sidebar";
 import { AppModal } from "@/components/ui/product/app-modal";
 import { loadCanvasProjectPage } from "@/lib/workspace-route-modules";
 import { listRemoteCanvasProjectsPage, type CanvasLibrarySummary } from "@/services/api/user-data";
 import { createCanvasProjectWithRemoteSync, loadCanvasProjectForEditing, saveRemoteUserDataNow } from "@/services/user-data-sync";
-import { useAppearanceStore } from "@/stores/use-appearance-store";
 import { useCanvasStore } from "@/stores/canvas/use-canvas-store";
 import { useUserStore } from "@/stores/use-user-store";
 
@@ -56,7 +50,6 @@ export default function CanvasProjectsPage() {
     const [folderStylePreviews, setFolderStylePreviews] = useState<FolderPreview[]>(() => initialFolderStylePreviews.map((folder) => ({ ...folder })));
     const [recycleBinOpen, setRecycleBinOpen] = useState(false);
     const [selectedRecycleProjectIds, setSelectedRecycleProjectIds] = useState<Set<string>>(() => new Set());
-    const appearance = useAppearanceStore((state) => state.appearance);
     const user = useUserStore((state) => state.user);
     const renameStoredCanvasProject = useCanvasStore((state) => state.renameProject);
     const projectsQuery = useQuery({
@@ -119,14 +112,7 @@ export default function CanvasProjectsPage() {
 
     return (
         <main className="canvas-projects-page grid h-dvh min-h-dvh grid-cols-[241px_minmax(0,1fr)] overflow-hidden bg-[#191919] text-[#FFFFFF]">
-            <aside className="min-h-dvh border-r border-[#303030] bg-[#191919] px-[14px] py-[22px]">
-                <h1 className="m-0 max-w-[190px] overflow-hidden px-2 text-ellipsis whitespace-nowrap text-[20px] leading-7 !font-bold text-[#FFFFFF]">{appearance.brandName || "系统名称"}</h1>
-                <nav className="mt-[15px] grid gap-[10px] pt-[9px]" aria-label="首页导航">
-                    <ProductNavLink to="/home" label="首页" normalIcon={navHomeNormal} selectedIcon={navHomeSelected} />
-                    <ProductNavLink to="/canvas-projects" label="项目" normalIcon={navProjectsNormal} selectedIcon={navProjectsSelected} end={false} />
-                    <ProductNavLink to="/assets" label="资产" normalIcon={navAssetsNormal} selectedIcon={navAssetsSelected} />
-                </nav>
-            </aside>
+            <ProductPrimarySidebar />
 
             <section className="flex min-h-0 min-w-0 flex-col bg-[#191919]">
                 <ProductPageHeader />
@@ -272,14 +258,6 @@ function RecycleBinModal({ open, projects, selectedProjectIds, onSelectionChange
                 </footer>
             </div>
         </AppModal>
-    );
-}
-
-function ProductNavLink({ to, label, normalIcon, selectedIcon, end = true }: { to: string; label: string; normalIcon: string; selectedIcon: string; end?: boolean }) {
-    return (
-        <NavLink to={to} end={end} className="canvas-projects-page__nav-link group flex h-9 w-[213px] items-center gap-[6px] rounded-lg px-[10px] text-[14px] leading-5 font-bold text-[#E8E8E8] no-underline hover:bg-[#1E1E1E] [&.active]:bg-[#1E1E1E]">
-            {({ isActive }) => <><span className="relative size-4 shrink-0" aria-hidden="true"><img className={`absolute inset-0 size-4 object-contain transition-opacity ${isActive ? "opacity-0" : "opacity-100 group-hover:opacity-0"}`} src={normalIcon} alt="" /><img className={`absolute inset-0 size-4 object-contain transition-opacity ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`} src={selectedIcon} alt="" /></span><span>{label}</span></>}
-        </NavLink>
     );
 }
 

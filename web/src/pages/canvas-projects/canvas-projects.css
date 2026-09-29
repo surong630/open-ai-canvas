@@ -2,14 +2,6 @@
     font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
 }
 
-.canvas-projects-page .canvas-projects-page__nav-link,
-.canvas-projects-page .canvas-projects-page__nav-link:hover,
-.canvas-projects-page .canvas-projects-page__nav-link:focus-visible,
-.canvas-projects-page .canvas-projects-page__nav-link.active,
-.canvas-projects-page .canvas-projects-page__nav-link > span:last-child {
-    color: #E8E8E8 !important;
-}
-
 .canvas-projects-page__search.ant-input-affix-wrapper {
     height: 28px;
     border: 1px solid #272727 !important;
@@ -399,7 +391,6 @@ body .canvas-projects-submenu .ant-dropdown-menu-item-active {
 
 @media (max-width: 720px) {
     .canvas-projects-page { grid-template-columns: 1fr; }
-    .canvas-projects-page > aside { display: none; }
     .canvas-projects-page__content { padding-right: 16px !important; padding-left: 16px !important; }
     .canvas-projects-page__content > div:first-child { align-items: flex-start; flex-direction: column; padding-left: 0; }
     .canvas-projects-page__content > div:first-child > div { width: 100%; flex-wrap: wrap; }

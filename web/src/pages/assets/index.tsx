@@ -2,7 +2,7 @@ import { CollectionToolbar } from "@/components/layout/collection-toolbar";
 import { assetGridCardMinWidth, assetGridDensityOptions, parseAssetGridDensity, type AssetGridDensity } from "./asset-grid-density";
 import { DeleteButton } from "@/components/ui/base/buttons/delete-button";
 import { AlertTriangle, AudioLines, Box, CheckCheck, Clapperboard, Copy, Download, FileText, FileUp, FolderOpen, FolderPlus, Image as ImageIcon, Images, LayoutGrid, Link2, Maximize2, MoreHorizontal, PencilLine, Play, Plus, RotateCcw, Search, Trash2, Upload, ZoomIn, ZoomOut, type LucideIcon } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { App, Button, Drawer, Dropdown, Form, Input, Modal, Popconfirm, Progress, Space, Tag, Typography } from "antd";
 import type { MenuProps } from "antd";
@@ -32,6 +32,19 @@ import { createAssetFolder, deleteAssetFolder, listAssetFolders, listRemoteAsset
 import { AssetBatchUploadModal } from "./asset-batch-upload-modal";
 import { useAppearanceStore } from "@/stores/use-appearance-store";
 import { Select } from "@/components/ui/base/select";
+import { ProductPrimarySidebar } from "@/components/layout/product-primary-sidebar";
+import historyIcon from "@/assets/product-assets/history.svg";
+import libraryIcon from "@/assets/product-assets/library.svg";
+import cardDownloadIcon from "@/assets/product-assets/card-download.svg";
+import cardDeleteIcon from "@/assets/product-assets/card-delete.svg";
+import historyImageEmpty from "@/assets/product-assets/history-image-empty@2x.png";
+import historyAudioEmpty from "@/assets/product-assets/history-audio-empty@2x.png";
+import selectionCloseIcon from "@/assets/product-assets/selection-close.svg";
+import selectionSaveIcon from "@/assets/product-assets/selection-save.svg";
+import selectionDownloadIcon from "@/assets/product-assets/selection-download.svg";
+import selectionDeleteIcon from "@/assets/product-assets/selection-delete.svg";
+
+import "./product-assets.css";
 
 type LibraryAsset = Exclude<Asset, { kind: "entity" }>;
 
@@ -65,6 +78,8 @@ const ASSET_LIBRARY_QUERY_KEY = ["asset-library"] as const;
 const ASSET_FOLDER_QUERY_KEY = ["asset-folders"] as const;
 const ASSET_GRID_DENSITY_KEY = "infinite-canvas:asset-grid-density";
 type AssetFolderFilter = "all" | "uncategorized" | string;
+type AssetSection = "history" | "library";
+type HistoryKind = "all" | "image" | "video" | "audio";
 
 const assetKindIcons: Record<LibraryAsset["kind"], LucideIcon> = {
     text: FileText,
@@ -91,6 +106,8 @@ export default function AssetsPage() {
     const userId = useUserStore((state) => state.user?.id || "");
     const retentionDays = useUserStore((state) => state.runtimeLimits.recycleBinRetentionDays ?? 30);
     const [viewMode, setViewMode] = useState<"library" | "trash">("library");
+    const [assetSection, setAssetSection] = useState<AssetSection>("history");
+    const [historyKind, setHistoryKind] = useState<HistoryKind>("all");
     const [keyword, setKeyword] = useState("");
     const [kindFilter, setKindFilter] = useState<AssetKind | "all">("all");
     const [categoryFilter, setCategoryFilter] = useState<AssetCategory | "all">("all");
@@ -133,7 +150,6 @@ export default function AssetsPage() {
     const activeAssets = useMemo(() => allLibraryAssets.filter((asset) => asset.status !== "archived"), [allLibraryAssets]);
     const trashAssets = useMemo(() => allLibraryAssets.filter((asset) => asset.status === "archived"), [allLibraryAssets]);
     const validAssets = viewMode === "trash" ? trashAssets : activeAssets;
-    const selectedAssets = useMemo(() => validAssets.filter((asset) => selectedIds.includes(asset.id)), [selectedIds, validAssets]);
     const filteredAssets = useMemo(() => {
         const query = keyword.trim().toLowerCase();
         return validAssets.filter((asset) => {
@@ -176,6 +192,25 @@ export default function AssetsPage() {
     const remoteEntityOnlyPage = remoteReady && remotePageAssets.length === 0 && remoteTotal > 0;
     const useRemotePage = remoteReady && !preferLocalUnsynced && !remoteEntityOnlyPage && (remotePageAssets.length > 0 || remoteTotal === 0);
     const visibleAssets = useMemo(() => useRemotePage ? remotePageAssets : localVisibleAssets, [useRemotePage, remotePageAssets, localVisibleAssets]);
+    const generationAssets = useMemo(() => {
+        const combined = new Map(activeAssets.map((asset) => [asset.id, asset]));
+        remotePageAssets.forEach((asset) => combined.set(asset.id, asset));
+        return Array.from(combined.values()).filter((asset) => asset.kind === "image" || asset.kind === "video" || asset.kind === "audio");
+    }, [activeAssets, remotePageAssets]);
+    const historyAssets = useMemo(() => generationAssets.filter((asset) => historyKind === "all" || asset.kind === historyKind), [generationAssets, historyKind]);
+    const historyGroups = useMemo(() => groupAssetsByDate(historyAssets), [historyAssets]);
+    const historyCounts = useMemo(() => ({
+        all: generationAssets.length,
+        image: generationAssets.filter((asset) => asset.kind === "image").length,
+        video: generationAssets.filter((asset) => asset.kind === "video").length,
+        audio: generationAssets.filter((asset) => asset.kind === "audio").length,
+    }), [generationAssets]);
+    const selectedAssets = useMemo(() => {
+        if (viewMode === "trash") return trashAssets.filter((asset) => selectedIds.includes(asset.id));
+        const combined = new Map(activeAssets.map((asset) => [asset.id, asset]));
+        remotePageAssets.forEach((asset) => combined.set(asset.id, asset));
+        return Array.from(combined.values()).filter((asset) => selectedIds.includes(asset.id));
+    }, [activeAssets, remotePageAssets, selectedIds, trashAssets, viewMode]);
     const visibleAssetIds = useMemo(() => visibleAssets.map((asset) => asset.id), [visibleAssets]);
     const allFilteredSelected = visibleAssetIds.length > 0 && visibleAssetIds.every((id) => selectedIds.includes(id));
     const totalAssets = useRemotePage ? remoteTotal : filteredAssets.length;
@@ -193,9 +228,9 @@ export default function AssetsPage() {
     }, [gridDensity]);
 
     useEffect(() => {
-        const existingIds = new Set(validAssets.map((asset) => asset.id));
+        const existingIds = new Set([...validAssets, ...(viewMode === "library" ? remotePageAssets : [])].map((asset) => asset.id));
         setSelectedIds((current) => current.filter((id) => existingIds.has(id)));
-    }, [validAssets]);
+    }, [remotePageAssets, validAssets, viewMode]);
 
     const folderSelectOptions = useMemo(() => [
         { label: "未分类", value: "" },
@@ -550,6 +585,36 @@ export default function AssetsPage() {
 
     return (
         <>
+            <ProductAssetsShell
+                section={assetSection}
+                historyCount={historyCounts.all}
+                libraryCount={activeAssets.length}
+                onSectionChange={(section) => {
+                    setAssetSection(section);
+                    if (section === "history") setViewMode("library");
+                    setSelectedIds([]);
+                }}
+            >
+            {assetSection === "history" ? (
+                <AssetHistoryView
+                    groups={historyGroups}
+                    counts={historyCounts}
+                    kind={historyKind}
+                    selectedIds={selectedIds}
+                    onKindChange={(kind) => {
+                        setHistoryKind(kind);
+                        setSelectedIds([]);
+                    }}
+                    onOpen={setPreviewAsset}
+                    onSelect={(assetId, selected) => setSelectedIds((current) => selected ? [...new Set([...current, assetId])] : current.filter((id) => id !== assetId))}
+                    onClear={() => setSelectedIds([])}
+                    onOpenLibrary={() => setAssetSection("library")}
+                    onDownload={() => void exportSelectedAssets()}
+                    onDelete={() => setBatchArchiveOpen(true)}
+                    onDownloadAsset={(asset) => void downloadImage(asset)}
+                    onDeleteAsset={setArchivingAsset}
+                />
+            ) : (
             <WorkspacePage grid className="library-page assets-library-page canvas-library-page">
                 <div className="studio-band">
                     <PageHeader
@@ -786,6 +851,8 @@ export default function AssetsPage() {
                     </div>
                 </div>
             </WorkspacePage>
+            )}
+            </ProductAssetsShell>
 
             <Modal
                 className="workspace-modal workspace-modal-wide library-modal"
@@ -1021,6 +1088,128 @@ export default function AssetsPage() {
             </Modal>
         </>
     );
+}
+
+function ProductAssetsShell({ section, historyCount, libraryCount, onSectionChange, children }: {
+    section: AssetSection;
+    historyCount: number;
+    libraryCount: number;
+    onSectionChange: (section: AssetSection) => void;
+    children: ReactNode;
+}) {
+    return (
+        <main className="product-assets-page">
+            <ProductPrimarySidebar />
+
+            <section className="product-assets-page__workspace">
+                <div className="product-assets-page__body">
+                    <aside className="product-assets-page__section-nav" aria-label="资产导航">
+                        <button type="button" className={section === "history" ? "is-active" : ""} aria-pressed={section === "history"} onClick={() => onSectionChange("history")}>
+                            <span><img src={historyIcon} alt="" aria-hidden="true" />生成历史</span><small>{historyCount}</small>
+                        </button>
+                        <button type="button" className={section === "library" ? "is-active" : ""} aria-pressed={section === "library"} onClick={() => onSectionChange("library")}>
+                            <span><img src={libraryIcon} alt="" aria-hidden="true" />个人资产库</span><small>{libraryCount}</small>
+                        </button>
+                    </aside>
+                    <section className="product-assets-page__content">{children}</section>
+                </div>
+            </section>
+        </main>
+    );
+}
+
+function AssetHistoryView({ groups, counts, kind, selectedIds, onKindChange, onOpen, onSelect, onClear, onOpenLibrary, onDownload, onDelete, onDownloadAsset, onDeleteAsset }: {
+    groups: Array<{ key: string; label: string; assets: LibraryAsset[] }>;
+    counts: Record<HistoryKind, number>;
+    kind: HistoryKind;
+    selectedIds: string[];
+    onKindChange: (kind: HistoryKind) => void;
+    onOpen: (asset: LibraryAsset) => void;
+    onSelect: (assetId: string, selected: boolean) => void;
+    onClear: () => void;
+    onOpenLibrary: () => void;
+    onDownload: () => void;
+    onDelete: () => void;
+    onDownloadAsset: (asset: LibraryAsset) => void;
+    onDeleteAsset: (asset: LibraryAsset) => void;
+}) {
+    const tabs: Array<{ value: HistoryKind; label: string }> = [
+        { value: "all", label: "全部" },
+        { value: "image", label: "图片" },
+        { value: "video", label: "视频" },
+        { value: "audio", label: "音频" },
+    ];
+
+    return (
+        <div className="asset-history-page">
+            <header className="asset-history-page__header">
+                <h2>生成历史</h2>
+                <nav aria-label="生成历史类型">
+                    {tabs.map((tab) => <button key={tab.value} type="button" className={kind === tab.value ? "is-active" : ""} aria-pressed={kind === tab.value} onClick={() => onKindChange(tab.value)}><span>{tab.label}</span><small>{counts[tab.value]}</small></button>)}
+                </nav>
+            </header>
+
+            <div className="asset-history-page__scroll">
+                {groups.length ? groups.map((group) => (
+                    <section key={group.key} className="asset-history-group" aria-labelledby={`asset-history-${group.key}`}>
+                        <h3 id={`asset-history-${group.key}`}>{group.label}</h3>
+                        <div className="asset-history-grid">
+                            {group.assets.map((asset) => {
+                                const selected = selectedIds.includes(asset.id);
+                                return (
+                                    <article key={asset.id} className={cn("asset-history-card", selected && "is-selected")}>
+                                        <button type="button" className="asset-history-card__preview" aria-label={`查看 ${asset.title}`} onClick={() => onOpen(asset)}>
+                                            <AssetHistoryMedia asset={asset} />
+                                        </button>
+                                        <input type="checkbox" checked={selected} aria-label={`选择 ${asset.title}`} onChange={(event) => onSelect(asset.id, event.target.checked)} />
+                                        <div className="asset-history-card__actions">
+                                            <button type="button" aria-label={`下载 ${asset.title}`} title="下载" onClick={() => onDownloadAsset(asset)}><img src={cardDownloadIcon} alt="" /></button>
+                                            <button type="button" aria-label={`删除 ${asset.title}`} title="删除" onClick={() => onDeleteAsset(asset)}><img src={cardDeleteIcon} alt="" /></button>
+                                        </div>
+                                    </article>
+                                );
+                            })}
+                        </div>
+                    </section>
+                )) : <p className="asset-history-page__end">暂无历史记录</p>}
+            </div>
+
+            {selectedIds.length ? (
+                <div className="asset-history-selection" role="toolbar" aria-label="已选资产操作">
+                    <button type="button" className="asset-history-selection__clear" onClick={onClear}><img src={selectionCloseIcon} alt="" /><span>已选择{selectedIds.length}项</span></button>
+                    <div>
+                        <button type="button" className="asset-history-selection__button is-save" onClick={onOpenLibrary}><img src={selectionSaveIcon} alt="" /><span>保存到资产</span></button>
+                        <button type="button" className="asset-history-selection__button is-icon" aria-label="下载已选资产" title="下载" onClick={onDownload}><img src={selectionDownloadIcon} alt="" /></button>
+                        <button type="button" className="asset-history-selection__button is-icon is-danger" aria-label="删除已选资产" title="删除" onClick={onDelete}><img src={selectionDeleteIcon} alt="" /></button>
+                    </div>
+                </div>
+            ) : null}
+        </div>
+    );
+}
+
+function AssetHistoryMedia({ asset }: { asset: LibraryAsset }) {
+    if (asset.kind === "audio") return <span className="asset-history-card__fallback"><img src={historyAudioEmpty} alt="" aria-hidden="true" />{formatAssetClock(asset.data.durationMs) ? <small>{formatAssetClock(asset.data.durationMs)}</small> : null}</span>;
+    if (asset.kind === "text") return <span className="asset-history-card__fallback"><FileText aria-hidden /></span>;
+    if (asset.kind === "model") return <span className="asset-history-card__fallback"><Box aria-hidden /></span>;
+    return (
+        <>
+            <AssetMediaPreview asset={asset} alt={asset.title} className="asset-history-card__media" fallback={<span className="asset-history-card__fallback"><img src={historyImageEmpty} alt="" aria-hidden="true" /></span>} />
+            {asset.kind === "video" && formatAssetClock(asset.data.durationMs) ? <small className="asset-history-card__duration">{formatAssetClock(asset.data.durationMs)}</small> : null}
+        </>
+    );
+}
+
+function groupAssetsByDate(assets: LibraryAsset[]) {
+    const groups = new Map<string, LibraryAsset[]>();
+    [...assets]
+        .sort((left, right) => Date.parse(right.createdAt) - Date.parse(left.createdAt))
+        .forEach((asset) => {
+            const timestamp = Date.parse(asset.createdAt);
+            const key = Number.isFinite(timestamp) ? new Date(timestamp).toLocaleDateString("sv-SE") : "unknown";
+            groups.set(key, [...(groups.get(key) || []), asset]);
+        });
+    return Array.from(groups, ([key, groupedAssets]) => ({ key, label: key === "unknown" ? "时间未知" : key, assets: groupedAssets }));
 }
 
 function formatExpirationHint(updatedAt: string, retentionDays: number) {

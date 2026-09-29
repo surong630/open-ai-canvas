@@ -2,16 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import { App } from "antd";
 import { ChevronRight, Image as ImageIcon, LoaderCircle } from "lucide-react";
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 import { ProjectPreview } from "@/components/canvas/canvas-project-card";
 import { ProductPageHeader } from "@/components/layout/product-page-header";
+import { ProductPrimarySidebar } from "@/components/layout/product-primary-sidebar";
 import { NODE_DEFAULT_SIZE } from "@/constant/canvas";
 import { createCanvasNode } from "@/lib/canvas/canvas-project-domain";
 import { loadCanvasProjectPage } from "@/lib/workspace-route-modules";
 import { listRemoteCanvasProjectsPage } from "@/services/api/user-data";
 import { createCanvasProjectWithRemoteSync } from "@/services/user-data-sync";
-import { useAppearanceStore } from "@/stores/use-appearance-store";
 import { useUserStore } from "@/stores/use-user-store";
 import { CanvasNodeType } from "@/types/canvas";
 
@@ -25,12 +25,6 @@ import iconAudio from "@/assets/product-home/icon-audio@2x.png";
 import iconImage from "@/assets/product-home/icon-image@2x.png";
 import iconText from "@/assets/product-home/icon-text@2x.png";
 import iconVideo from "@/assets/product-home/icon-video@2x.png";
-import navAssets from "@/assets/product-home/nav-assets@2x.png";
-import navAssetsSelected from "@/assets/product-home/nav-assets-selected@2x.png";
-import navHome from "@/assets/product-home/nav-home@2x.png";
-import navHomeNormal from "@/assets/product-home/nav-home-normal@2x.png";
-import navProjects from "@/assets/product-home/nav-projects@2x.png";
-import navProjectsSelected from "@/assets/product-home/nav-projects-selected@2x.png";
 
 import "./product-home.css";
 
@@ -45,7 +39,6 @@ export default function ProductHomePage() {
     const navigate = useNavigate();
     const { message } = App.useApp();
     const [creating, setCreating] = useState(false);
-    const appearance = useAppearanceStore((state) => state.appearance);
     const user = useUserStore((state) => state.user);
     const recentQuery = useQuery({
         queryKey: ["product-home", "recent-canvases", user?.id],
@@ -87,14 +80,7 @@ export default function ProductHomePage() {
 
     return (
         <main className="product-home">
-            <aside className="product-home__sidebar">
-                <div className="product-home__brand"><h1>{appearance.brandName || "系统名称"}</h1></div>
-                <nav aria-label="首页导航">
-                    <NavLink to="/home" end><NavIcon normal={navHomeNormal} selected={navHome} />首页</NavLink>
-                    <NavLink to={user ? "/canvas-projects" : "/email-login?next=%2Fcanvas-projects"}><NavIcon normal={navProjects} selected={navProjectsSelected} />项目</NavLink>
-                    <NavLink to={user ? "/assets" : "/email-login?next=%2Fassets"}><NavIcon normal={navAssets} selected={navAssetsSelected} />资产</NavLink>
-                </nav>
-            </aside>
+            <ProductPrimarySidebar />
 
             <section className="product-home__workspace">
                 <ProductPageHeader className="product-home__topbar" />
@@ -161,10 +147,6 @@ export default function ProductHomePage() {
             </section>
         </main>
     );
-}
-
-function NavIcon({ normal, selected }: { normal: string; selected: string }) {
-    return <span className="product-home__nav-icon" aria-hidden="true"><img className="is-normal" src={normal} alt="" /><img className="is-selected" src={selected} alt="" /></span>;
 }
 
 function formatDate(value: string) {

@@ -1,0 +1,68 @@
+.product-primary-sidebar {
+    min-height: 100dvh;
+    border-right: 1px solid #303030;
+    background: #191919;
+    padding: 22px 14px;
+    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+}
+
+.product-primary-sidebar h1 {
+    max-width: 190px;
+    margin: 0;
+    overflow: hidden;
+    padding: 0 8px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 28px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.product-primary-sidebar nav { display: grid; gap: 10px; margin-top: 24px; }
+.product-primary-sidebar nav a {
+    display: flex;
+    width: 213px;
+    height: 36px;
+    align-items: center;
+    gap: 6px;
+    border-radius: 8px;
+    padding: 0 10px;
+    color: #e8e8e8;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+    text-decoration: none;
+}
+.product-primary-sidebar nav a:hover,
+.product-primary-sidebar nav a.active { background: #1e1e1e; color: #fff; }
+
+.product-primary-sidebar__icon { position: relative; width: 16px; height: 16px; flex: 0 0 16px; }
+.product-primary-sidebar__icon img { position: absolute; inset: 0; width: 16px; height: 16px; object-fit: contain; transition: opacity 160ms ease; }
+.product-primary-sidebar__icon .is-selected { opacity: 0; }
+.product-primary-sidebar__icon .is-normal.is-hidden,
+.product-primary-sidebar nav a:hover .is-normal { opacity: 0; }
+.product-primary-sidebar__icon .is-selected.is-visible,
+.product-primary-sidebar nav a:hover .is-selected { opacity: 1; }
+
+.product-primary-sidebar :where(a):focus-visible { outline: 2px solid #a998ff; outline-offset: 2px; }
+
+@media (max-width: 720px) {
+    .product-primary-sidebar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        min-height: auto;
+        border-right: 0;
+        border-bottom: 1px solid #303030;
+        padding: 12px 16px;
+    }
+    .product-primary-sidebar h1 { display: none; }
+    .product-primary-sidebar nav { display: flex; justify-content: flex-start; margin: 0; padding-right: 112px; }
+    .product-primary-sidebar nav a { width: 36px; justify-content: center; padding: 0; }
+    .product-primary-sidebar__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .product-primary-sidebar__icon img { transition-duration: .01ms; }
+}
