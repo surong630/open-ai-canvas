@@ -36,7 +36,7 @@ export function AssetPreviewModal({ asset, creatorName, onClose, onCopy, onSave,
             flush
             centered
             open={Boolean(asset)}
-            width="min(1208px, calc(100vw - 32px))"
+            width="min(92vw, 1200px)"
             title={null}
             footer={null}
             closable={false}
@@ -105,23 +105,13 @@ function PreviewStage({ asset }: { asset: PreviewAsset }) {
     }
     return (
         <div className="asset-preview__stage asset-preview__stage--image">
-            <CachedResourceImage
-                eager
-                variant="original"
-                storageKey={asset.data.storageKey}
-                src={asset.data.dataUrl}
-                alt={asset.title || "图片"}
-                className="asset-preview__image"
-                draggable={false}
-                style={{
-                    width: "auto",
-                    height: "auto",
-                    maxWidth: "100%",
-                    maxHeight: "100%",
-                    objectFit: "contain",
-                    objectPosition: "center",
-                }}
-            />
+            <div className="asset-preview__image-backdrop" aria-hidden="true">
+                <CachedResourceImage eager variant="original" storageKey={asset.data.storageKey} src={asset.data.dataUrl} alt="" className="asset-preview__image-backdrop-media" draggable={false} />
+            </div>
+            <div className="asset-preview__image-shade" aria-hidden="true" />
+            <div className="asset-preview__image-content">
+                <CachedResourceImage eager variant="original" storageKey={asset.data.storageKey} src={asset.data.dataUrl} alt={asset.title || "图片"} className="asset-preview__image" draggable={false} />
+            </div>
         </div>
     );
 }

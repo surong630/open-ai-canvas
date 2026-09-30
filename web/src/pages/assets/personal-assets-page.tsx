@@ -270,7 +270,7 @@ function PersonalFolderCard({ folder, count, onOpen, onRename, onDelete }: { fol
             </button>
             <div className="mt-[5px] flex h-7 min-w-0 items-center gap-1 overflow-hidden px-[3px]">
                 <button type="button" className="w-0 min-w-0 flex-1 truncate border-0 bg-transparent p-0 text-left text-sm leading-5 font-bold text-white" onClick={onOpen} title={folder.name}>
-                    {folder.name}
+                    <span className="block w-full overflow-hidden text-ellipsis whitespace-nowrap">{folder.name}</span>
                 </button>
                 <ProductCardMoreMenu
                     ariaLabel={`更多文件夹操作 ${folder.name}`}
@@ -414,7 +414,7 @@ function PersonalAssetCard({
                 ) : (
                     <>
                         <button type="button" className="w-0 min-w-0 flex-1 truncate border-0 bg-transparent p-0 text-left text-sm leading-5 font-bold text-white" onClick={onOpen} title={displayTitle}>
-                            {displayTitle}
+                            <span className="block w-full overflow-hidden text-ellipsis whitespace-nowrap">{displayTitle}</span>
                         </button>
                         <ProductCardMoreMenu ariaLabel={`更多资产操作 ${asset.title}`} buttonClassName="opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100" items={menuItems} />
                     </>
