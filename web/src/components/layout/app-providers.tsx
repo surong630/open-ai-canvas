@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import { lazy, Suspense, useLayoutEffect } from "react";
+import { lazy, Suspense, useLayoutEffect, useMemo } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { App, ConfigProvider } from "antd";
 import zhCN from "antd/locale/zh_CN";
+import { useReducedMotion } from "motion/react";
 
 import { AuthSessionHydrator } from "@/components/auth/auth-session-hydrator";
 import { FullScreenLoader } from "@/components/ui/aceternity/full-screen-loader";
@@ -26,6 +27,19 @@ export function AppProviders({ children }: { children: ReactNode }) {
     const theme = useActiveTheme();
     const dark = theme === "dark";
     const appearance = useAppearanceStore((state) => state.appearance);
+    const reducedMotion = useReducedMotion();
+    const antTheme = useMemo(() => {
+        const config = getAntThemeConfig(dark, appearance.activeSkin);
+        return {
+            ...config,
+            token: {
+                ...config.token,
+                // 让 AntD 自己跳过 rc-motion；用 CSS 把动画压到 1ms 会让
+                // Select/Popover 的首次测量与结束回调竞态，弹层停在屏幕外。
+                motion: !reducedMotion,
+            },
+        };
+    }, [appearance.activeSkin, dark, reducedMotion]);
 
     useLayoutEffect(() => {
         document.documentElement.classList.toggle("dark", dark);
@@ -40,7 +54,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
     const isolateDevRepro = typeof window !== "undefined" && isIsolatedDirectorRepro(import.meta.env.DEV, window.location.pathname);
 
     return (
-        <ConfigProvider locale={zhCN} theme={getAntThemeConfig(dark, appearance.activeSkin)} wave={{ disabled: true }}>
+        <ConfigProvider locale={zhCN} theme={antTheme} wave={{ disabled: true }}>
             <App message={{ duration: 3, maxCount: 3 }} notification={{ duration: 4.5, maxCount: 3, placement: "topRight" }}>
                 <QueryClientProvider client={appQueryClient}>
                     {isolateDevRepro ? (

@@ -8,6 +8,7 @@ describe("personal asset library", () => {
         const personalPage = readFileSync(resolve(import.meta.dir, "../src/pages/assets/personal-assets-page.tsx"), "utf8");
         const shell = readFileSync(resolve(import.meta.dir, "../src/pages/assets/product-assets-shell.tsx"), "utf8");
         const historyPage = readFileSync(resolve(import.meta.dir, "../src/pages/assets/asset-history-page.tsx"), "utf8");
+        const blackSelect = readFileSync(resolve(import.meta.dir, "../src/components/ui/product/product-black-select.tsx"), "utf8");
         const sharedMenu = readFileSync(resolve(import.meta.dir, "../src/components/ui/product/product-card-more-menu.tsx"), "utf8");
         const sharedMenuCss = readFileSync(resolve(import.meta.dir, "../src/components/ui/product/product-card-more-menu.css"), "utf8");
         expect(page).toContain('from "./personal-assets-page"');
@@ -26,6 +27,10 @@ describe("personal asset library", () => {
         expect(personalPage.match(/w-0 min-w-0 flex-1 truncate/g)?.length).toBe(2);
         expect(personalPage).toContain("<ProductCardMoreMenu");
         expect(personalPage).toContain('popupClassName: "product-card-more-submenu"');
+        expect(personalPage).toContain("<ProductBlackSelect");
+        expect(personalPage).not.toContain('from "@/components/ui/base/select"');
+        expect(blackSelect).toContain('"--popover": "#303030"');
+        expect(blackSelect).toContain('classNames={{ popup: { root: cn(popupClassName, popupClassNameProp) } }}');
         expect(shell).toContain("grid-cols-[241px_minmax(0,1fr)]");
         expect(historyPage).toContain("grid-cols-[repeat(auto-fill,136px)]");
         expect(sharedMenu).toContain('rootClassName="product-card-more-menu"');
@@ -41,6 +46,8 @@ describe("personal asset library", () => {
         expect(page).toContain('className="asset-save-dialog__empty-option">暂无文件夹');
         expect(page).toContain("options={folderOptions}");
         expect(page).toContain("disabled: true");
+        expect(page.match(/<ProductBlackSelect/g)?.length).toBe(2);
+        expect(page).not.toContain('classNames={{ popup: { root: "asset-save-dialog__popup" } }}');
     });
 
     test("uses the Lanhu media preview modal for image, video and audio assets", () => {

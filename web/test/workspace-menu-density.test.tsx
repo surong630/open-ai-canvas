@@ -99,5 +99,14 @@ test("shared single-select popup uses a borderless surface instead of a bright f
     expect(select).toContain('variant={variant ?? "filled"}');
     expect(select).toContain("data-input-modality={inputModality}");
     expect(select).toContain('setInputModality("keyboard")');
+    expect(select).toContain("ariaLabelProp ?? ariaLabel");
     expect(select).not.toContain("setPopoverWidth(width + 2)");
+});
+
+test("reduced motion uses the AntD motion switch without racing popup alignment", () => {
+    const providers = readFileSync(new URL("../src/components/layout/app-providers.tsx", import.meta.url), "utf8");
+    const css = readFileSync(new URL("../src/styles/workspace-product.css", import.meta.url), "utf8");
+    expect(providers).toContain("motion: !reducedMotion");
+    expect(css).not.toContain("animation-duration: 1ms !important");
+    expect(css).not.toContain("transition-duration: 1ms !important");
 });

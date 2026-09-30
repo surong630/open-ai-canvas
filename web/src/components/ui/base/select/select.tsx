@@ -35,7 +35,7 @@ const sizeMap: Record<SelectSize, "small" | "middle"> = {
     md: "middle",
 };
 
-export const Select = forwardRef<RefSelectProps, SelectProps>(function Select({ size, ariaLabel, appearance = "pill", className, variant, onMouseDown, onKeyDown, onFocus, onBlur, ...props }, ref) {
+export const Select = forwardRef<RefSelectProps, SelectProps>(function Select({ size, ariaLabel, appearance = "pill", className, variant, onMouseDown, onKeyDown, onFocus, onBlur, "aria-label": ariaLabelProp, ...props }, ref) {
     const [inputModality, setInputModality] = useState<"unknown" | "pointer" | "keyboard">("unknown");
     const normalizedSize = size && size in sizeMap ? sizeMap[size as SelectSize] : size;
     return (
@@ -44,7 +44,7 @@ export const Select = forwardRef<RefSelectProps, SelectProps>(function Select({ 
             {...props}
             variant={variant ?? "filled"}
             size={normalizedSize as AntSelectProps["size"]}
-            aria-label={ariaLabel}
+            aria-label={ariaLabelProp ?? ariaLabel}
             className={cn("app-unified-select", `app-unified-select--${appearance}`, className)}
             data-input-modality={inputModality}
             onMouseDown={(event) => {

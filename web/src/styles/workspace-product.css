@@ -916,8 +916,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .app-product-workspace *,
-    .app-product-overlays * { animation-duration: 1ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+    /* AntD 浮层由 ConfigProvider 的 motion token 关闭动画。不要在这里用 1ms
+       通配覆盖 rc-motion：它会让弹层测量回调竞态并停留在 -1000vw/-1000vh。 */
     .app-product-workspace .product-collection-card:hover,
     .app-product-workspace .library-card:hover,
     .app-product-workspace .task-grid-card:hover,

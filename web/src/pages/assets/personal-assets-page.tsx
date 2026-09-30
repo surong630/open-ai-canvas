@@ -18,7 +18,7 @@ import personalUploadIcon from "@/assets/product-assets/upload.svg";
 import { AssetMediaPreview } from "@/components/asset-media-preview";
 import { PaginationBar } from "@/components/layout/workspace-page";
 import { WorkspaceState } from "@/components/layout/workspace-state";
-import { Select } from "@/components/ui/base/select";
+import { ProductBlackSelect } from "@/components/ui/product/product-black-select";
 import { ProductCardMoreMenu } from "@/components/ui/product/product-card-more-menu";
 import { cn } from "@/lib/utils";
 import type { AssetFolder } from "@/services/api/user-data";
@@ -74,8 +74,8 @@ type PersonalAssetsPageProps = {
     onDeleteSelected: () => void;
 };
 
-const fieldClass =
-    "min-w-0 [&_.ant-select-selector]:!min-h-9 [&_.ant-select-selector]:!rounded-md [&_.ant-select-selector]:!border-[#3a3a3a] [&_.ant-select-selector]:!bg-[#252525] [&_.ant-select-selector]:!shadow-none [&_.ant-select-selection-placeholder]:!text-[13px] [&_.ant-select-selection-placeholder]:!text-[#929292] [&_.ant-input-affix-wrapper]:!min-h-9 [&_.ant-input-affix-wrapper]:!rounded-md [&_.ant-input-affix-wrapper]:!border-[#3a3a3a] [&_.ant-input-affix-wrapper]:!bg-[#252525] [&_.ant-input-affix-wrapper]:!shadow-none [&_.ant-input]:placeholder:!text-[13px] [&_.ant-input]:placeholder:!text-[#929292]";
+const inputFieldClass =
+    "min-w-0 [&_.ant-input-affix-wrapper]:!min-h-9 [&_.ant-input-affix-wrapper]:!rounded-md [&_.ant-input-affix-wrapper]:!border-[#3a3a3a] [&_.ant-input-affix-wrapper]:!bg-[#252525] [&_.ant-input-affix-wrapper]:!shadow-none [&_.ant-input]:placeholder:!text-[13px] [&_.ant-input]:placeholder:!text-[#929292]";
 const actionClass = "inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border border-transparent bg-[#2c2c2c] px-[13px] text-[13px] text-white shadow-none hover:bg-[#3c3c3c] [&_img]:size-4";
 
 export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
@@ -92,10 +92,10 @@ export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
                     ) : null}
                     <h1 className="m-0 overflow-hidden text-base leading-6 font-bold text-ellipsis whitespace-nowrap text-[#f5f5f5]">{props.viewMode === "trash" ? "回收站" : props.folderFilter === "all" ? "个人资产库" : folderName || "未分类"}</h1>
                 </div>
-                <Select
+                <ProductBlackSelect
                     mode="multiple"
                     aria-label="按标签搜索资产"
-                    className={cn(fieldClass, "max-[720px]:min-w-[220px] max-[720px]:flex-1")}
+                    className="max-[720px]:min-w-[220px] max-[720px]:flex-1"
                     value={props.tagFilters}
                     maxTagCount="responsive"
                     placeholder="请选择标签进行搜索"
@@ -104,7 +104,7 @@ export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
                 />
                 <Input
                     allowClear
-                    className={cn(fieldClass, "[&_.ant-input-prefix_img]:size-4 max-[720px]:min-w-[220px] max-[720px]:flex-1")}
+                    className={cn(inputFieldClass, "[&_.ant-input-prefix_img]:size-4 max-[720px]:min-w-[220px] max-[720px]:flex-1")}
                     prefix={<img src={personalSearchIcon} alt="" aria-hidden />}
                     value={props.keyword}
                     placeholder="请输入名称进行搜索"

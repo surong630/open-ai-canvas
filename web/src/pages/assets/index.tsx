@@ -34,6 +34,7 @@ import { AssetPreviewModal } from "./asset-image-preview-modal";
 import { useAppearanceStore } from "@/stores/use-appearance-store";
 import { Select } from "@/components/ui/base/select";
 import { AppModal } from "@/components/ui/product/app-modal";
+import { ProductBlackSelect } from "@/components/ui/product/product-black-select";
 import selectArrowIcon from "@/assets/product-assets/select-arrow.svg";
 import { AssetHistoryMedia, AssetHistoryPage, groupAssetsByDate } from "./asset-history-page";
 import { PersonalAssetsPage, PersonalAssetsTagModal } from "./personal-assets-page";
@@ -1074,8 +1075,9 @@ function SaveAssetsModal({ open, assets, folders, knownTags, name, folderId, tag
                         ) : null}
                         <div className="asset-save-dialog__field">
                             <span>所属文件夹</span>
-                            <Select
-                                ariaLabel="所属文件夹"
+                            <ProductBlackSelect
+                                aria-label="所属文件夹"
+                                size="small"
                                 value={folderId || undefined}
                                 options={folderOptions}
                                 popupMatchSelectWidth={false}
@@ -1083,18 +1085,18 @@ function SaveAssetsModal({ open, assets, folders, knownTags, name, folderId, tag
                                 placeholder="请选择所属文件夹"
                                 notFoundContent={null}
                                 suffixIcon={<img src={selectArrowIcon} alt="" />}
-                                className="asset-save-dialog__select"
-                                classNames={{ popup: { root: "asset-save-dialog__popup" } }}
+                                className="asset-save-dialog__select w-full!"
+                                popupClassName="asset-save-dialog__popup"
                                 getPopupContainer={() => document.body}
                                 onChange={(value) => onFolderChange(typeof value === "string" ? value : "")}
                             />
                         </div>
                         <div className="asset-save-dialog__field">
                             <span>设置标签</span>
-                            <Select
-                                ariaLabel="设置标签"
+                            <ProductBlackSelect
+                                aria-label="设置标签"
+                                size="small"
                                 mode="tags"
-                                appearance="field"
                                 value={tags}
                                 options={knownTags.map((tag) => ({ label: tag, value: tag }))}
                                 popupMatchSelectWidth={false}
@@ -1103,8 +1105,8 @@ function SaveAssetsModal({ open, assets, folders, knownTags, name, folderId, tag
                                 placeholder="请选择标签"
                                 notFoundContent={<span className="asset-save-dialog__empty-option">输入标签后按回车创建</span>}
                                 suffixIcon={<img src={selectArrowIcon} alt="" />}
-                                className="asset-save-dialog__select"
-                                classNames={{ popup: { root: "asset-save-dialog__popup" } }}
+                                className="asset-save-dialog__select w-full!"
+                                popupClassName="asset-save-dialog__popup"
                                 getPopupContainer={() => document.body}
                                 onChange={(value) => onTagsChange(value)}
                             />

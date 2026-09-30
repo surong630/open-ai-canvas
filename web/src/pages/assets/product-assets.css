@@ -114,53 +114,6 @@
     font: inherit;
 }
 .asset-save-dialog__field > input::placeholder { color: rgba(137, 137, 137, 1); }
-.asset-save-dialog__select.ant-select {
-    --unified-select-surface: rgba(55, 55, 55, 1);
-    --unified-select-surface-hover: rgba(55, 55, 55, 1);
-    --unified-select-surface-open: rgba(55, 55, 55, 1);
-    --ant-select-height: 32px;
-    --ant-select-padding-horizontal: 10px;
-    --ant-select-padding-vertical: 0px;
-    --ant-select-border-size: 0px;
-    width: 100%;
-    min-width: 0;
-    min-height: 32px;
-    height: 32px;
-    box-sizing: border-box;
-    align-items: center;
-    border-radius: 6px !important;
-    background: rgba(55, 55, 55, 1) !important;
-    padding: 0 10px !important;
-}
-.asset-save-dialog__select.ant-select:hover:not(.ant-select-disabled),
-.asset-save-dialog__select.ant-select.ant-select-focused,
-.asset-save-dialog__select.ant-select.ant-select-open {
-    background: rgba(55, 55, 55, 1) !important;
-}
-.asset-save-dialog__select .ant-select-selector {
-    height: 100%;
-    border: 0 !important;
-    border-radius: 6px !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-}
-.asset-save-dialog__select .ant-select-content {
-    min-height: 20px;
-    align-self: center;
-}
-.asset-save-dialog__select :is(.ant-select-placeholder, .ant-select-selection-placeholder) {
-    color: rgba(137, 137, 137, 1) !important;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 20px;
-    opacity: 1 !important;
-}
-.asset-save-dialog__select :is(.ant-select-content-value, .ant-select-selection-item) {
-    color: rgba(255, 255, 255, 1) !important;
-    font-size: 14px;
-}
-.asset-save-dialog__select .ant-select-suffix { color: rgba(137, 137, 137, 1) !important; }
 .asset-save-dialog__select .ant-select-suffix img {
     width: 12px;
     height: 8px;
@@ -195,27 +148,6 @@
     color: rgba(51, 51, 51, 1);
 }
 .asset-save-dialog__footer button:disabled { cursor: wait; opacity: 0.6; }
-.asset-save-dialog__popup {
-    border: 1px solid rgba(83, 83, 83, 1) !important;
-    border-radius: 6px !important;
-    background: rgba(38, 38, 38, 1) !important;
-    box-shadow: none !important;
-    padding: 4px !important;
-}
-.asset-save-dialog__popup .ant-select-item {
-    min-height: 32px;
-    margin: 0;
-    border-radius: 4px !important;
-    color: rgba(232, 232, 232, 1) !important;
-    font-size: 14px;
-    font-weight: 400;
-}
-.asset-save-dialog__popup .ant-select-item-option-active:not(.ant-select-item-option-disabled),
-.asset-save-dialog__popup .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
-    background: rgba(55, 55, 55, 1) !important;
-    color: rgba(255, 255, 255, 1) !important;
-    font-weight: 400;
-}
 .asset-save-dialog__empty-option {
     display: block;
     padding: 8px 10px;

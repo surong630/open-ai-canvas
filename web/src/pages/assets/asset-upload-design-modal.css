@@ -1,0 +1,33 @@
+.asset-upload-design-modal .ant-modal-content { padding: 0; overflow: hidden; border: 1px solid #535353; border-radius: 16px; background: #292929; color: #f5f5f5; box-shadow: 0 18px 55px #0009; }
+.asset-upload-design-modal .ant-modal-close { top: 19px; right: 21px; color: #eee; }
+.asset-upload-design-shell { min-height: 600px; }
+.asset-upload-design-header { height: 66px; display: flex; align-items: center; padding: 0 32px; border-bottom: 1px solid #454545; }
+.asset-upload-design-header h2 { margin: 0; font-size: 20px; font-weight: 700; }
+.asset-upload-design-body { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 32px; padding: 35px 33px 23px; }
+.asset-upload-design-gallery { min-height: 390px; display: grid; align-content: start; grid-template-columns: repeat(3, 168px); gap: 20px 18px; padding: 18px; border: 1px solid #484848; border-radius: 16px; }
+.asset-upload-design-add, .asset-upload-design-thumb { width: 168px; height: 168px; border-radius: 10px; }
+.asset-upload-design-add { display: grid; place-items: center; border: 1px dashed #777; color: #a4a4a4; background: #2b2b2b; cursor: pointer; }
+.asset-upload-design-add:hover { border-color: #bbb; color: white; }
+.asset-upload-design-card { min-width: 0; }
+.asset-upload-design-thumb { position: relative; overflow: hidden; display: grid; place-items: center; background: #303030; border: 1px solid #444; }
+.asset-upload-design-thumb button { position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 24px; height: 24px; border: 0; border-radius: 50%; background: #161616b8; color: white; opacity: 0; cursor: pointer; }
+.asset-upload-design-thumb:hover button { opacity: 1; }
+.asset-upload-design-preview-media { width: 100%; height: 100%; object-fit: cover; }
+.asset-upload-design-preview-icon { color: #ececec; }
+.asset-upload-design-card > span { display: block; margin-top: 9px; overflow: hidden; color: #f0f0f0; font-size: 15px; text-overflow: ellipsis; white-space: nowrap; }
+.asset-upload-design-fields { display: flex; flex-direction: column; gap: 24px; padding-top: 2px; }
+.asset-upload-design-fields label { display: flex; flex-direction: column; gap: 10px; color: #9c9c9c; font-size: 16px; }
+.asset-upload-design-fields label i { margin-right: 4px; color: #f05252; font-style: normal; }
+.asset-upload-design-fields input, .asset-upload-design-fields .ant-select-selector { min-height: 44px !important; border: 0 !important; border-radius: 11px !important; background: #414141 !important; color: white !important; box-shadow: none !important; }
+.asset-upload-design-fields input { padding: 0 13px; font-size: 17px; outline: none; }
+.asset-upload-design-fields input::placeholder, .asset-upload-design-fields .ant-select-selection-placeholder { color: #999 !important; }
+.asset-upload-design-footer { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 0 33px 27px; }
+.asset-upload-design-hints { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 13px; color: #aaa; font-size: 14px; }
+.asset-upload-design-hints span { display: inline-flex; align-items: center; gap: 5px; }
+.asset-upload-design-hints small { flex-basis: 100%; color: #8e8e8e; }
+.asset-upload-design-actions { display: flex; gap: 12px; }
+.asset-upload-design-actions button { height: 44px; min-width: 76px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 9px; font-size: 16px; cursor: pointer; }
+.asset-upload-design-cancel { background: #414141; color: white; }
+.asset-upload-design-save { background: white; color: #242424; }
+.asset-upload-design-save:disabled { opacity: .45; cursor: not-allowed; }
+@media (max-width: 820px) { .asset-upload-design-body { grid-template-columns: 1fr; } .asset-upload-design-gallery { grid-template-columns: repeat(3, minmax(90px, 1fr)); } .asset-upload-design-add, .asset-upload-design-thumb { width: 100%; height: auto; aspect-ratio: 1; } .asset-upload-design-footer { align-items: stretch; flex-direction: column; } .asset-upload-design-actions { justify-content: flex-end; } }

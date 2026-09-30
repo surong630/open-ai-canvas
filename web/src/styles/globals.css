@@ -18828,3 +18828,8 @@ html:not(.dark) .creation-home .creation-user-message-copy-wrap { box-shadow: 0 
     background: color-mix(in srgb, var(--popover-foreground) 10%, var(--popover)) !important;
     color: var(--popover-foreground) !important;
 }
+
+.ant-select-dropdown .ant-select-item-option-disabled:has(.asset-save-dialog__empty-option) {
+    cursor: default;
+    opacity: 1;
+}
