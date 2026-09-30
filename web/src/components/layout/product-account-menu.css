@@ -1,46 +1,70 @@
-.product-account-menu-popover .ant-popover-container {
-    width: 400px;
-    max-width: calc(100vw - var(--space-6));
-    border: 1px solid #444444 !important;
+.product-account-menu-popover .ant-popover-container,
+.product-team-settings-popover .ant-popover-container {
+    border: 1px solid #4b4b4b !important;
     border-radius: 12px !important;
-    background: #1b1b1b !important;
+    background: #1c1c1c !important;
     background-image: none !important;
-    padding: 10px !important;
-    box-shadow: 0 16px 48px #00000052 !important;
+    box-shadow: 0 4px 10px #0000004d !important;
 }
 
-.product-account-menu {
-    display: grid;
-    gap: 8px;
-    color: #ffffff;
+.product-account-menu-popover .ant-popover-container {
+    width: 430px;
+    max-width: calc(100vw - var(--space-6));
+    padding: 16px !important;
 }
+
+.product-account-switcher-popover .ant-popover-container {
+    width: 324px;
+    max-width: calc(100vw - var(--space-6));
+    border: 1px solid #4b4b4b !important;
+    border-radius: 12px !important;
+    background: #1c1c1c !important;
+    background-image: none !important;
+    padding: 16px !important;
+    box-shadow: 0 4px 10px #0000004d !important;
+}
+.product-account-menu-popover .ant-popover-inner-content,
+.product-team-settings-popover .ant-popover-inner-content { color: #ffffff; }
+.product-account-menu,
+.product-account-switcher { color: #ffffff; }
 
 .product-account-menu__identity {
     display: flex;
-    min-height: 48px;
+    min-height: 69px;
     align-items: center;
-    gap: 10px;
-    border-radius: 9px;
-    background: #262626;
-    padding: 16px;
+    gap: 12px;
+    border-radius: 8px;
+    background: #282828;
+    padding: 12px 16px;
 }
 
-.product-account-menu__identity strong {
+.product-account-menu__identity-copy {
+    display: flex;
     min-width: 0;
-    overflow: hidden;
     flex: 1;
-    font-size: 14px;
-    font-weight: 400;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.product-account-menu__identity-copy strong {
+    overflow: hidden;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.product-account-menu__avatar {
-    width: 26px;
-    height: 26px;
-    flex: 0 0 auto;
+.product-account-menu__identity-copy > span {
+    overflow: hidden;
+    color: #7d7d7d;
+    font-size: 12px;
+    line-height: 17px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
+.product-account-menu__avatar { width: 36px; height: 36px; flex: 0 0 auto; }
 .product-account-avatar-fallback {
     position: relative;
     display: block;
@@ -51,60 +75,153 @@
     background: linear-gradient(145deg, #eef2ff 4%, #91a9ff 52%, #806ee8 100%);
     box-shadow: inset 0 0 0 1px #ffffff80;
 }
-
 .product-account-avatar-fallback::before {
     position: absolute;
-    top: 20%;
-    left: 36%;
-    width: 28%;
-    height: 28%;
+    top: 20%; left: 36%;
+    width: 28%; height: 28%;
     border-radius: 50%;
     background: #f6f7ff;
     content: "";
 }
-
 .product-account-avatar-fallback::after {
     position: absolute;
-    right: 22%;
-    bottom: 8%;
-    left: 22%;
+    right: 22%; bottom: 8%; left: 22%;
     height: 42%;
     border-radius: 50% 50% 34% 34%;
     background: #e2e7ff;
     content: "";
 }
 
-.product-account-menu .ant-btn {
-    width: max-content;
-    min-height: 36px;
-    justify-content: flex-start;
-    color: #ffffff;
-    padding-inline: 8px;
+.product-account-menu__identity-action,
+.product-account-menu__actions button,
+.product-team-settings button,
+.product-account-switcher button {
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+}
+
+.product-account-menu__identity-action {
+    display: inline-flex;
+    min-height: 32px;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    padding: 4px;
     font-size: 14px;
 }
+.product-account-menu__identity-action:hover { color: #d8d8d8; }
+.product-account-menu__identity-action svg,
+.product-account-menu__actions button > svg,
+.product-account-switcher__create svg { width: 16px; height: 16px; }
 
-.product-account-menu .ant-btn:hover {
-    background: #262626 !important;
-    color: #ffffff !important;
+.product-account-menu__actions { display: grid; gap: 2px; padding-top: 8px; }
+.product-account-menu__actions button {
+    display: flex;
+    width: 100%;
+    min-height: 38px;
+    align-items: center;
+    gap: 12px;
+    border-radius: 6px;
+    background: transparent;
+    padding: 8px 12px;
+    font-size: 14px;
+    text-align: left;
 }
+.product-account-menu__actions button:hover { background: #4a4a4a4d; }
+.product-account-menu__actions button:disabled { cursor: wait; opacity: 0.6; }
+.product-account-menu__chevron { margin-left: auto; }
 
-.product-account-menu .ant-btn svg {
-    width: var(--space-4);
-    height: var(--space-4);
+.product-team-settings-popover .ant-popover-container { width: 140px; padding: 8px !important; }
+.product-team-settings { display: grid; gap: 2px; }
+.product-team-settings button {
+    min-height: 34px;
+    border-radius: 6px;
+    background: transparent;
+    padding: 7px 12px;
+    font-size: 14px;
+    text-align: left;
 }
+.product-team-settings button:hover { background: #4a4a4a4d; }
 
-.product-account-menu .product-account-menu__logout-icon {
-    width: 16px;
-    height: auto;
-    object-fit: contain;
+.product-account-switcher { display: grid; gap: 10px; }
+.product-account-switcher__group { display: grid; gap: 5px; }
+.product-account-switcher__label {
+    color: #818181;
+    font-size: 14px;
+    line-height: 20px;
+    padding: 0 8px;
 }
-
-.product-account-menu .product-account-menu__team {
-    min-height: 30px;
+.product-account-switcher__account {
+    display: flex;
+    width: 100%;
+    min-height: 48px;
+    align-items: center;
+    gap: 10px;
+    border-radius: 7px;
+    background: transparent;
+    padding: 6px 8px;
+    text-align: left;
+}
+.product-account-switcher__account:hover,
+.product-account-switcher__account.is-active { background: #4a4a4a4d; }
+.product-account-switcher__personal-avatar { width: 36px; height: 36px; flex: 0 0 auto; }
+.product-account-switcher__team-avatar {
+    width: 28px; height: 28px;
     flex: 0 0 auto;
-    padding-inline: 4px;
-    font-size: 12px;
-    font-weight: 400;
+    border-radius: 50%;
+    object-fit: cover;
 }
+.product-account-switcher__team-avatar--fallback {
+    display: grid;
+    place-items: center;
+    background: #3b3b3b;
+    color: #c7c7c7;
+}
+.product-account-switcher__team-avatar--fallback svg { width: 15px; height: 15px; }
+.product-account-switcher__account-copy {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+}
+.product-account-switcher__account-name {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.product-account-switcher__role { font-size: 12px; line-height: 17px; }
+.product-account-switcher__role.is-owner { color: #3662ec; }
+.product-account-switcher__role.is-member { color: #00b578; }
+.product-account-switcher__account > svg { width: 16px; height: 16px; flex: 0 0 auto; }
+.product-account-switcher__separator { height: 1px; background: #414141; }
+.product-account-switcher__empty {
+    min-height: 34px;
+    color: #777777;
+    font-size: 13px;
+    line-height: 34px;
+    padding: 0 8px;
+}
+.product-account-switcher__create {
+    display: flex;
+    min-height: 36px;
+    align-items: center;
+    gap: 10px;
+    border-radius: 6px;
+    background: transparent;
+    padding: 6px 8px;
+    font-size: 14px;
+}
+.product-account-switcher__create:hover { background: #4a4a4a4d; }
 
-.product-account-menu .product-account-menu__team svg { width: 14px; height: 14px; }
+@media (max-width: 560px) {
+    .product-account-menu-popover .ant-popover-container { width: min(430px, calc(100vw - 24px)); }
+    .product-account-switcher-popover .ant-popover-container { width: min(324px, calc(100vw - 24px)); }
+}
