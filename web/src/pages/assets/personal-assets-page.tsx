@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Dropdown, Input, Modal, Popconfirm, type MenuProps } from "antd";
 import { Box, RotateCcw, Search } from "lucide-react";
 
@@ -18,6 +18,7 @@ import personalTagIcon from "@/assets/product-assets/tag-manage.svg";
 import personalUploadIcon from "@/assets/product-assets/upload.svg";
 import { AssetMediaPreview } from "@/components/asset-media-preview";
 import { PaginationBar } from "@/components/layout/workspace-page";
+import selectArrowIcon from "@/assets/product-assets/select-arrow.svg";
 import { WorkspaceState } from "@/components/layout/workspace-state";
 import { ProductBlackSelect } from "@/components/ui/product/product-black-select";
 import { ProductCardMoreMenu } from "@/components/ui/product/product-card-more-menu";
@@ -66,7 +67,7 @@ type PersonalAssetsPageProps = {
     onDeleteFolder: (folder: AssetFolder) => void;
     onSelectAsset: (assetId: string, selected: boolean) => void;
     onOpenAsset: (asset: LibraryAsset) => void;
-    onEditAsset: (asset: LibraryAsset) => void;
+    onRenameAsset: (asset: LibraryAsset, title: string) => Promise<boolean>;
     onEditTags: (asset: LibraryAsset) => void;
     onDownloadAsset: (asset: LibraryAsset) => void;
     onArchiveAsset: (asset: LibraryAsset) => void;
@@ -119,9 +120,11 @@ export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
                     <h1 className="m-0 overflow-hidden text-base leading-6 font-bold text-ellipsis whitespace-nowrap text-[#f5f5f5]">{props.viewMode === "trash" ? "回收站" : props.folderFilter === "all" ? "个人资产库" : folderName || "未分类"}</h1>
                 </div>
                 <ProductBlackSelect
-                    mode="multiple"
                     aria-label="按标签搜索资产"
-                    className="max-[720px]:min-w-[220px] max-[720px]:flex-1"
+                    size="small"
+                    mode="tags"
+                    suffixIcon={<img src={selectArrowIcon} alt="" />}
+                    className="max-[720px]:min-w-[220px] bg-[#2C2C2C] border-none max-[720px]:flex-1"
                     value={props.tagFilters}
                     maxTagCount="responsive"
                     placeholder="请选择标签进行搜索"
@@ -130,7 +133,7 @@ export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
                 />
                 <Input
                     allowClear
-                    className="canvas-projects-page__search w-[202px]"
+                    className="canvas-projects-page__search h-8! w-[202px]"
                     prefix={<Search className="size-[13px] text-[#929292]" />}
                     value={props.keyword}
                     placeholder="请输入名称进行搜索"
@@ -190,7 +193,7 @@ export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
                                 selected={props.selectedIds.includes(asset.id)}
                                 onSelect={(selected) => props.onSelectAsset(asset.id, selected)}
                                 onOpen={() => props.onOpenAsset(asset)}
-                                onEdit={() => props.onEditAsset(asset)}
+                                onRename={(title) => props.onRenameAsset(asset, title)}
                                 onTags={() => props.onEditTags(asset)}
                                 onDownload={() => props.onDownloadAsset(asset)}
                                 onArchive={() => props.onArchiveAsset(asset)}
@@ -209,7 +212,7 @@ export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
                                 isTrash={props.viewMode === "trash"}
                                 onSelect={(selected) => props.onSelectAsset(asset.id, selected)}
                                 onOpen={() => props.onOpenAsset(asset)}
-                                onEdit={() => props.onEditAsset(asset)}
+                                onRename={(title) => props.onRenameAsset(asset, title)}
                                 onTags={() => props.onEditTags(asset)}
                                 onDownload={() => props.onDownloadAsset(asset)}
                                 onArchive={() => props.onArchiveAsset(asset)}
@@ -305,7 +308,7 @@ function PersonalAssetCard({
     isTrash = false,
     onSelect,
     onOpen,
-    onEdit,
+    onRename,
     onTags,
     onDownload,
     onArchive,
@@ -319,7 +322,7 @@ function PersonalAssetCard({
     isTrash?: boolean;
     onSelect: (selected: boolean) => void;
     onOpen: () => void;
-    onEdit: () => void;
+    onRename: (title: string) => Promise<boolean>;
     onTags: () => void;
     onDownload: () => void;
     onArchive: () => void;
@@ -328,7 +331,45 @@ function PersonalAssetCard({
     folderOptions: FolderOption[];
     onMove: (folderId: string) => void;
 }) {
+    const [editing, setEditing] = useState(false);
+    const [displayTitle, setDisplayTitle] = useState(asset.title);
+    const [editingTitle, setEditingTitle] = useState(asset.title);
+    const savingRef = useRef(false);
+    const cancellingRef = useRef(false);
     const canDownload = asset.kind !== "text";
+    useEffect(() => {
+        setDisplayTitle(asset.title);
+        if (!editing) setEditingTitle(asset.title);
+    }, [asset.title, editing]);
+    const startEditing = () => {
+        cancellingRef.current = false;
+        setEditingTitle(displayTitle);
+        setEditing(true);
+    };
+    const stopEditing = () => {
+        cancellingRef.current = true;
+        setEditingTitle(displayTitle);
+        setEditing(false);
+    };
+    const saveTitle = async () => {
+        if (cancellingRef.current) {
+            cancellingRef.current = false;
+            return;
+        }
+        if (savingRef.current) return;
+        const title = editingTitle.trim();
+        if (!title || title === displayTitle) {
+            setEditingTitle(displayTitle);
+            setEditing(false);
+            return;
+        }
+        savingRef.current = true;
+        setEditing(false);
+        const saved = await onRename(title);
+        if (saved) setDisplayTitle(title);
+        else setEditingTitle(displayTitle);
+        savingRef.current = false;
+    };
     const menuItems: MenuProps["items"] = isTrash
         ? [
               { key: "restore", label: "还原", onClick: onRestore },
@@ -336,7 +377,7 @@ function PersonalAssetCard({
           ]
         : [
               { key: "open", label: "打开", onClick: onOpen },
-              { key: "rename", label: "重命名", onClick: onEdit },
+              { key: "rename", label: "重命名", onClick: startEditing },
               { key: "move", label: "移动文件夹", popupClassName: "product-card-more-submenu", children: folderOptions.map((folder) => ({ key: folder.value || "uncategorized", label: folder.label, onClick: () => onMove(folder.value) })) },
               { key: "tags", label: "设置标签", onClick: onTags },
               ...(canDownload ? [{ key: "download", label: "下载", onClick: onDownload }] : []),
@@ -367,14 +408,33 @@ function PersonalAssetCard({
                 </label>
             </div>
             <div className="mt-[5px] flex h-7 min-w-0 items-center gap-1 overflow-hidden px-[3px]">
-                <button type="button" className="w-0 min-w-0 flex-1 truncate border-0 bg-transparent p-0 text-left text-sm leading-5 font-bold text-white" onClick={onOpen} title={asset.title}>
-                    {asset.title}
-                </button>
-                <ProductCardMoreMenu
-                    ariaLabel={`更多资产操作 ${asset.title}`}
-                    buttonClassName="opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
-                    items={menuItems}
-                />
+                {editing && !isTrash ? (
+                    <>
+                        <Input
+                            maxLength={80}
+                            className="-mt-0.5! h-6! min-w-0 flex-1 rounded-none! border-0! bg-transparent! p-0! text-sm! leading-5! font-bold! text-white! shadow-none! outline-0! hover:border-0! focus:border-0! focus:bg-transparent! focus:shadow-none!"
+                            value={editingTitle}
+                            onChange={(event) => setEditingTitle(event.target.value)}
+                            onBlur={() => void saveTitle()}
+                            onKeyDown={(event) => {
+                                if (event.key === "Enter") event.currentTarget.blur();
+                                else if (event.key === "Escape") stopEditing();
+                            }}
+                            autoFocus
+                        />
+                    </>
+                ) : (
+                    <>
+                        <button type="button" className="w-0 min-w-0 flex-1 truncate border-0 bg-transparent p-0 text-left text-sm leading-5 font-bold text-white" onClick={onOpen} title={displayTitle}>
+                            {displayTitle}
+                        </button>
+                        <ProductCardMoreMenu
+                            ariaLabel={`更多资产操作 ${asset.title}`}
+                            buttonClassName="opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+                            items={menuItems}
+                        />
+                    </>
+                )}
             </div>
             <div className="flex h-[18px] min-w-0 items-center gap-1 overflow-hidden px-[3px]">
                 {visibleTags.length ? (

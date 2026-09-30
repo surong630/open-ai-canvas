@@ -84,7 +84,7 @@ export function AssetHistoryPage({ groups, counts, kind, selectedIds, onKindChan
                                                 <input className="sr-only" type="checkbox" checked={selected} aria-label={`选择 ${asset.title}`} onChange={(event) => onSelect(asset.id, event.target.checked)} />
                                                 <img className="size-4" src={selected ? checkboxSelectedIcon : checkboxNormalIcon} alt="" aria-hidden="true" />
                                             </label>
-                                            <div className="pointer-events-none absolute right-2.5 bottom-2.5 left-2.5 z-[2] flex justify-between gap-2.5 opacity-100 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100">
+                                            <div className="pointer-events-none absolute right-2.5 bottom-2.5 left-2.5 z-[2] flex justify-between gap-2.5 opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100">
                                                 <button type="button" className="grid py-1 w-[53px] place-items-center rounded bg-black/60 p-0 hover:bg-black/80" aria-label={`下载 ${asset.title}`} title="下载" onClick={() => onDownloadAsset(asset)}>
                                                     <img className="size-3 object-contain" src={cardDownloadIcon} alt="" />
                                                 </button>
@@ -101,7 +101,7 @@ export function AssetHistoryPage({ groups, counts, kind, selectedIds, onKindChan
                 ) : (
                     <p className="mt-[150px] text-center text-xs text-[#6e6e6e]">暂无历史记录</p>
                 )}
-                {groups.length && <p className="pt-[50px] text-center text-xs text-[#6e6e6e]">没有更多了</p>}
+                {groups.length > 0 && <p className="pt-[50px] text-center text-xs text-[#6e6e6e]">没有更多了</p>}
             </div>
 
             {selectedIds.length ? (

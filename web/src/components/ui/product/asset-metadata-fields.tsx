@@ -5,6 +5,7 @@ import selectArrowIcon from "@/assets/product-assets/select-arrow.svg";
 import { cn } from "@/lib/utils";
 
 import "./asset-metadata-fields.css";
+import { ProductBlackSelect } from "./product-black-select";
 
 export type AssetMetadataOption = {
     label: ReactNode;
@@ -71,7 +72,7 @@ export function AssetMetadataFields({
             ) : null}
             <div className="asset-metadata-fields__field">
                 <span>所属文件夹</span>
-                <AntSelect<string>
+                <ProductBlackSelect<string>
                     aria-label="所属文件夹"
                     size="small"
                     value={folderId}
@@ -81,14 +82,14 @@ export function AssetMetadataFields({
                     placeholder="请选择所属文件夹"
                     notFoundContent={null}
                     suffixIcon={selectArrow}
-                    className="asset-metadata-fields__select"
-                    classNames={{ popup: { root: "asset-metadata-fields__popup" } }}
+                    className="asset-save-dialog__select bg-[#373737]! mt-2! mb-2! w-full!"
+                    popupClassName="asset-save-dialog__popup"
                     onChange={(value) => onFolderChange(typeof value === "string" ? value : "")}
                 />
             </div>
             <div className="asset-metadata-fields__field">
                 <span>设置标签</span>
-                <AntSelect<string[]>
+                <ProductBlackSelect<string[]>
                     aria-label="设置标签"
                     size="small"
                     mode="tags"
@@ -100,8 +101,8 @@ export function AssetMetadataFields({
                     placeholder="请选择标签"
                     notFoundContent={createTagHint}
                     suffixIcon={selectArrow}
-                    className="asset-metadata-fields__select"
-                    classNames={{ popup: { root: "asset-metadata-fields__popup" } }}
+className="asset-save-dialog__select mt-2! bg-[#373737]! w-full!"
+                                popupClassName="asset-save-dialog__popup"
                     onChange={onTagsChange}
                 />
             </div>

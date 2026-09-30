@@ -4,7 +4,10 @@ import emptyPreviewImage from "@/assets/product-assets/asset-preview-empty@2x.pn
 import { CachedResourceImage } from "@/components/cached-resource-image";
 import { AppModal } from "@/components/ui/product/app-modal";
 import type { AudioAsset, ImageAsset, VideoAsset } from "@/stores/use-asset-store";
-
+import selectionDeleteIcon from "@/assets/product-assets/selection-delete.svg";
+import selectionDownloadIcon from "@/assets/product-assets/selection-download.svg";
+import selectionSaveIcon from "@/assets/product-assets/selection-save.svg";
+import "./product-assets.css";
 type PreviewAsset = ImageAsset | VideoAsset | AudioAsset;
 
 type AssetPreviewModalProps = {
@@ -82,9 +85,9 @@ export function AssetPreviewModal({ asset, creatorName, onClose, onCopy, onSave,
                         </section>
 
                         <footer className="asset-preview__actions">
-                            <button type="button" onClick={() => onSave(asset)}><FolderOpen aria-hidden /><span>保存到资产</span></button>
-                            <button type="button" onClick={() => onDownload(asset)}><Download aria-hidden /><span>下载</span></button>
-                            <button type="button" className="is-danger" onClick={() => onDelete(asset)}><Trash2 aria-hidden /><span>删除</span></button>
+                            <button type="button" onClick={() => onSave(asset)}><img className="size-3.5 object-contain" src={selectionSaveIcon} alt="" /><span>保存到资产</span></button>
+                            <button type="button" onClick={() => onDownload(asset)}><img className="size-4 object-contain" src={selectionDownloadIcon} alt="" /><span>下载</span></button>
+                            <button type="button" className="is-danger" onClick={() => onDelete(asset)}><img className="size-4 object-contain" src={selectionDeleteIcon} alt="" /><span>删除</span></button>
                         </footer>
                     </aside>
                 </section>
