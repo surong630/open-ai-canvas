@@ -8,8 +8,6 @@ import { App, Button, Drawer, Dropdown, Form, Input, Modal, Popconfirm, Progress
 import type { MenuProps } from "antd";
 import { useNavigate } from "react-router";
 
-import { CollectionGrid, PageHeader, PaginationBar, WorkspacePage } from "@/components/layout/workspace-page";
-import { WorkspaceState } from "@/components/layout/workspace-state";
 import { AssetMediaPreview } from "@/components/asset-media-preview";
 import { AssetLibraryCard, AssetLibraryCardMedia } from "@/components/assets/asset-library-card";
 import { Switch } from "@/components/ui/base/switch";
@@ -41,7 +39,6 @@ import { PersonalAssetsPage, PersonalAssetsTagModal } from "./personal-assets-pa
 import { ProductAssetsShell } from "./product-assets-shell";
 import type { AssetSection, HistoryKind, LibraryAsset } from "./asset-view-types";
 
-import "./product-assets.css";
 
 type AssetFormValues = {
     kind: AssetKind;
@@ -1145,78 +1142,7 @@ function formatExpirationDate(updatedAt: string, retentionDays: number) {
     return `预计于 ${expireDate.getFullYear()}-${String(expireDate.getMonth() + 1).padStart(2, "0")}-${String(expireDate.getDate()).padStart(2, "0")} 彻底清除`;
 }
 
-function AssetCard({
-    asset,
-    selected,
-    isTrash = false,
-    retentionDays = 30,
-    onSelect,
-    onOpen,
-    onEdit,
-    onCopy,
-    onDownload,
-    onRestore,
-    onArchive,
-    onDelete,
-    folderOptions,
-    onMoveToFolder,
-}: {
-    asset: LibraryAsset;
-    selected: boolean;
-    isTrash?: boolean;
-    retentionDays?: number;
-    onSelect: (selected: boolean) => void;
-    onOpen: () => void;
-    onEdit: () => void;
-    onCopy: (asset: LibraryAsset) => void;
-    onDownload: (asset: LibraryAsset) => void;
-    onRestore?: () => void;
-    onArchive?: () => void;
-    onDelete: () => void;
-    folderOptions: Array<{ label: string; value: string }>;
-    onMoveToFolder: (folderId: string) => void;
-}) {
-    const summary = assetSummary(asset);
-    const menuItems: MenuProps["items"] = isTrash
-        ? [{ key: "restore", icon: <RotateCcw className="size-3.5" />, label: "还原到素材库", onClick: onRestore }, { type: "divider" as const }, { key: "delete", danger: true, icon: <Trash2 className="size-3.5" />, label: "彻底删除", onClick: onDelete }]
-        : [
-              ...(asset.kind === "text" || asset.kind === "image" ? [{ key: "edit", icon: <PencilLine className="size-3.5" />, label: "编辑", onClick: onEdit }] : []),
-              ...(asset.kind === "text" ? [{ key: "copy", icon: <Copy className="size-3.5" />, label: "复制文本", onClick: () => void onCopy(asset) }] : []),
-              ...(asset.kind === "image" || asset.kind === "video" || asset.kind === "audio" || asset.kind === "model" ? [{ key: "download", icon: <Download className="size-3.5" />, label: "下载", onClick: () => onDownload(asset) }] : []),
-              { key: "move", icon: <FolderOpen className="size-3.5" />, label: "移动到分类", children: folderOptions.map((folder) => ({ key: folder.value || "uncategorized", label: folder.label, onClick: () => onMoveToFolder(folder.value) })) },
-              { type: "divider" as const },
-              { key: "archive", icon: <Trash2 className="size-3.5 text-amber-500" />, label: "移入回收站", onClick: onArchive },
-              { key: "delete", danger: true, icon: <Trash2 className="size-3.5" />, label: "彻底删除", onClick: onDelete },
-          ];
-    return (
-        <AssetLibraryCard selected={selected}>
-            <AssetCover asset={asset} selected={selected} isTrash={isTrash} onSelect={onSelect} onOpen={onOpen} menuItems={menuItems} />
-            <button type="button" className="asset-collection-body block w-full px-2.5 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--workspace-accent)]" onClick={onOpen}>
-                <div className="flex min-w-0 items-center justify-between gap-2">
-                    <h2 className="truncate text-[var(--fs-body)] font-semibold text-foreground" title={asset.title}>
-                        {asset.title}
-                    </h2>
-                    <span className="asset-collection-date shrink-0 tabular-nums">{formatAssetTime(asset.updatedAt)}</span>
-                </div>
-                {isTrash ? (
-                    <div className="mt-1 flex items-center gap-1 text-[var(--fs-tiny)] font-medium text-amber-600 dark:text-amber-400" title={formatExpirationDate(asset.updatedAt, retentionDays)}>
-                        <AlertTriangle className="size-3 shrink-0" />
-                        <span>{formatExpirationHint(asset.updatedAt, retentionDays)}</span>
-                    </div>
-                ) : (
-                    <div className="asset-collection-summary mt-1 truncate" title={summary}>
-                        {summary}
-                    </div>
-                )}
-                <div className="asset-collection-source mt-1 flex min-w-0 items-center gap-1.5">
-                    <span className="truncate">{asset.source || "未标注来源"}</span>
-                    <span aria-hidden="true">·</span>
-                    <span className="truncate">{assetProjectLabel(asset)}</span>
-                </div>
-            </button>
-        </AssetLibraryCard>
-    );
-}
+
 
 function isKnownAssetKind(kind: unknown): kind is AssetKind {
     return kind === "image" || kind === "video" || kind === "audio" || kind === "model" || kind === "text";

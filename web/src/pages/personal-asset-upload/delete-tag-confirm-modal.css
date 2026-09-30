@@ -1,0 +1,85 @@
+.lanhu-delete-tag-confirm-modal .ant-modal-container {
+    overflow: hidden;
+    border: 1px solid rgba(83.00000265240669, 83.00000265240669, 83.00000265240669, 1);
+    border-radius: 8px;
+    background: rgba(38.0000015348196, 38.0000015348196, 38.0000015348196, 1);
+    color: rgba(255, 255, 255, 1);
+}
+
+.lanhu-delete-tag-confirm-modal .ant-modal-close {
+    top: 18px;
+    right: 32px;
+    width: 12px;
+    height: 12px;
+    color: rgba(255, 255, 255, 1);
+}
+
+.lanhu-delete-tag-confirm-shell {
+    position: relative;
+    width: 604px;
+    height: 239px;
+    overflow: hidden;
+    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+}
+
+.lanhu-delete-tag-confirm-header {
+    height: 49px;
+    display: flex;
+    align-items: center;
+    padding: 0 23px;
+    border-bottom: 1px solid rgba(60.00000022351742, 60.00000022351742, 60.00000022351742, 1);
+}
+
+.lanhu-delete-tag-confirm-header h2 {
+    margin: 0;
+    color: rgba(255, 255, 255, 1);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 21px;
+}
+
+.lanhu-delete-tag-confirm-shell p {
+    position: absolute;
+    top: 74px;
+    left: 23px;
+    width: 504px;
+    height: 22px;
+    margin: 0;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 1);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 22px;
+    white-space: nowrap;
+}
+
+.lanhu-delete-tag-confirm-shell footer {
+    position: absolute;
+    right: 24px;
+    bottom: 35px;
+    display: flex;
+    gap: 10px;
+}
+
+.lanhu-delete-tag-confirm-shell footer button {
+    width: 52px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    cursor: pointer;
+}
+
+.lanhu-delete-tag-confirm-no {
+    background: rgba(54.00000058114529, 54.00000058114529, 54.00000058114529, 1);
+    color: rgba(255, 255, 255, 1);
+}
+
+.lanhu-delete-tag-confirm-yes {
+    background: rgba(255, 255, 255, 1);
+    color: rgba(19.0000007674098, 19.0000007674098, 19.0000007674098, 1);
+}

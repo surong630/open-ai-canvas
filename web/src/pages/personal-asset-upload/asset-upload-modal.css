@@ -1,0 +1,230 @@
+.lanhu-asset-upload-modal .ant-modal-container {
+    overflow: hidden;
+    border: 1px solid rgba(83.00000265240669, 83.00000265240669, 83.00000265240669, 1);
+    border-radius: 0;
+    background: rgba(38.0000015348196, 38.0000015348196, 38.0000015348196, 1);
+    color: rgba(255, 255, 255, 1);
+}
+
+.lanhu-asset-upload-modal .ant-modal-close {
+    top: 18px;
+    right: 31px;
+    width: 12px;
+    height: 12px;
+    color: rgba(255, 255, 255, 1);
+}
+
+.lanhu-asset-upload-shell {
+    position: relative;
+    width: 723px;
+    height: 524px;
+    overflow: hidden;
+    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+}
+
+.lanhu-asset-upload-header {
+    height: 49px;
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    border-bottom: 1px solid rgba(60.00000022351742, 60.00000022351742, 60.00000022351742, 1);
+}
+
+.lanhu-asset-upload-header h2 {
+    margin: 0;
+    color: rgba(255, 255, 255, 1);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 21px;
+}
+
+.lanhu-asset-upload-content {
+    display: grid;
+    grid-template-columns: 412px 237px;
+    gap: 24px;
+    padding: 24px 24px 0;
+}
+
+.lanhu-asset-upload-left {
+    min-width: 0;
+}
+
+.lanhu-asset-upload-grid {
+    width: 412px;
+    height: 377px;
+    overflow: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-content: start;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid rgba(62.00000010430813, 62.00000010430813, 62.00000010430813, 1);
+    background: rgba(42.000001296401024, 42.000001296401024, 42.000001296401024, 1);
+}
+
+.lanhu-asset-upload-add,
+.lanhu-asset-upload-thumbnail {
+    width: 121px;
+    height: 121px;
+}
+
+.lanhu-asset-upload-add {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.lanhu-asset-upload-add img {
+    width: 121px;
+    height: 121px;
+}
+
+.lanhu-asset-upload-item {
+    min-width: 0;
+}
+
+.lanhu-asset-upload-thumbnail {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: rgba(30, 30, 30, 1);
+    color: rgba(210.00000268220901, 210.00000268220901, 210.00000268220901, 1);
+}
+
+.lanhu-asset-upload-thumbnail > img,
+.lanhu-asset-upload-thumbnail > video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.lanhu-asset-upload-thumbnail > .lanhu-asset-upload-video-play {
+    position: absolute;
+    width: 23px;
+    height: 27px;
+    color: rgba(255, 255, 255, 1);
+    fill: currentColor;
+}
+
+.lanhu-asset-upload-thumbnail button {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.68);
+    color: rgba(255, 255, 255, 1);
+    cursor: pointer;
+}
+
+.lanhu-asset-upload-thumbnail button svg {
+    width: 13px;
+    height: 13px;
+}
+
+.lanhu-asset-upload-item > span {
+    display: block;
+    overflow: hidden;
+    margin-top: 5px;
+    color: rgba(255, 255, 255, 1);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 17px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lanhu-asset-upload-help {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    padding-top: 15px;
+    color: rgba(123.0000002682209, 123.0000002682209, 123.0000002682209, 1);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 15px;
+}
+
+.lanhu-asset-upload-help span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.lanhu-asset-upload-help img {
+    flex: none;
+    object-fit: contain;
+}
+
+.lanhu-asset-upload-help span:nth-child(2) img {
+    width: 18px;
+    height: 18px;
+}
+
+.lanhu-asset-upload-help span:nth-child(3) img {
+    width: 18px;
+    height: 21px;
+}
+
+.lanhu-asset-upload-help span:nth-child(4) img {
+    width: 18px;
+    height: 14.625px;
+}
+
+.lanhu-asset-upload-help small {
+    flex-basis: 100%;
+    font: inherit;
+}
+
+.lanhu-asset-upload-fields {
+    width: 237px;
+}
+
+.lanhu-asset-upload-footer {
+    position: absolute;
+    right: 24px;
+    bottom: 16px;
+    display: flex;
+    gap: 8px;
+}
+
+.lanhu-asset-upload-footer button {
+    width: 52px;
+    height: 32px;
+    border: 0;
+    border-radius: 0;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.lanhu-asset-upload-cancel {
+    background: rgba(54.00000058114529, 54.00000058114529, 54.00000058114529, 1);
+    color: rgba(255, 255, 255, 1);
+    font-weight: 500;
+}
+
+.lanhu-asset-upload-save {
+    background: rgba(255, 255, 255, 1);
+    color: rgba(38.0000015348196, 38.0000015348196, 38.0000015348196, 1);
+    font-weight: 400;
+}
+
+.lanhu-asset-upload-save:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+@media (max-width: 760px) {
+    .lanhu-asset-upload-shell {
+        width: min(723px, calc(100vw - 24px));
+    }
+}

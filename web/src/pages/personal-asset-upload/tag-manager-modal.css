@@ -1,0 +1,319 @@
+.lanhu-tag-manager-modal .ant-modal-container {
+    overflow: hidden;
+    border: 1px solid rgba(83, 83, 83, 1);
+    border-radius: 8px;
+    background: rgba(38, 38, 38, 1);
+    color: rgba(255, 255, 255, 1);
+}
+
+.lanhu-tag-manager-modal .ant-modal-close {
+    top: 19px;
+    right: 24px;
+    width: 12px;
+    height: 12px;
+    color: rgba(255, 255, 255, 1);
+}
+
+.lanhu-tag-manager-shell {
+    position: relative;
+    width: 723px;
+    height: 573.3px;
+    overflow: hidden;
+    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+}
+
+.lanhu-tag-manager-header {
+    height: 56px;
+    display: flex;
+    align-items: center;
+    padding: 0 23px;
+    border-bottom: 1px solid rgba(60, 60, 60, 1);
+}
+
+.lanhu-tag-manager-header h2 {
+    margin: 0;
+    color: rgba(255, 255, 255, 1);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 20.8px;
+}
+
+.lanhu-tag-manager-body {
+    padding: 18px 23px 0;
+}
+
+.lanhu-tag-manager-create {
+    width: 675px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(83, 83, 83, 1);
+    border-radius: 8px;
+    background: rgba(55, 55, 55, 1);
+}
+
+.lanhu-tag-manager-create input,
+.lanhu-tag-manager-search input,
+.lanhu-tag-manager-row input {
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 1);
+    font: inherit;
+}
+
+.lanhu-tag-manager-create input {
+    min-width: 0;
+    flex: 1;
+    height: 30px;
+    padding: 0 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.lanhu-tag-manager-create input::placeholder,
+.lanhu-tag-manager-search input::placeholder {
+    color: rgba(138, 138, 138, 1);
+    opacity: 1;
+}
+
+.lanhu-tag-manager-create button {
+    width: 38px;
+    height: 30px;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 1);
+    font-size: 25px;
+    font-weight: 300;
+    line-height: 30px;
+    cursor: pointer;
+}
+
+.lanhu-tag-manager-search {
+    width: 198px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 9px 0 10px auto;
+    padding: 0 10px;
+    border-radius: 8px;
+    background: rgba(30, 30, 30, 1);
+}
+
+.lanhu-tag-manager-search svg {
+    width: 13px;
+    height: 13px;
+    color: rgba(146, 146, 146, 1);
+}
+
+.lanhu-tag-manager-search input {
+    width: 150px;
+    font-size: 13px;
+}
+
+.lanhu-tag-manager-table {
+    width: 675px;
+    height: 341px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: rgba(30, 30, 30, 1);
+}
+
+.lanhu-tag-manager-table-head,
+.lanhu-tag-manager-row {
+    display: grid;
+    grid-template-columns: 299px 266px 110px;
+    align-items: center;
+}
+
+.lanhu-tag-manager-table-head {
+    height: 42px;
+    background: rgba(46, 46, 46, 1);
+}
+
+.lanhu-tag-manager-table-head strong {
+    padding-left: 12px;
+    color: rgba(255, 255, 255, 1);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.lanhu-tag-manager-row {
+    height: 61px;
+    border-bottom: 1px solid rgba(60, 60, 60, 1);
+    color: rgba(255, 255, 255, 1);
+    font-size: 13px;
+}
+
+.lanhu-tag-manager-row > div:first-child,
+.lanhu-tag-manager-row > span {
+    padding-left: 12px;
+}
+
+.lanhu-tag-manager-row input {
+    width: 174px;
+    height: 26px;
+    padding: 0 6px;
+    border: 1px solid rgba(83, 83, 83, 1);
+    border-radius: 4px;
+    background: rgba(55, 55, 55, 1);
+}
+
+.lanhu-tag-manager-actions {
+    display: flex;
+    gap: 20px;
+}
+
+.lanhu-tag-manager-actions button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: rgba(169, 152, 255, 1);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.lanhu-tag-manager-actions button.is-danger {
+    color: rgba(250, 81, 81, 1);
+}
+
+.lanhu-tag-manager-pagination {
+    position: absolute;
+    right: 23px;
+    bottom: 16px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    color: rgba(132, 132, 132, 1);
+    font-size: 14px;
+}
+
+.lanhu-tag-manager-pagination .ant-pagination {
+    display: flex;
+    align-items: center;
+    color: #848484;
+}
+
+.lanhu-tag-manager-pagination .ant-pagination-total-text {
+    height: 36px;
+    margin-right: 18px;
+    line-height: 36px;
+}
+
+.lanhu-tag-manager-pagination .ant-pagination-prev,
+.lanhu-tag-manager-pagination .ant-pagination-next,
+.lanhu-tag-manager-pagination .ant-pagination-item {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    line-height: 36px;
+}
+
+.lanhu-tag-manager-pagination .ant-pagination-item a {
+    color: #848484;
+}
+
+.lanhu-tag-manager-pagination .ant-pagination-item-active {
+    background: #303030;
+}
+
+.lanhu-tag-manager-pagination .ant-pagination-item-active a {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.lanhu-tag-manager-pagination .ant-pagination-prev button,
+.lanhu-tag-manager-pagination .ant-pagination-next button {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+}
+
+.lanhu-tag-manager-page-arrow {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.lanhu-tag-manager-pagination .ant-pagination-options {
+    height: 36px;
+    margin-left: 8px;
+}
+
+.lanhu-tag-manager-pagination .lanhu-tag-manager-size-select.ant-select {
+    --ant-select-background-color: #303030 !important;
+    --ant-select-border-color: #303030 !important;
+    --ant-select-color: #848484 !important;
+    --ant-select-affix-color: #848484 !important;
+    background: #303030 !important;
+    color: #848484 !important;
+}
+
+.lanhu-tag-manager-pagination .lanhu-tag-manager-size-select .ant-select-selector {
+    border-color: #303030 !important;
+    border-radius: 8px !important;
+    background: #303030 !important;
+    color: #848484 !important;
+    box-shadow: none !important;
+}
+
+.lanhu-tag-manager-pagination .lanhu-tag-manager-size-select .ant-select-content-value {
+    color: #848484 !important;
+}
+
+.lanhu-tag-manager-pagination .lanhu-tag-manager-size-select .ant-select-suffix img {
+    width: 10px;
+    height: 8px;
+    object-fit: contain;
+}
+
+.lanhu-tag-manager-quick-jumper {
+    display: inline-flex;
+    height: 36px;
+    align-items: center;
+    gap: 8px;
+    margin-left: 10px;
+    color: #848484;
+    white-space: nowrap;
+}
+
+.lanhu-tag-manager-quick-jumper input {
+    width: 48px;
+    height: 36px;
+    border: 0;
+    border-radius: 8px;
+    outline: 0;
+    background: #303030;
+    color: #ffffff;
+    padding: 0 8px;
+    text-align: center;
+}
+
+body .lanhu-tag-manager-size-menu.ant-select-dropdown {
+    min-width: 86px !important;
+    padding: 4px !important;
+    border: 1px solid #3a3a3a !important;
+    border-radius: 8px !important;
+    background: #303030 !important;
+    box-shadow: 0 4px 10px #0000004d !important;
+}
+
+body .lanhu-tag-manager-size-menu .ant-select-item {
+    min-height: 32px;
+    border-radius: 6px;
+    color: #a0a0a0 !important;
+    padding: 6px 8px;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+body .lanhu-tag-manager-size-menu .ant-select-item-option-active:not(.ant-select-item-option-disabled),
+body .lanhu-tag-manager-size-menu .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background: #454545 !important;
+    color: #ffffff !important;
+}

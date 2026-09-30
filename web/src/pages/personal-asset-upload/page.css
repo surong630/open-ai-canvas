@@ -1,0 +1,22 @@
+.personal-asset-upload-page {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: #1e1e1e;
+}
+
+.personal-asset-upload-page-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.personal-asset-upload-page-actions button {
+    height: 32px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 8px;
+    background: #373737;
+    color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+}

@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Button, Dropdown, Input, Modal, Popconfirm, type MenuProps } from "antd";
-import { Box, RotateCcw } from "lucide-react";
+import { Box, RotateCcw, Search } from "lucide-react";
 
 import personalAudioPlaceholder from "@/assets/product-assets/audio-placeholder.svg";
 import personalCheckboxNormal from "@/assets/product-assets/checkbox-normal.svg";
@@ -24,6 +25,12 @@ import { cn } from "@/lib/utils";
 import type { AssetFolder } from "@/services/api/user-data";
 
 import type { LibraryAsset } from "./asset-view-types";
+import {
+    LanhuAssetUploadModal,
+    LanhuFolderEditorModal,
+    LanhuTagManagerModal,
+    type LanhuAssetUploadValue,
+} from "../personal-asset-upload";
 
 type FolderOption = { label: string; value: string };
 type ViewMode = "library" | "trash";
@@ -79,14 +86,33 @@ const inputFieldClass =
 const actionClass = "inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border border-transparent bg-[#2c2c2c] px-[13px] text-[13px] text-white shadow-none hover:bg-[#3c3c3c] [&_img]:size-4";
 
 export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
+    const [assetUploadOpen, setAssetUploadOpen] = useState(false);
+    const [folderCreateOpen, setFolderCreateOpen] = useState(false);
+    const [folderCreateName, setFolderCreateName] = useState("");
+    const [tagManagerOpen, setTagManagerOpen] = useState(false);
     const folderName = props.folders.find((folder) => folder.id === props.folderFilter)?.name;
     const selectedAssetIds = props.selectedIds.filter((id) => props.visibleAssets.some((asset) => asset.id === id) || props.activeAssets.some((asset) => asset.id === id));
+
+    const closeFolderCreate = () => {
+        setFolderCreateOpen(false);
+        setFolderCreateName("");
+    };
+
+    const submitUpload = (_value: LanhuAssetUploadValue) => {
+        setAssetUploadOpen(false);
+    };
+
+    const submitFolderCreate = () => {
+        if (!folderCreateName.trim()) return;
+        closeFolderCreate();
+    };
+
     return (
         <section className="relative flex h-full min-h-0 flex-col bg-[#191919] text-white max-[720px]:min-h-[calc(100dvh-120px)]">
             <header className="grid min-h-14 shrink-0 grid-cols-[minmax(126px,1fr)_minmax(190px,250px)_minmax(170px,220px)_auto] items-center gap-3 border-b border-[#303030] px-10 py-[9px] max-[1040px]:grid-cols-[minmax(120px,1fr)_minmax(180px,220px)_minmax(170px,210px)] max-[1040px]:px-6 max-[720px]:flex max-[720px]:flex-wrap max-[720px]:px-4 max-[720px]:py-3.5">
                 <div className="flex min-w-0 items-center gap-2 max-[720px]:w-full">
                     {props.folderFilter !== "all" && props.viewMode === "library" ? (
-                        <button type="button" className="inline-flex size-6 items-center justify-center border-0 bg-transparent p-0 text-[25px] text-[#d6d6d6]" onClick={props.onBackToLibrary} aria-label="返回个人资产库">
+                        <button type="button" className="inline-flex size-6 items-center justify-center border-0 bg-transparent p-0 text-[25px] text-[#d6d6d6]" onClick={props.onBackToLibrary} aria-label="返回">
                             ‹
                         </button>
                     ) : null}
@@ -104,23 +130,23 @@ export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
                 />
                 <Input
                     allowClear
-                    className={cn(inputFieldClass, "[&_.ant-input-prefix_img]:size-4 max-[720px]:min-w-[220px] max-[720px]:flex-1")}
-                    prefix={<img src={personalSearchIcon} alt="" aria-hidden />}
+                    className="canvas-projects-page__search w-[202px]"
+                    prefix={<Search className="size-[13px] text-[#929292]" />}
                     value={props.keyword}
                     placeholder="请输入名称进行搜索"
                     onChange={(event) => props.onKeywordChange(event.target.value)}
                 />
                 {props.viewMode === "library" ? (
                     <div className="flex items-center gap-2 whitespace-nowrap max-[1040px]:col-span-full max-[1040px]:justify-end max-[720px]:w-full max-[720px]:justify-start max-[720px]:overflow-x-auto">
-                        <button type="button" className={actionClass} onClick={props.onUpload}>
+                        <button type="button" className={actionClass} onClick={() => setAssetUploadOpen(true)}>
                             <img src={personalUploadIcon} alt="" aria-hidden />
                             <span>上传资产</span>
                         </button>
-                        <button type="button" className={actionClass} onClick={props.onCreateFolder}>
+                        <button type="button" className={actionClass} onClick={() => setFolderCreateOpen(true)}>
                             <img src={personalNewFolderIcon} alt="" aria-hidden />
                             <span>新建文件夹</span>
                         </button>
-                        <button type="button" className={actionClass} onClick={props.onOpenTagManager}>
+                        <button type="button" className={actionClass} onClick={() => setTagManagerOpen(true)}>
                             <img src={personalTagIcon} alt="" aria-hidden />
                             <span>标签管理</span>
                         </button>
@@ -213,6 +239,33 @@ export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
                     onDelete={props.onDeleteSelected}
                 />
             ) : null}
+
+            <LanhuAssetUploadModal
+                open={assetUploadOpen}
+                initialFolderId={props.folderFilter !== "all" && props.folderFilter !== "uncategorized" ? props.folderFilter : ""}
+                folders={props.folderOptions}
+                tags={props.knownTags.map((tag) => ({ label: tag, value: tag }))}
+                onCancel={() => setAssetUploadOpen(false)}
+                onSave={submitUpload}
+            />
+
+            <LanhuFolderEditorModal
+                open={folderCreateOpen}
+                mode="create"
+                value={folderCreateName}
+                onChange={setFolderCreateName}
+                onCancel={closeFolderCreate}
+                onSave={submitFolderCreate}
+            />
+
+            <LanhuTagManagerModal
+                open={tagManagerOpen}
+                tags={props.knownTags.map((name) => ({
+                    name,
+                    count: props.activeAssets.filter((asset) => asset.tags?.includes(name)).length,
+                }))}
+                onCancel={() => setTagManagerOpen(false)}
+            />
         </section>
     );
 }

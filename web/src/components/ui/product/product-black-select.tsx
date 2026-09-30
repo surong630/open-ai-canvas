@@ -10,6 +10,8 @@ import { forwardRef, type CSSProperties, type ReactElement, type RefAttributes }
 
 import { cn } from "@/lib/utils";
 
+import "./product-black-select.css";
+
 const triggerClassName = [
     "product-black-select min-w-0! rounded-md! border! border-[#3a3a3a]! bg-[#252525]! shadow-none! [&:not(.ant-select-sm)]:min-h-9! [&.ant-select-sm]:min-h-8!",
     "hover:border-[#4b4b4b]! hover:bg-[#2b2b2b]!",
