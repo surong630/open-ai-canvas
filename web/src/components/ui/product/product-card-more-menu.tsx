@@ -14,7 +14,6 @@ const menuStyle = {
     "--workspace-overlay-selected": "#4a4a4a",
     "--r-lg": "10px",
     "--r-sm": "6px",
-    "--background": "red !important",
     "--elevation-overlay": "0 4px 10px #0000004d",
 } as CSSProperties;
 
@@ -31,13 +30,8 @@ export function ProductCardMoreMenu({ ariaLabel, items, buttonClassName, placeme
             rootClassName="product-card-more-menu"
             placement={placement}
             trigger={["click"]}
-            styles={{
-                root: {
-                    background: "red !important"
-                }
-            }}
             menu={{
-                className: "",
+                className: "product-card-more-menu__list",
                 style: menuStyle,
                 items,
                 onClick: ({ domEvent }) => domEvent.stopPropagation(),

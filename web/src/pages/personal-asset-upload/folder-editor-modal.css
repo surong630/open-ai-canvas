@@ -1,7 +1,7 @@
 .lanhu-folder-editor-modal .ant-modal-container {
     overflow: hidden;
     border: 1px solid rgba(83.00000265240669, 83.00000265240669, 83.00000265240669, 1);
-    border-radius: 0;
+    border-radius: 12px;
     background: rgba(38.0000015348196, 38.0000015348196, 38.0000015348196, 1);
     color: rgba(255, 255, 255, 1);
 }
@@ -84,7 +84,7 @@
     height: 32px;
     padding: 0;
     border: 0;
-    border-radius: 0;
+    border-radius: 5px;
     font-family: inherit;
     font-size: 14px;
     line-height: 20px;

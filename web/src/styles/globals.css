@@ -927,6 +927,8 @@
     --card-foreground: oklch(0.145 0 0);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.145 0 0);
+    --dropdown-menu-background: var(--popover);
+    --dropdown-menu-hover: color-mix(in srgb, var(--popover-foreground) 7%, var(--popover));
     --primary: oklch(0.205 0 0);
     --primary-foreground: oklch(0.985 0 0);
     --secondary: oklch(0.97 0 0);
@@ -970,6 +972,8 @@
     --card-foreground: #ffffff;
     --popover: #222222;
     --popover-foreground: #ffffff;
+    --dropdown-menu-background: #363636;
+    --dropdown-menu-hover: #4a4a4a;
     --primary: oklch(0.922 0 0);
     --primary-foreground: oklch(0.205 0 0);
     --secondary: oklch(0.269 0 0);
@@ -18680,6 +18684,10 @@ html:not(.dark) .creation-home .creation-user-message-copy-wrap { box-shadow: 0 
     box-shadow: var(--elevation-overlay) !important;
 }
 
+:where(.ant-dropdown-menu) {
+    background: var(--dropdown-menu-background) !important;
+}
+
 :where(.ant-select-item-option, .ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title, .ant-cascader-menu-item, .ant-tree-select-tree-node-content-wrapper) {
     min-height: 36px;
     margin-block: 2px;
@@ -18689,6 +18697,15 @@ html:not(.dark) .creation-home .creation-user-message-copy-wrap { box-shadow: 0 
 
 :where(.ant-select-item-option-active:not(.ant-select-item-option-disabled), .ant-dropdown-menu-item:hover, .ant-cascader-menu-item-active, .ant-tree-select-tree-node-content-wrapper:hover) {
     background: color-mix(in srgb, var(--popover-foreground) 7%, var(--popover)) !important;
+}
+
+:where(
+    .ant-dropdown-menu-item:not(.ant-dropdown-menu-item-disabled):hover,
+    .ant-dropdown-menu-item-active:not(.ant-dropdown-menu-item-disabled),
+    .ant-dropdown-menu-submenu-title:hover,
+    .ant-dropdown-menu-submenu-active > .ant-dropdown-menu-submenu-title
+) {
+    background: var(--dropdown-menu-hover) !important;
 }
 
 :where(.ant-select-item-option-selected:not(.ant-select-item-option-disabled), .ant-dropdown-menu-item-selected, .ant-tree-select-tree-node-content-wrapper.ant-tree-node-selected) {

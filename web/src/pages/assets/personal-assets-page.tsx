@@ -26,12 +26,7 @@ import { cn } from "@/lib/utils";
 import type { AssetFolder } from "@/services/api/user-data";
 
 import type { LibraryAsset } from "./asset-view-types";
-import {
-    LanhuAssetUploadModal,
-    LanhuFolderEditorModal,
-    LanhuTagManagerModal,
-    type LanhuAssetUploadValue,
-} from "../personal-asset-upload";
+import { LanhuAssetUploadModal, LanhuFolderEditorModal, LanhuTagManagerModal, type LanhuAssetUploadValue } from "../personal-asset-upload";
 
 type FolderOption = { label: string; value: string };
 type ViewMode = "library" | "trash";
@@ -110,14 +105,14 @@ export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
 
     return (
         <section className="relative flex h-full min-h-0 flex-col bg-[#191919] text-white max-[720px]:min-h-[calc(100dvh-120px)]">
-            <header className="grid min-h-14 shrink-0 grid-cols-[minmax(126px,1fr)_minmax(190px,250px)_minmax(170px,220px)_auto] items-center gap-3 border-b border-[#303030] px-10 py-[9px] max-[1040px]:grid-cols-[minmax(120px,1fr)_minmax(180px,220px)_minmax(170px,210px)] max-[1040px]:px-6 max-[720px]:flex max-[720px]:flex-wrap max-[720px]:px-4 max-[720px]:py-3.5">
+            <header className="grid min-h-14 shrink-0 grid-cols-[minmax(126px,1fr)_minmax(190px,250px)_minmax(170px,220px)_auto] items-center gap-3 px-10 py-5 max-[1040px]:grid-cols-[minmax(120px,1fr)_minmax(180px,220px)_minmax(170px,210px)] max-[1040px]:px-6 max-[720px]:flex max-[720px]:flex-wrap max-[720px]:px-4 max-[720px]:py-3.5 pb-0">
                 <div className="flex min-w-0 items-center gap-2 max-[720px]:w-full">
                     {props.folderFilter !== "all" && props.viewMode === "library" ? (
                         <button type="button" className="inline-flex size-6 items-center justify-center border-0 bg-transparent p-0 text-[25px] text-[#d6d6d6]" onClick={props.onBackToLibrary} aria-label="返回">
                             ‹
                         </button>
                     ) : null}
-                    <h1 className="m-0 overflow-hidden text-base leading-6 font-bold text-ellipsis whitespace-nowrap text-[#f5f5f5]">{props.viewMode === "trash" ? "回收站" : props.folderFilter === "all" ? "个人资产库" : folderName || "未分类"}</h1>
+                    <h1 className="m-0 overflow-hidden text-xl leading-6 font-bold text-ellipsis whitespace-nowrap text-[#f5f5f5]">{props.viewMode === "trash" ? "回收站" : props.folderFilter === "all" ? "个人资产库" : folderName || "未分类"}</h1>
                 </div>
                 <ProductBlackSelect
                     aria-label="按标签搜索资产"
@@ -170,7 +165,7 @@ export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
                 )}
             </header>
 
-            <div className="min-h-0 flex-1 overflow-y-auto px-10 pt-3.5 pb-[120px] [scrollbar-color:#4a4a4a_transparent] [scrollbar-width:thin] max-[1040px]:px-6 max-[720px]:overflow-visible max-[720px]:px-4 max-[720px]:pt-3.5 max-[720px]:pb-[100px]">
+            <div className="min-h-0 flex-1 overflow-y-auto px-10 pt-4 pb-[120px] [scrollbar-color:#4a4a4a_transparent] [scrollbar-width:thin] max-[1040px]:px-6 max-[720px]:overflow-visible max-[720px]:px-4 max-[720px]:pt-3.5 max-[720px]:pb-[100px]">
                 {props.viewMode === "trash" ? (
                     <p className="mt-0 mb-3.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-[9px] text-xs text-[#c9a66d]">回收站内的资产将在 {props.retentionDays} 天后自动清除，您可以在此还原或彻底删除。</p>
                 ) : null}
@@ -252,14 +247,7 @@ export function PersonalAssetsPage(props: PersonalAssetsPageProps) {
                 onSave={submitUpload}
             />
 
-            <LanhuFolderEditorModal
-                open={folderCreateOpen}
-                mode="create"
-                value={folderCreateName}
-                onChange={setFolderCreateName}
-                onCancel={closeFolderCreate}
-                onSave={submitFolderCreate}
-            />
+            <LanhuFolderEditorModal open={folderCreateOpen} mode="create" value={folderCreateName} onChange={setFolderCreateName} onCancel={closeFolderCreate} onSave={submitFolderCreate} />
 
             <LanhuTagManagerModal
                 open={tagManagerOpen}
@@ -277,7 +265,7 @@ function PersonalFolderCard({ folder, count, onOpen, onRename, onDelete }: { fol
     return (
         <article className="group min-w-0 text-white">
             <button type="button" className="relative flex aspect-[1.24/1] w-full items-center justify-center overflow-hidden rounded-lg border-0 bg-[#242424] p-0" onClick={onOpen} aria-label={`打开文件夹 ${folder.name}`}>
-                <span className="absolute top-0 left-0 z-[2] inline-flex h-[18px] items-center rounded-[7px_0_5px_0] bg-[#131313e0] px-1.5 text-[10px] leading-[18px]">文件夹</span>
+                <span className="absolute top-1.5 left-1.5 z-[2] inline-flex h-[18px] items-center rounded-[2px] bg-[#131313e0] px-1.5 text-[10px] leading-[18px]">文件夹</span>
                 <img className="size-[60px] object-contain" src={personalFolderPlaceholder} alt="" aria-hidden />
             </button>
             <div className="mt-[5px] flex h-7 min-w-0 items-center gap-1 overflow-hidden px-[3px]">
@@ -387,7 +375,7 @@ function PersonalAssetCard({
     const extraTagCount = Math.max(0, (asset.tags?.length || 0) - visibleTags.length);
     return (
         <article className="group min-w-0 text-white">
-            <div className={cn("relative flex aspect-[1.24/1] w-full items-center justify-center overflow-hidden rounded-lg border border-transparent bg-[#242424]", selected && "border-white")}>
+            <div className={cn("relative flex aspect-[1.2/1] w-full items-center justify-center overflow-hidden rounded-lg border border-transparent bg-[#242424]", selected && "border-white")}>
                 <button type="button" className="absolute inset-0 size-full border-0 bg-transparent p-0" onClick={onOpen} aria-label={`查看资产 ${asset.title}`}>
                     {asset.kind === "audio" ? (
                         <img className="size-[60px] object-contain" src={personalAudioPlaceholder} alt="" aria-hidden />
@@ -400,7 +388,7 @@ function PersonalAssetCard({
                     )}
                     {asset.kind === "video" ? <img className="absolute top-1/2 left-1/2 z-[2] size-8 -translate-x-1/2 -translate-y-1/2" src={personalPlayIcon} alt="" aria-hidden /> : null}
                 </button>
-                <span className="absolute top-0 left-0 z-[2] inline-flex h-[18px] items-center rounded-[7px_0_5px_0] bg-[#131313e0] px-1.5 text-[10px] leading-[18px]">{assetKindLabel(asset.kind)}</span>
+                <span className="absolute top-1.5 left-1.5 z-[2] inline-flex h-[18px] items-center rounded-[2px] bg-[#131313e0] px-1.5 text-[10px] leading-[18px]">{assetKindLabel(asset.kind)}</span>
                 <label className={cn("absolute top-[7px] right-[7px] z-[3] hidden cursor-pointer group-hover:block", selected && "block")}>
                     <input className="sr-only" type="checkbox" checked={selected} onChange={(event) => onSelect(event.target.checked)} />
                     <img className="size-4" src={selected ? personalCheckboxSelected : personalCheckboxNormal} alt="" aria-hidden />
@@ -428,11 +416,7 @@ function PersonalAssetCard({
                         <button type="button" className="w-0 min-w-0 flex-1 truncate border-0 bg-transparent p-0 text-left text-sm leading-5 font-bold text-white" onClick={onOpen} title={displayTitle}>
                             {displayTitle}
                         </button>
-                        <ProductCardMoreMenu
-                            ariaLabel={`更多资产操作 ${asset.title}`}
-                            buttonClassName="opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
-                            items={menuItems}
-                        />
+                        <ProductCardMoreMenu ariaLabel={`更多资产操作 ${asset.title}`} buttonClassName="opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100" items={menuItems} />
                     </>
                 )}
             </div>

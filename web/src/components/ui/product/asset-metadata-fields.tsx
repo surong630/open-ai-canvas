@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import { Select as AntSelect } from "antd";
+import { useMemo, useState, type ReactNode } from "react";
+import { Check, Plus, X } from "lucide-react";
 
 import selectArrowIcon from "@/assets/product-assets/select-arrow.svg";
 import { cn } from "@/lib/utils";
@@ -55,6 +55,35 @@ export function AssetMetadataFields({
     onTagsChange,
 }: AssetMetadataFieldsProps) {
     const folderOptions = folders.length ? folders : emptyFolderOptions;
+    const [tagPopupOpen, setTagPopupOpen] = useState(false);
+    const [creatingTag, setCreatingTag] = useState(false);
+    const [newTagName, setNewTagName] = useState("");
+    const [createdTags, setCreatedTags] = useState<string[]>([]);
+    const mergedTagOptions = useMemo(() => {
+        const values = new Set(tagOptions.map((option) => option.value));
+        const options = [...tagOptions];
+        [...createdTags, ...tags].forEach((tag) => {
+            if (values.has(tag)) return;
+            values.add(tag);
+            options.push({ label: tag, value: tag });
+        });
+        return options;
+    }, [createdTags, tagOptions, tags]);
+
+    const cancelTagCreation = () => {
+        setCreatingTag(false);
+        setNewTagName("");
+    };
+
+    const createTag = () => {
+        const name = newTagName.trim();
+        if (!name) return;
+        const existing = mergedTagOptions.find((option) => option.value.toLocaleLowerCase() === name.toLocaleLowerCase());
+        const value = existing?.value ?? name;
+        if (!existing) setCreatedTags((current) => [...current, name]);
+        if (!tags.includes(value)) onTagsChange([...tags, value]);
+        cancelTagCreation();
+    };
 
     return (
         <div className={cn("asset-metadata-fields", className)}>
@@ -93,16 +122,115 @@ export function AssetMetadataFields({
                     aria-label="设置标签"
                     size="small"
                     mode="tags"
+                    open={tagPopupOpen}
                     value={tags}
-                    options={tagOptions}
+                    options={mergedTagOptions}
                     popupMatchSelectWidth={false}
                     virtual={false}
                     tokenSeparators={[",", "，"]}
                     placeholder="请选择标签"
                     notFoundContent={createTagHint}
                     suffixIcon={selectArrow}
-className="asset-save-dialog__select mt-2! bg-[#373737]! w-full!"
-                                popupClassName="asset-save-dialog__popup"
+                    className="asset-save-dialog__select mt-2! w-full! bg-[#373737]!"
+                    popupClassName="asset-save-dialog__popup asset-metadata-fields__tag-popup"
+                    popupRender={() => (
+                        <div className="asset-metadata-fields__tag-menu" onMouseDown={(event) => event.stopPropagation()}>
+                            <div className="asset-metadata-fields__tag-menu-header">
+                                <span>标签</span>
+                                <button
+                                    type="button"
+                                    aria-label="添加标签"
+                                    aria-pressed={creatingTag}
+                                    onMouseDown={(event) => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                    }}
+                                    onClick={() => {
+                                        setTagPopupOpen(true);
+                                        if (creatingTag) cancelTagCreation();
+                                        else setCreatingTag(true);
+                                    }}
+                                >
+                                    <Plus aria-hidden="true" />
+                                </button>
+                            </div>
+                            {creatingTag ? (
+                                <div className="asset-metadata-fields__tag-create">
+                                    <input
+                                        autoFocus
+                                        value={newTagName}
+                                        aria-label="新标签名称"
+                                        maxLength={40}
+                                        onChange={(event) => setNewTagName(event.currentTarget.value)}
+                                        onKeyDown={(event) => {
+                                            if (event.key === "Enter") {
+                                                event.preventDefault();
+                                                createTag();
+                                            } else if (event.key === "Escape") {
+                                                event.stopPropagation();
+                                                cancelTagCreation();
+                                            }
+                                        }}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="is-confirm"
+                                        aria-label="确认添加标签"
+                                        disabled={!newTagName.trim()}
+                                        onMouseDown={(event) => {
+                                            event.preventDefault();
+                                            event.stopPropagation();
+                                        }}
+                                        onClick={createTag}
+                                    >
+                                        <Check aria-hidden="true" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        aria-label="取消添加标签"
+                                        onMouseDown={(event) => {
+                                            event.preventDefault();
+                                            event.stopPropagation();
+                                        }}
+                                        onClick={cancelTagCreation}
+                                    >
+                                        <X aria-hidden="true" />
+                                    </button>
+                                </div>
+                            ) : null}
+                            <div className="asset-metadata-fields__tag-options" role="listbox" aria-label="标签列表" aria-multiselectable="true">
+                                {mergedTagOptions.map((option) => {
+                                    const selected = tags.includes(option.value);
+                                    return (
+                                        <button
+                                            key={option.value}
+                                            type="button"
+                                            role="option"
+                                            aria-selected={selected}
+                                            disabled={option.disabled}
+                                            className="asset-metadata-fields__tag-option"
+                                            onMouseDown={(event) => {
+                                                event.preventDefault();
+                                                event.stopPropagation();
+                                            }}
+                                            onClick={() => {
+                                                setTagPopupOpen(true);
+                                                onTagsChange(selected ? tags.filter((tag) => tag !== option.value) : [...tags, option.value]);
+                                            }}
+                                        >
+                                            <span>{option.label}</span>
+                                            {selected ? <Check aria-hidden="true" /> : null}
+                                        </button>
+                                    );
+                                })}
+                                {mergedTagOptions.length === 0 ? <span className="asset-metadata-fields__tag-empty">暂无标签，请点击加号添加</span> : null}
+                            </div>
+                        </div>
+                    )}
+                    onOpenChange={(open) => {
+                        setTagPopupOpen(open);
+                        if (!open) cancelTagCreation();
+                    }}
                     onChange={onTagsChange}
                 />
             </div>

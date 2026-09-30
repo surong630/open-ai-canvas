@@ -120,3 +120,173 @@ body .asset-metadata-fields__popup .ant-select-item-option-selected:not(.ant-sel
 .asset-metadata-fields__empty-option {
     color: #858585;
 }
+
+body .asset-metadata-fields__tag-popup.ant-select-dropdown,
+body .ant-select-dropdown:has(.asset-metadata-fields__tag-menu) {
+    --popover: rgba(38, 38, 38, 1);
+    --popover-foreground: rgba(255, 255, 255, 1);
+    min-width: 237px !important;
+    max-height: 180px;
+    padding: 0 !important;
+    border-color: rgba(83, 83, 83, 1) !important;
+    border-radius: 8px !important;
+    background: rgba(38, 38, 38, 1) !important;
+}
+
+.asset-metadata-fields__tag-menu {
+    display: flex;
+    max-height: 180px;
+    flex-direction: column;
+    border-radius: 8px;
+    background: rgba(38, 38, 38, 1);
+    padding: 10px 11px 8px;
+    color: rgba(255, 255, 255, 1);
+}
+
+.asset-metadata-fields__tag-menu-header {
+    display: flex;
+    height: 22px;
+    flex: 0 0 auto;
+    align-items: flex-start;
+    justify-content: space-between;
+    color: rgba(137, 137, 137, 1);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 17px;
+}
+
+.asset-metadata-fields__tag-menu button {
+    display: inline-grid;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    padding: 0;
+    color: rgba(151, 151, 151, 1);
+    cursor: pointer;
+}
+
+.asset-metadata-fields__tag-menu-header button {
+    width: 16px;
+    height: 16px;
+}
+
+.asset-metadata-fields__tag-menu-header svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 1.5;
+}
+
+.asset-metadata-fields__tag-create {
+    display: grid;
+    grid-template-columns: minmax(0, 160px) 18px 18px;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 2px;
+}
+
+.asset-metadata-fields__tag-create input {
+    width: 160px;
+    height: 30px;
+    border: 1px solid rgba(236, 236, 236, 1);
+    border-radius: 4px;
+    outline: 0;
+    background: rgba(55, 55, 55, 1);
+    padding: 0 9px;
+    color: rgba(255, 255, 255, 1);
+    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+    font-size: 12px;
+    line-height: 17px;
+}
+
+.asset-metadata-fields__tag-create button {
+    width: 18px;
+    height: 30px;
+}
+
+.asset-metadata-fields__tag-create button:disabled {
+    cursor: not-allowed;
+    opacity: 0.35;
+}
+
+.asset-metadata-fields__tag-create button.is-confirm {
+    color: rgba(0, 214, 143, 1);
+}
+
+.asset-metadata-fields__tag-create svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
+
+.asset-metadata-fields__tag-options {
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-color: rgba(126, 126, 126, 1) transparent;
+    scrollbar-width: thin;
+}
+
+.asset-metadata-fields__tag-option {
+    display: flex !important;
+    width: 100%;
+    min-height: 33px;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0;
+    background: rgba(38, 38, 38, 1) !important;
+    padding: 7px 4px !important;
+    color: rgba(255, 255, 255, 1) !important;
+    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 17px;
+    text-align: left;
+}
+
+.asset-metadata-fields__tag-option:hover,
+.asset-metadata-fields__tag-option[aria-selected="true"] {
+    background: rgba(55, 55, 55, 1) !important;
+}
+
+.asset-metadata-fields__tag-option:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.asset-metadata-fields__tag-option svg {
+    width: 16px;
+    height: 13px;
+    color: rgba(0, 214, 143, 1);
+    stroke-width: 2;
+}
+
+.asset-metadata-fields__tag-empty {
+    display: block;
+    padding: 8px 4px;
+    color: rgba(137, 137, 137, 1);
+    font-size: 12px;
+    line-height: 17px;
+}
+
+body .asset-metadata-fields__tag-popup .ant-select-item-option,
+body .asset-metadata-fields__tag-menu .ant-select-item-option {
+    min-height: 33px !important;
+    border-radius: 0 !important;
+    background: rgba(38, 38, 38, 1) !important;
+    padding: 7px 4px !important;
+    color: rgba(255, 255, 255, 1) !important;
+    font-size: 12px !important;
+    line-height: 17px !important;
+}
+
+body .asset-metadata-fields__tag-menu .ant-select-item-option-active:not(.ant-select-item-option-disabled),
+body .asset-metadata-fields__tag-menu .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background: rgba(55, 55, 55, 1) !important;
+    color: rgba(255, 255, 255, 1) !important;
+}
+
+body .asset-metadata-fields__tag-menu .ant-select-item-option-state {
+    color: rgba(0, 214, 143, 1) !important;
+}

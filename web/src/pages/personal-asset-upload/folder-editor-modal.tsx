@@ -49,7 +49,7 @@ export function LanhuFolderEditorModal({
                 </header>
 
                 <label className="lanhu-folder-editor-field">
-                    <span>*文件夹名称</span>
+                    <span>*<span className="text-[#818181]">文件夹名称</span></span>
                     <input
                         autoFocus
                         maxLength={40}

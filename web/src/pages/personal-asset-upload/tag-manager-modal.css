@@ -169,13 +169,13 @@
     padding: 0;
     border: 0;
     background: transparent;
-    color: rgba(169, 152, 255, 1);
+    color: #A998FF;
     font-size: 13px;
     cursor: pointer;
 }
 
 .lanhu-tag-manager-actions button.is-danger {
-    color: rgba(250, 81, 81, 1);
+    color: #FA5151;
 }
 
 .lanhu-tag-manager-pagination {

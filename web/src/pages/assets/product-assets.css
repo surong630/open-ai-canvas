@@ -8,7 +8,7 @@
     box-shadow: none;
 }
 .asset-save-dialog {
-    height: 349px;
+    height: 380px;
     color: #fff;
     font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
 }
@@ -65,7 +65,7 @@
 .asset-save-dialog__body {
     position: relative;
     display: grid;
-    height: 300px;
+    height: 324px;
     grid-template-columns: 200px minmax(0, 1fr);
     gap: 24px;
     padding: 24px 26px;

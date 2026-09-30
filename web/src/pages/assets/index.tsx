@@ -1136,7 +1136,7 @@ function SaveAssetsModal({
                     </button>
                 </header>
                 <div className="asset-save-dialog__body">
-                    <div className="asset-save-dialog__previews">
+                    <div className={cn("asset-save-dialog__previews", assets.length > 1 && "asset-save-dialog__previews__more")}>
                         {assets.map((asset) => (
                             <figure key={asset.id} className="asset-save-dialog__preview">
                                 <div>
