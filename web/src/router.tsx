@@ -36,6 +36,7 @@ const SystemPerformancePage = lazy(() => import("@/pages/admin/settings/system-p
 const StoryboardPromptsPage = lazy(() => import("@/pages/admin/storyboard-prompts/storyboard-prompts-page"));
 const UsersPage = lazy(() => import("@/pages/admin/users/users-page"));
 const AssetsPage = lazy(loadAssetsPage);
+const ProductAssetsPage = lazy(() => import("@/pages/assets/product-assets-page"));
 const ProductHomePage = lazy(() => import("@/pages/product-home"));
 const CanvasProjectsPage = lazy(() => import("@/pages/canvas-projects"));
 const CreditsPage = lazy(() => import("@/pages/credits"));
@@ -70,7 +71,7 @@ function fullScreenDeferred(element: ReactNode) {
 function AuthenticatedWorkspaceLayout() {
     const { pathname } = useLocation();
     const isCanvasProjectRoute = pathname.startsWith("/canvas/");
-    const usesEmailCodeLogin = pathname === "/canvas" || isCanvasProjectRoute || pathname === "/assets";
+    const usesEmailCodeLogin = pathname === "/canvas" || isCanvasProjectRoute || pathname === "/assets" || pathname.startsWith("/product-assets");
     const fallback = isCanvasProjectRoute ? <CanvasRefreshShell /> : <FullScreenLoader label="正在打开创作空间" detail="准备当前页面" />;
     return <RequireAuth loginPath={usesEmailCodeLogin ? "/email-login" : "/login"}><Suspense fallback={fallback}><UserLayout><Outlet /></UserLayout></Suspense></RequireAuth>;
 }
@@ -124,6 +125,8 @@ export const router = createBrowserRouter([
                 ),
             },
             { path: "/assets", element: <RequireAuth>{deferred(<AssetsPage />)}</RequireAuth> },
+            { path: "/product-assets", element: <RequireAuth>{deferred(<ProductAssetsPage />)}</RequireAuth> },
+            { path: "/product-assets/library", element: <RequireAuth>{deferred(<ProductAssetsPage />)}</RequireAuth> },
             { path: "/skills", element: <RequireAuth>{deferred(<SkillsPage />)}</RequireAuth> },
             {
                 path: "/plugins",

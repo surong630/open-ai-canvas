@@ -20,7 +20,7 @@ export function AppWorkspaceShell({ children }: { children: ReactNode }) {
     const [desktopSidebarCollapsed, setDesktopSidebarCollapsed] = useState(readWorkspaceSidebarCollapsed);
     const [paletteOpen, setPaletteOpen] = useState(false);
 
-    const hideChrome = pathname.startsWith("/admin") || pathname === "/assets" || /^\/canvas\/[^/]+/.test(pathname);
+    const hideChrome = pathname.startsWith("/admin") || pathname === "/assets" || pathname.startsWith("/product-assets") || /^\/canvas\/[^/]+/.test(pathname);
     const showGlobalTopBar = !hideChrome;
     // 自带完整页面壳的路由不应再套工作区卡片圆角，否则四角会露出底层画布。
     const spatialWorkbench = !hideChrome && isSpatialWorkbenchPath(pathname);

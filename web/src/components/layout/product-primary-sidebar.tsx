@@ -15,7 +15,7 @@ import "./product-primary-sidebar.css";
 const productNavigation = [
     { to: "/home", label: "首页", normalIcon: navHomeNormal, selectedIcon: navHomeSelected, end: true },
     { to: "/canvas-projects", label: "项目", normalIcon: navProjectsNormal, selectedIcon: navProjectsSelected, end: false },
-    { to: "/assets", label: "资产", normalIcon: navAssetsNormal, selectedIcon: navAssetsSelected, end: true },
+    { to: "/product-assets", label: "资产", normalIcon: navAssetsNormal, selectedIcon: navAssetsSelected, end: false },
 ] as const;
 
 export function ProductPrimarySidebar({ className }: { className?: string }) {
