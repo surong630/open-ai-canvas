@@ -1,0 +1,113 @@
+.invite-members-modal .ant-modal-container {
+    height: 266px;
+    border: 1px solid rgba(83,83,83,1);
+    border-radius: 12px;
+    background: rgba(38,38,38,1);
+    box-shadow: 0 12px 36px #00000073;
+}
+
+.invite-members-modal__shell {
+    height: 266px;
+    color: rgba(255,255,255,1);
+}
+
+.invite-members-modal__header {
+    display: flex;
+    height: 44px;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(60,60,60,1);
+    padding: 0 23px;
+}
+
+.invite-members-modal__header h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 18px;
+}
+
+.invite-members-modal__header button {
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: rgba(255,255,255,1);
+    cursor: pointer;
+}
+
+.invite-members-modal__header button:hover { background: #ffffff12; }
+.invite-members-modal__header svg { width: 16px; height: 16px; }
+
+.invite-members-modal__body {
+    position: relative;
+    height: 221px;
+    padding: 18px 23px 16px;
+}
+
+.invite-members-modal__tabs {
+    height: 35px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(58,58,58,1);
+}
+
+.invite-members-modal__tabs span {
+    display: inline-flex;
+    height: 35px;
+    align-items: flex-start;
+    border-bottom: 1px solid rgba(255,255,255,1);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+}
+
+.invite-members-modal__link {
+    height: 32px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: rgba(55,55,55,1);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 32px;
+    padding: 0 6px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.invite-members-modal__body p {
+    margin: 5px 0 0;
+    color: rgba(129,129,129,1);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+}
+
+.invite-members-modal__body p strong {
+    color: #ff5252;
+    font-weight: 600;
+}
+
+.invite-members-modal__copy {
+    position: absolute;
+    right: 23px;
+    bottom: 16px;
+    width: 80px;
+    height: 32px;
+    border: 0;
+    border-radius: 6px;
+    background: rgba(255,255,255,1);
+    color: rgba(38,38,38,1);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.invite-members-modal__copy:hover { background: #e7e7e7; }
+
+@media (max-width: 640px) {
+    .invite-members-modal .ant-modal { max-width: calc(100vw - 24px); }
+    .invite-members-modal__body p { font-size: 13px; }
+}

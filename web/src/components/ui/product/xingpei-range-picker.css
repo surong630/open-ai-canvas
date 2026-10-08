@@ -1,0 +1,82 @@
+.xingpei-range-picker.ant-picker {
+    width: 223px;
+    height: 32px;
+    overflow: hidden;
+    border: 1px solid #272727 !important;
+    border-radius: 10px !important;
+    background: #2c2c2c !important;
+    box-shadow: none !important;
+    padding: 0 11px;
+}
+
+.xingpei-range-picker.ant-picker:hover,
+.xingpei-range-picker.ant-picker-focused {
+    border-color: #3a3a3a !important;
+    background: #2c2c2c !important;
+    box-shadow: none !important;
+}
+
+.xingpei-range-picker .ant-picker-input > input {
+    color: #ffffff !important;
+    font-size: 13px;
+}
+
+.xingpei-range-picker .ant-picker-input > input::placeholder,
+.xingpei-range-picker .ant-picker-range-separator,
+.xingpei-range-picker .ant-picker-suffix,
+.xingpei-range-picker .ant-picker-clear {
+    color: #818181 !important;
+}
+
+.xingpei-range-picker .ant-picker-range-separator { padding: 0 6px; }
+.xingpei-range-picker .ant-picker-suffix { margin-left: 8px; }
+.xingpei-range-picker .ant-picker-suffix img { width: 16px; height: 16px; object-fit: contain; }
+.xingpei-range-picker .ant-picker-clear { background: #2c2c2c !important; }
+
+body .xingpei-range-picker-popup.ant-picker-dropdown,
+body .xingpei-range-picker-popup .ant-picker-panel-container,
+body .xingpei-range-picker-popup .ant-picker-panel-layout,
+body .xingpei-range-picker-popup .ant-picker-panel,
+body .xingpei-range-picker-popup .ant-picker-date-panel,
+body .xingpei-range-picker-popup .ant-picker-month-panel,
+body .xingpei-range-picker-popup .ant-picker-year-panel,
+body .xingpei-range-picker-popup .ant-picker-decade-panel {
+    background: #2c2c2c !important;
+    color: #ffffff !important;
+}
+
+body .xingpei-range-picker-popup .ant-picker-panel-container {
+    overflow: hidden;
+    border: 1px solid #272727 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 24px #00000066 !important;
+}
+
+body .xingpei-range-picker-popup .ant-picker-panel,
+body .xingpei-range-picker-popup .ant-picker-header,
+body .xingpei-range-picker-popup .ant-picker-footer {
+    border-color: #3a3a3a !important;
+}
+
+body .xingpei-range-picker-popup .ant-picker-header,
+body .xingpei-range-picker-popup .ant-picker-header button,
+body .xingpei-range-picker-popup .ant-picker-header-view,
+body .xingpei-range-picker-popup .ant-picker-header-view button {
+    color: #f5f5f5 !important;
+}
+
+body .xingpei-range-picker-popup .ant-picker-content th { color: #929292 !important; }
+body .xingpei-range-picker-popup .ant-picker-cell { color: #666666 !important; }
+body .xingpei-range-picker-popup .ant-picker-cell-in-view { color: #e8e8e8 !important; }
+body .xingpei-range-picker-popup .ant-picker-cell .ant-picker-cell-inner { border-radius: 7px; }
+body .xingpei-range-picker-popup .ant-picker-cell-in-view:not(.ant-picker-cell-disabled) .ant-picker-cell-inner:hover { background: #3a3a3a !important; }
+body .xingpei-range-picker-popup .ant-picker-cell-in-range::before,
+body .xingpei-range-picker-popup .ant-picker-cell-range-hover::after,
+body .xingpei-range-picker-popup .ant-picker-cell-range-start::before,
+body .xingpei-range-picker-popup .ant-picker-cell-range-end::before { background: #3a3a3a !important; }
+body .xingpei-range-picker-popup .ant-picker-cell-range-start .ant-picker-cell-inner,
+body .xingpei-range-picker-popup .ant-picker-cell-range-end .ant-picker-cell-inner,
+body .xingpei-range-picker-popup .ant-picker-cell-selected .ant-picker-cell-inner {
+    background: #ffffff !important;
+    color: #2c2c2c !important;
+}

@@ -1,0 +1,76 @@
+.xingpei-select.ant-select {
+    --ant-select-background-color: #2c2c2c !important;
+    --ant-select-border-color: #272727 !important;
+    --ant-select-border-radius: 10px !important;
+    width: 223px !important;
+    height: 32px !important;
+    overflow: hidden;
+    border-radius: 10px !important;
+    background: #2c2c2c;
+}
+
+.xingpei-select.ant-select .ant-select-selector {
+    height: 32px !important;
+    border: 1px solid #272727 !important;
+    border-radius: 10px !important;
+    background: #2c2c2c !important;
+    box-shadow: none !important;
+    padding: 0 11px !important;
+}
+
+.xingpei-select.ant-select:hover .ant-select-selector {
+    border-color: #3a3a3a !important;
+}
+
+.xingpei-select.ant-select-focused .ant-select-selector,
+.xingpei-select.ant-select-open .ant-select-selector {
+    border-color: #4a4a4a !important;
+    box-shadow: none !important;
+}
+
+.xingpei-select .ant-select-selection-wrap,
+.xingpei-select .ant-select-selection-search,
+.xingpei-select .ant-select-selection-item,
+.xingpei-select .ant-select-selection-placeholder {
+    height: 30px !important;
+    line-height: 30px !important;
+}
+
+.xingpei-select .ant-select-selection-item {
+    color: #ffffff !important;
+    font-size: 13px;
+}
+
+.xingpei-select .ant-select-selection-placeholder,
+.xingpei-select .ant-select-arrow,
+.xingpei-select .ant-select-clear {
+    color: #818181 !important;
+}
+
+.xingpei-select .ant-select-clear { background: #2c2c2c !important; }
+
+body .xingpei-select-popup.ant-select-dropdown {
+    overflow: hidden;
+    border: 1px solid #272727;
+    border-radius: 10px !important;
+    background: #2c2c2c;
+    padding: 5px;
+    box-shadow: 0 8px 24px #00000066;
+}
+
+body .xingpei-select-popup .ant-select-item-option {
+    min-height: 32px;
+    border-radius: 7px;
+    background: transparent;
+    color: #e8e8e8;
+    font-size: 13px;
+}
+
+body .xingpei-select-popup .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background: #3a3a3a;
+}
+
+body .xingpei-select-popup .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background: #444444;
+    color: #ffffff;
+}

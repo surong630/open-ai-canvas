@@ -1,0 +1,156 @@
+.dissolve-team-modal .ant-modal-container {
+    overflow: hidden;
+    border: 1px solid rgba(83, 83, 83, 1);
+    background: rgba(38, 38, 38, 1);
+    color: rgba(255, 255, 255, 1);
+}
+
+.dissolve-team-modal .ant-modal-close {
+    top: 16.5px;
+    right: 24px;
+    width: 12px;
+    height: 12px;
+    color: rgba(255, 255, 255, 1);
+}
+
+.dissolve-team-modal .ant-modal-close svg {
+    width: 12px;
+    height: 12px;
+}
+
+.dissolve-team-modal__shell {
+    position: relative;
+    width: 420px;
+    height: 253px;
+    overflow: hidden;
+    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+}
+
+.dissolve-team-modal__header {
+    height: 47.5px;
+    border-bottom: 1px solid rgba(60, 60, 60, 1);
+}
+
+.dissolve-team-modal__header h2 {
+    position: absolute;
+    top: 11.5px;
+    left: 24px;
+    margin: 0;
+    color: rgba(255, 255, 255, 1);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 21px;
+}
+
+.dissolve-team-modal__body {
+    display: contents;
+}
+
+.dissolve-team-modal__body p {
+    position: absolute;
+    left: 24px;
+    margin: 0;
+    color: rgba(146, 146, 146, 1);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.dissolve-team-modal__body p:first-child {
+    top: 71.5px;
+    width: 300px;
+    height: 20px;
+}
+
+.dissolve-team-modal__body p:last-child {
+    top: 160.5px;
+    width: 300px;
+    height: 20px;
+}
+
+.dissolve-team-modal__body ul {
+    position: absolute;
+    top: 103.5px;
+    left: 24px;
+    display: grid;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.dissolve-team-modal__body li {
+    position: relative;
+    min-height: 20px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    padding-left: 12px;
+}
+
+.dissolve-team-modal__body li strong {
+    color: rgba(255, 255, 255, 1);
+    font-weight: 700;
+}
+
+.dissolve-team-modal__body li span {
+    color: #929292;
+}
+
+.dissolve-team-modal__body li::before {
+    position: absolute;
+    top: 7px;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(216, 216, 216, 1);
+    content: "";
+}
+
+.dissolve-team-modal__footer {
+    position: absolute;
+    top: 204.5px;
+    right: 24px;
+    display: flex;
+    gap: 8px;
+}
+
+.dissolve-team-modal__footer button {
+    width: 52px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    cursor: pointer;
+}
+
+.dissolve-team-modal__cancel {
+    background: rgba(54, 54, 54, 1);
+    color: rgba(255, 255, 255, 1);
+}
+
+.dissolve-team-modal__confirm {
+    background: rgba(255, 255, 255, 1);
+    color: rgba(38, 38, 38, 1);
+}
+
+.dissolve-team-modal__footer button:focus-visible,
+.dissolve-team-modal .ant-modal-close:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 1);
+    outline-offset: 2px;
+}
+
+@media (max-width: 460px) {
+    .dissolve-team-modal .ant-modal {
+        max-width: calc(100vw - 24px);
+    }
+
+    .dissolve-team-modal__shell {
+        width: 100%;
+    }
+}

@@ -1,12 +1,16 @@
 import { App, Popover } from "antd";
-import { ArrowLeftRight, Check, ChevronRight, LogOut, Plus, Settings, UserPlus, UsersRound } from "lucide-react";
+import { ArrowLeftRight, Check, ChevronRight, Plus, Settings, UserPlus, UsersRound } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 
+import logoutIcon from "@/assets/account/logout@2x.png";
 import { useWorkspaceLogout } from "@/hooks/use-workspace-logout";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/use-user-store";
 
 import { UserAvatar } from "./user-avatar";
+import { CreateTeamModal, type CreateTeamDraft } from "./create-team-modal";
+import { InviteMembersModal } from "./invite-members-modal";
 import "./product-account-menu.css";
 
 export type ProductAccountTeam = {
@@ -45,11 +49,15 @@ export function ProductAccountMenu({
     onSwitchAccount,
 }: ProductAccountMenuProps) {
     const { message } = App.useApp();
+    const navigate = useNavigate();
     const user = useUserStore((state) => state.user);
     const [open, setOpen] = useState(false);
     const [accountSwitcherOpen, setAccountSwitcherOpen] = useState(false);
-    const [mockTeams, setMockTeams] = useState<ProductAccountTeam[]>([]);
+    const [teamSettingsOpen, setTeamSettingsOpen] = useState(false);
+    const [mockTeams, setMockTeams] = useState<ProductAccountTeam[]>(MOCK_TEAMS);
     const [mockActiveTeamId, setMockActiveTeamId] = useState<string>();
+    const [createTeamOpen, setCreateTeamOpen] = useState(false);
+    const [inviteTeam, setInviteTeam] = useState<ProductAccountTeam>();
     const { handleLogout, loggingOut } = useWorkspaceLogout("/email-login");
     const visibleTeams = teams ?? mockTeams;
     const visibleActiveTeamId = activeTeamId ?? mockActiveTeamId;
@@ -65,6 +73,7 @@ export function ProductAccountMenu({
     const closeAndRun = (action?: () => void) => {
         setOpen(false);
         setAccountSwitcherOpen(false);
+        setTeamSettingsOpen(false);
         (action || notifyUnavailable)();
     };
     const createTeam = () => {
@@ -72,9 +81,28 @@ export function ProductAccountMenu({
             closeAndRun(onCreateTeam);
             return;
         }
-
-        setMockTeams(MOCK_TEAMS);
-        setMockActiveTeamId(MOCK_TEAMS[0].id);
+        setOpen(false);
+        setAccountSwitcherOpen(false);
+        setTeamSettingsOpen(false);
+        setCreateTeamOpen(true);
+    };
+    const confirmCreateTeam = (draft: CreateTeamDraft) => {
+        const id = `mock-team-${typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : Date.now()}`;
+        const team: ProductAccountTeam = { id, name: draft.name, avatarUrl: draft.avatarUrl, role: "owner" };
+        setMockTeams((current) => [...current, team]);
+        setMockActiveTeamId(id);
+        setCreateTeamOpen(false);
+        message.success("团队创建成功");
+    };
+    const inviteMembers = (team: ProductAccountTeam) => {
+        if (onInviteMembers) {
+            closeAndRun(() => onInviteMembers(team));
+            return;
+        }
+        setOpen(false);
+        setAccountSwitcherOpen(false);
+        setTeamSettingsOpen(false);
+        setInviteTeam(team);
     };
     const selectAccount = (teamId: string | null) => {
         if (onSwitchAccount) {
@@ -86,6 +114,7 @@ export function ProductAccountMenu({
             return;
         }
         setAccountSwitcherOpen(false);
+        setTeamSettingsOpen(false);
     };
 
     const accountSwitcher = (
@@ -140,11 +169,11 @@ export function ProductAccountMenu({
     const teamSettings = activeTeam ? (
         <div className="product-team-settings" aria-label="团队设置">
             <button type="button" onClick={() => closeAndRun(onOpenTeamMembers ? () => onOpenTeamMembers(activeTeam) : undefined)}>成员管理</button>
-            <button type="button" onClick={() => closeAndRun(onOpenTeamCredits ? () => onOpenTeamCredits(activeTeam) : undefined)}>积分管理</button>
+            <button type="button" onClick={() => closeAndRun(onOpenTeamCredits ? () => onOpenTeamCredits(activeTeam) : () => navigate(`/team-settings/${encodeURIComponent(activeTeam.id)}/credits`, { state: { team: activeTeam } }))}>积分管理</button>
         </div>
     ) : null;
 
-    const accountMenu = (
+    const accountMenuContent = (
         <section className="product-account-menu" aria-label="账户菜单">
             <div className="product-account-menu__identity">
                 <UserAvatar user={user} className="product-account-menu__avatar" fallbackVariant="product" />
@@ -153,20 +182,17 @@ export function ProductAccountMenu({
                     {activeTeam ? <span>团队：{activeTeam.name}</span> : null}
                 </span>
                 {activeTeam ? (
-                    <Popover
-                        trigger="click"
-                        placement="leftTop"
-                        arrow={false}
-                        open={accountSwitcherOpen}
-                        onOpenChange={setAccountSwitcherOpen}
-                        rootClassName="product-account-switcher-popover"
-                        content={accountSwitcher}
+                    <button
+                        type="button"
+                        className="product-account-menu__identity-action"
+                        onClick={() => {
+                            setTeamSettingsOpen(false);
+                            setAccountSwitcherOpen((value) => !value);
+                        }}
                     >
-                        <button type="button" className="product-account-menu__identity-action">
-                            <ArrowLeftRight aria-hidden="true" />
-                            切换账户
-                        </button>
-                    </Popover>
+                        <ArrowLeftRight aria-hidden="true" />
+                        切换账户
+                    </button>
                 ) : showCreateTeam ? (
                     <button type="button" className="product-account-menu__identity-action" onClick={createTeam}>
                         <Plus aria-hidden="true" />
@@ -177,14 +203,18 @@ export function ProductAccountMenu({
 
             {activeTeam ? (
                 <nav className="product-account-menu__actions" aria-label="团队与账户操作">
-                    <Popover trigger="hover" placement="leftTop" arrow={false} rootClassName="product-team-settings-popover" content={teamSettings}>
-                        <button type="button">
-                            <Settings aria-hidden="true" />
-                            <span>团队设置</span>
-                            <ChevronRight className="product-account-menu__chevron" aria-hidden="true" />
-                        </button>
-                    </Popover>
-                    <button type="button" onClick={() => closeAndRun(onInviteMembers ? () => onInviteMembers(activeTeam) : undefined)}>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setAccountSwitcherOpen(false);
+                            setTeamSettingsOpen((value) => !value);
+                        }}
+                    >
+                        <Settings aria-hidden="true" />
+                        <span>团队设置</span>
+                        <ChevronRight className="product-account-menu__chevron" aria-hidden="true" />
+                    </button>
+                    <button type="button" onClick={() => inviteMembers(activeTeam)}>
                         <UserPlus aria-hidden="true" />
                         <span>邀请成员</span>
                     </button>
@@ -198,15 +228,32 @@ export function ProductAccountMenu({
         </section>
     );
 
+    const accountMenu = (
+        <div className="product-account-menu-stack">
+            {open && accountSwitcherOpen ? (
+                <div className="product-account-switcher-layer">{accountSwitcher}</div>
+            ) : null}
+            {open && teamSettingsOpen ? (
+                <div className="product-team-settings-layer">{teamSettings}</div>
+            ) : null}
+            {accountMenuContent}
+        </div>
+    );
+
     return (
+        <>
         <Popover
             trigger="click"
             placement="bottomRight"
             arrow={false}
             open={open}
+            destroyOnHidden
             onOpenChange={(nextOpen) => {
                 setOpen(nextOpen);
-                if (!nextOpen) setAccountSwitcherOpen(false);
+                if (!nextOpen) {
+                    setAccountSwitcherOpen(false);
+                    setTeamSettingsOpen(false);
+                }
             }}
             rootClassName="product-account-menu-popover"
             content={accountMenu}
@@ -215,13 +262,16 @@ export function ProductAccountMenu({
                 <UserAvatar user={user} className="size-full" fallbackVariant="product" />
             </button>
         </Popover>
+        <CreateTeamModal open={createTeamOpen} onCancel={() => setCreateTeamOpen(false)} onConfirm={confirmCreateTeam} />
+        <InviteMembersModal team={inviteTeam} onClose={() => setInviteTeam(undefined)} />
+        </>
     );
 }
 
 function LogoutButton({ loggingOut, onLogout }: { loggingOut: boolean; onLogout: () => void }) {
     return (
         <button type="button" disabled={loggingOut} onClick={onLogout}>
-            <LogOut aria-hidden="true" />
+            <img src={logoutIcon} alt="" aria-hidden="true" />
             <span>{loggingOut ? "退出中" : "退出登录"}</span>
         </button>
     );
