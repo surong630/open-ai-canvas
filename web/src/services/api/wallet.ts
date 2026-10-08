@@ -23,6 +23,7 @@ export type CreditLedgerEntry = {
     billingOrderId?: string;
     paymentOrderId?: string;
     model?: string;
+    memberName?: string;
     channelId?: string;
     scene?: string;
     note?: string;

@@ -1,6 +1,7 @@
 import { App, Popover } from "antd";
 import { ArrowLeftRight, Check, ChevronRight, LogOut, Plus, Settings, UserPlus, UsersRound } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 
 import { useWorkspaceLogout } from "@/hooks/use-workspace-logout";
 import { cn } from "@/lib/utils";
@@ -45,6 +46,7 @@ export function ProductAccountMenu({
     onSwitchAccount,
 }: ProductAccountMenuProps) {
     const { message } = App.useApp();
+    const navigate = useNavigate();
     const user = useUserStore((state) => state.user);
     const [open, setOpen] = useState(false);
     const [accountSwitcherOpen, setAccountSwitcherOpen] = useState(false);
@@ -140,7 +142,7 @@ export function ProductAccountMenu({
     const teamSettings = activeTeam ? (
         <div className="product-team-settings" aria-label="团队设置">
             <button type="button" onClick={() => closeAndRun(onOpenTeamMembers ? () => onOpenTeamMembers(activeTeam) : undefined)}>成员管理</button>
-            <button type="button" onClick={() => closeAndRun(onOpenTeamCredits ? () => onOpenTeamCredits(activeTeam) : undefined)}>积分管理</button>
+            <button type="button" onClick={() => closeAndRun(onOpenTeamCredits ? () => onOpenTeamCredits(activeTeam) : () => navigate(`/team-settings/${encodeURIComponent(activeTeam.id)}/credits`, { state: { team: activeTeam } }))}>积分管理</button>
         </div>
     ) : null;
 
