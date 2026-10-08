@@ -15,6 +15,8 @@ import pageRight from "@/assets/credits/page-right@2x.png";
 import "./team-members.css";
 import "../credits/credits-page.css";
 import { DissolveTeamModal } from "./dissolve-team-modal";
+import { EditMemberRemarkModal } from "./edit-member-remark-modal";
+import { TransferTeamOwnerModal } from "./transfer-team-owner-modal";
 
 type Member = { id: string; name: string; username?: string; email: string; usage: string; role: "owner" | "member" };
 
@@ -34,12 +36,15 @@ export default function TeamMembersPage() {
     const [teamName, setTeamName] = useState("测试团队");
     const [editTeamOpen, setEditTeamOpen] = useState(false);
     const [dissolveTeamOpen, setDissolveTeamOpen] = useState(false);
+    const [memberRows, setMemberRows] = useState(members);
+    const [editingMember, setEditingMember] = useState<Member | null>(null);
+    const [transferOwnerOpen, setTransferOwnerOpen] = useState(false);
     const columns: TableColumnsType<Member> = [
         { title: "成员", key: "member", render: (_, member) => <div className="team-members-page__member"><UserAvatar user={user!} className="team-members-page__member-avatar" fallbackVariant="product" /><span><strong>{member.name}</strong>{member.username ? <small>{member.username}</small> : null}</span></div> },
         { title: "邮箱", dataIndex: "email", key: "email" },
         { title: "月积分消耗/额度", dataIndex: "usage", key: "usage" },
         { title: "角色", key: "role", render: (_, member) => <span className={`team-members-page__role is-${member.role}`}>{member.role === "owner" ? "团队负责人" : "团队成员"}</span> },
-        { title: "操作", key: "actions", render: (_, member) => <div className="team-members-page__actions"><button type="button" onClick={() => message.info("修改备注功能尚未接入")}>修改备注</button><button type="button" onClick={() => member.role === "owner" ? message.info("转让团队负责人功能尚未接入") : setDissolveTeamOpen(true)}>{member.role === "owner" ? "转让团队负责人" : "解散团队"}</button></div> },
+        { title: "操作", key: "actions", render: (_, member) => <div className="team-members-page__actions"><button type="button" onClick={() => setEditingMember(member)}>修改备注</button><button type="button" onClick={() => member.role === "owner" ? setTransferOwnerOpen(true) : setDissolveTeamOpen(true)}>{member.role === "owner" ? "转让团队负责人" : "解散团队"}</button></div> },
     ];
     const jumpToPage = () => setPage(Math.max(1, Number.parseInt(jumpPage || "1", 10)));
 
@@ -92,7 +97,7 @@ export default function TeamMembersPage() {
                             邀请成员
                         </button>
                     </div>
-                    <Table<Member> className="credits-page__table" columns={columns} dataSource={members} pagination={false} rowKey="id" tableLayout="fixed" />
+                    <Table<Member> className="credits-page__table" columns={columns} dataSource={memberRows} pagination={false} rowKey="id" tableLayout="fixed" />
                     <footer className="credits-page__footer">
                         <Pagination current={page} pageSize={pageSize} pageSizeOptions={[20, 50, 100]} total={5} showSizeChanger={{ className: "credits-page__size-select", suffixIcon: <img src={pageDropIcon} alt="" />, classNames: { popup: { root: "credits-page__size-menu" } } }} showTotal={(total) => `共${total}笔`} itemRender={(_, type, originalElement) => type === "prev" ? <img className="credits-page__page-arrow" src={pageLeftDisabled} alt="上一页" /> : type === "next" ? <img className="credits-page__page-arrow" src={pageRight} alt="下一页" /> : originalElement} onChange={(nextPage, nextPageSize) => { setPage(nextPageSize !== pageSize ? 1 : nextPage); setPageSize(nextPageSize); }} />
                         <label className="credits-page__quick-jumper"><span>跳至</span><input type="text" inputMode="numeric" aria-label="跳转页码" value={jumpPage} onChange={(event) => setJumpPage(event.target.value.replace(/\D/g, ""))} onBlur={jumpToPage} onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); jumpToPage(); } }} /><span>页</span></label>
@@ -108,6 +113,27 @@ export default function TeamMembersPage() {
                 onConfirm={(draft: CreateTeamDraft) => { setTeamName(draft.name); setEditTeamOpen(false); }}
             />
             <DissolveTeamModal open={dissolveTeamOpen} onCancel={() => setDissolveTeamOpen(false)} onConfirm={() => { setDissolveTeamOpen(false); message.info("解散团队功能尚未接入"); }} />
+            <EditMemberRemarkModal
+                open={Boolean(editingMember)}
+                username={editingMember?.username ?? ""}
+                remark={editingMember?.name ?? ""}
+                onCancel={() => setEditingMember(null)}
+                onConfirm={(remark) => {
+                    if (!editingMember) return;
+                    setMemberRows((current) => current.map((member) => member.id === editingMember.id ? { ...member, name: remark } : member));
+                    setEditingMember(null);
+                }}
+            />
+            <TransferTeamOwnerModal
+                open={transferOwnerOpen}
+                members={memberRows}
+                onCancel={() => setTransferOwnerOpen(false)}
+                onConfirm={(memberId) => {
+                    setMemberRows((current) => current.map((member) => ({ ...member, role: member.id === memberId ? "owner" : "member" })));
+                    setTransferOwnerOpen(false);
+                    message.success("团队负责人已转让");
+                }}
+            />
         </main>
     );
 }

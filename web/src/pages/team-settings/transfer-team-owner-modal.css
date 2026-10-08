@@ -1,0 +1,62 @@
+.transfer-team-owner-modal .ant-modal-container {
+    overflow: hidden;
+    border: 1px solid #535353;
+    border-radius: 12px;
+    background: #262626;
+    color: #fff;
+}
+
+.transfer-team-owner-modal .ant-modal-close {
+    top: 18px;
+    right: 24px;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+}
+.transfer-team-owner-modal .ant-modal-close:hover { background: transparent; }
+.transfer-team-owner-modal .ant-modal-close img { display: block; width: 12px; height: 12px; }
+
+.transfer-team-owner-modal__shell {
+    width: 420px;
+    color: #fff;
+    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+}
+
+.transfer-team-owner-modal__header {
+    display: flex;
+    height: 49px;
+    align-items: center;
+    border-bottom: 1px solid #3c3c3c;
+    padding: 0 24px;
+}
+.transfer-team-owner-modal__header h2 { margin: 0; font-size: 15px; font-weight: 700; line-height: 21px; }
+
+.transfer-team-owner-modal__body { display: grid; gap: 10px; padding: 22px 24px 24px; }
+.transfer-team-owner-modal__body label { display: grid; width: 100%; gap: 8px; color: #d8d8d8; font-size: 13px; line-height: 18px; }
+.transfer-team-owner-modal__body .xingpei-select { width: 100% !important; }
+.transfer-team-owner-modal__member-option { display: inline-flex; align-items: center; gap: 8px; }
+.transfer-team-owner-modal__select-menu .ant-select-item-option-content,
+.transfer-team-owner-modal__member-option { width: 100%; }
+.transfer-team-owner-modal__avatar { display: inline-grid; width: 24px; height: 24px; place-items: center; border-radius: 50%; background: #4a4a4a; color: #cfcfcf; }
+.transfer-team-owner-modal__avatar svg { width: 14px; height: 14px; }
+.transfer-team-owner-modal__member-copy { display: inline-flex; flex-direction: column; gap: 1px; min-width: 0; }
+.transfer-team-owner-modal__member-copy strong { color: #fff; font-size: 13px; font-weight: 500; line-height: 17px; }
+.transfer-team-owner-modal__member-copy small { color: #8a8a8a; font-size: 11px; line-height: 14px; }
+.transfer-team-owner-modal__member-option em { margin-left: 2px; color: #365eec; font-size: 11px; font-style: normal; }
+.transfer-team-owner-modal__body p { margin: 0; color: #818181; font-size: 12px; line-height: 18px; }
+.transfer-team-owner-modal__footer { display: flex; justify-content: flex-end; gap: 10px; padding: 0 24px 22px; }
+.transfer-team-owner-modal__footer button { width: 52px; height: 32px; border: 0; border-radius: 5px; font: 400 13px/20px inherit; cursor: pointer; }
+.transfer-team-owner-modal__cancel { background: #363636; color: #fff; }
+.transfer-team-owner-modal__confirm { background: #fff; color: #262626; }
+.transfer-team-owner-modal__confirm:disabled { cursor: not-allowed; opacity: .45; }
+.transfer-team-owner-modal__cancel:hover { background: #414141; }
+.transfer-team-owner-modal__confirm:not(:disabled):hover { background: #e7e7e7; }
+
+body .transfer-team-owner-modal__select-menu.ant-select-dropdown { padding: 4px; border: 1px solid #272727; border-radius: 10px; background: #2c2c2c; }
+body .transfer-team-owner-modal__select-menu .ant-select-item { min-height: 32px; border-radius: 7px; color: #fff; }
+body .transfer-team-owner-modal__select-menu .ant-select-item-option-active { background: #3a3a3a; }
+body .transfer-team-owner-modal__select-menu .ant-select-item-option-selected { background: #444; color: #fff; }
+
+@media (max-width: 460px) { .transfer-team-owner-modal__shell { width: 100%; } }

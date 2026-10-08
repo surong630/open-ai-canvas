@@ -1,0 +1,88 @@
+.edit-member-remark-modal .ant-modal-container {
+    overflow: hidden;
+    border: 1px solid #535353;
+    border-radius: 12px;
+    background: #262626;
+    color: #fff;
+}
+
+.edit-member-remark-modal .ant-modal-close {
+    top: 18px;
+    right: 24px;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.edit-member-remark-modal .ant-modal-close:hover { background: transparent; }
+.edit-member-remark-modal .ant-modal-close img { display: block; width: 12px; height: 12px; }
+
+.edit-member-remark-modal__shell {
+    width: 420px;
+    color: #fff;
+    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+}
+
+.edit-member-remark-modal__header {
+    display: flex;
+    height: 49px;
+    align-items: center;
+    border-bottom: 1px solid #3c3c3c;
+    padding: 0 24px;
+}
+
+.edit-member-remark-modal__header h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 21px;
+}
+
+.edit-member-remark-modal__body {
+    display: grid;
+    gap: 16px;
+    padding: 22px 24px 24px;
+}
+
+.edit-member-remark-modal__body label {
+    display: grid;
+    gap: 8px;
+    color: #d8d8d8;
+    font-size: 13px;
+    line-height: 18px;
+}
+
+.edit-member-remark-modal__body .xingpei-input-root.ant-input[disabled] {
+    border-color: #272727 !important;
+    background: #767575 !important;
+    color: #ffffff !important;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.edit-member-remark-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 0 24px 22px;
+}
+
+.edit-member-remark-modal__footer button {
+    width: 52px;
+    height: 32px;
+    border: 0;
+    border-radius: 5px;
+    font: 400 13px/20px inherit;
+    cursor: pointer;
+}
+
+.edit-member-remark-modal__cancel { background: #363636; color: #fff; }
+.edit-member-remark-modal__confirm { background: #fff; color: #262626; }
+.edit-member-remark-modal__cancel:hover { background: #414141; }
+.edit-member-remark-modal__confirm:hover { background: #e7e7e7; }
+
+@media (max-width: 460px) {
+    .edit-member-remark-modal__shell { width: 100%; }
+}
