@@ -1,5 +1,4 @@
-import { X } from "lucide-react";
-
+import closeIcon from "@/assets/team/modal-close.svg";
 import { AppModal } from "@/components/ui/product/app-modal";
 
 import "./folder-editor-modal.css";
@@ -33,7 +32,7 @@ export function LanhuFolderEditorModal({
             width={604}
             centered
             flush
-            closeIcon={<X size={12} />}
+            closeIcon={<img src={closeIcon} alt="" />}
             className="lanhu-folder-editor-modal"
         >
             <form

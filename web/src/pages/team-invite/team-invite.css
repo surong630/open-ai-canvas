@@ -1,0 +1,225 @@
+.team-invite-page {
+    display: grid;
+    grid-template-columns: 241px minmax(0, 1fr);
+    min-height: 100dvh;
+    overflow: hidden;
+    background: #191919;
+    color: #fff;
+    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.team-invite-page__sidebar {
+    width: 241px;
+    min-height: 100dvh;
+    border-right: 1px solid #303030;
+    background: #191919;
+    padding: 22px 14px;
+}
+.team-invite-page__sidebar h1 {
+    margin: 0 8px 24px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 28px;
+}
+.team-invite-page__sidebar nav {
+    display: grid;
+    gap: 10px;
+}
+.team-invite-page__sidebar nav a {
+    display: flex;
+    height: 36px;
+    align-items: center;
+    gap: 6px;
+    border-radius: 4px;
+    padding: 0 10px;
+    color: #e8e8e8;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+}
+.team-invite-page__sidebar nav a.is-active {
+    background: #1e1e1e;
+}
+.team-invite-page__sidebar nav img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+.team-invite-page__content {
+    position: relative;
+    min-width: 0;
+    min-height: 100dvh;
+    background: #191919;
+}
+.team-invite-page__topbar {
+    position: absolute;
+    top: 16px;
+    right: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    font-size: 14px;
+}
+.team-invite-page__login {
+    width: 82px;
+    height: 34px;
+    border: 0;
+    border-radius: 6px;
+    background: #fff;
+    color: #161616;
+    font-size: 14px;
+    cursor: pointer;
+}
+.team-invite-page__credits {
+    display: inline-flex;
+    height: 32px;
+    align-items: center;
+    border: 1px solid #292929;
+    border-radius: 8px;
+    background: #202020;
+    padding: 0 14px;
+    color: #fff;
+}
+.team-invite-page__avatar {
+    width: 28px;
+    height: 28px;
+    border: 2px solid #cde1fd;
+    border-radius: 50%;
+    background: linear-gradient(#fff 0 32%, #a998ff 33%);
+}
+.team-invite-page__card {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100dvh;
+    box-sizing: border-box;
+    text-align: center;
+}
+.team-invite-page__card h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 16px;
+    line-height: 22px;
+}
+.team-invite-page__card h2.is-team {
+    color: #ffffff;
+}
+.team-invite-page__card h2.is-team .team-name {
+    color: #a998ff;
+}
+.team-invite-page__card p {
+    margin: 0;
+    color: #818181;
+    font-size: 14px;
+    line-height: 20px;
+}
+.team-invite-page__card p.is-note {
+    border: 1px solid #303030;
+    border-radius: 6px;
+    background: #202020;
+    padding: 6px 12px;
+    color: #fff;
+}
+.team-invite-page__card p.is-pending {
+    color: #a7a8ac;
+}
+.team-invite-page__button {
+    width: 160px;
+    height: 40px;
+    border: 0;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.team-invite-page__button.is-accent {
+    background: linear-gradient(180deg, #a998ff 0%, #7861fa 100%), #a998ff;
+    color: #222222;
+}
+.team-invite-page__button.is-pending {
+    background: #a8a8a8;
+    color: #222222;
+}
+.team-invite-page__button:disabled {
+    cursor: default;
+    opacity: 1;
+}
+.team-invite-page__status-icon {
+    width: 56px;
+    height: 56px;
+    object-fit: contain;
+}
+.team-invite-page__avatars {
+    width: 180px;
+    height: 56px;
+    object-fit: contain;
+}
+.team-invite-page__card.is-invalid .team-invite-page__status-icon {
+    margin-top: 287px;
+    margin-bottom: 10px;
+}
+.team-invite-page__card.is-invalid h2 {
+    margin-bottom: 12px;
+}
+.team-invite-page__card.is-invalid p:first-of-type {
+    margin-bottom: 17px;
+}
+.team-invite-page__card.is-invalid p.is-note {
+    width: fit-content;
+    margin-bottom: 16px;
+}
+.team-invite-page__card.is-login .team-invite-page__avatars {
+    margin-top: 335px;
+    margin-bottom: 9px;
+}
+.team-invite-page__card.is-login h2 {
+    margin-bottom: 18px;
+}
+.team-invite-page__card.is-ready .team-invite-page__avatars,
+.team-invite-page__card.is-pending .team-invite-page__avatars,
+.team-invite-page__card.is-joined .team-invite-page__avatars {
+    margin-top: 319px;
+    margin-bottom: 9px;
+}
+.team-invite-page__card.is-ready h2 {
+    margin-bottom: 12px;
+}
+.team-invite-page__card.is-ready p {
+    margin-bottom: 18px;
+}
+.team-invite-page__card.is-pending h2,
+.team-invite-page__card.is-joined h2 {
+    margin-bottom: 20px;
+}
+.team-invite-page__card.is-pending button {
+    margin-bottom: 22px;
+}
+@media (max-width: 720px) {
+    .team-invite-page {
+        grid-template-columns: 1fr;
+    }
+    .team-invite-page__sidebar {
+        position: fixed;
+        z-index: 2;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        min-height: auto;
+    }
+    .team-invite-page__card {
+        min-height: 100dvh;
+        justify-content: center;
+        gap: 14px;
+    }
+    .team-invite-page__card > .team-invite-page__status-icon,
+    .team-invite-page__card > .team-invite-page__avatars,
+    .team-invite-page__card > .team-invite-page__status-icon,
+    .team-invite-page__card > .team-invite-page__avatars { margin-top: 0; }
+    .team-invite-page__card > h2,
+    .team-invite-page__card > p,
+    .team-invite-page__card > button {
+        margin: 0;
+    }
+}

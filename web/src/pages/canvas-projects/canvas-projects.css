@@ -64,6 +64,37 @@
 .canvas-projects-page__card button:disabled { cursor: wait; opacity: .72; }
 .canvas-projects-page :where(button, a):focus-visible { outline: 2px solid #A998FF; outline-offset: 2px; }
 
+.canvas-projects-other-project-notice .ant-modal-container {
+    width: 421px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 69px;
+    border: 1px solid #343434;
+    border-radius: 9px;
+    background: #242424 !important;
+    box-shadow: none !important;
+}
+
+.canvas-projects-other-project-notice__content {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    color: rgba(160, 160, 160, 1);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 21px;
+}
+
+.canvas-projects-other-project-notice__icon {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
 .canvas-projects-page__editable-title {
     height: 20px;
     margin-top: 8px;
@@ -122,34 +153,21 @@
     right: 17px;
     width: 24px;
     height: 24px;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
     color: #929292;
 }
 
 .canvas-projects-recycle-modal .ant-modal-close:hover {
-    background: #363636;
-    color: #FFFFFF;
+    background: transparent;
 }
 
-.canvas-projects-recycle-modal__close {
-    position: relative;
+.canvas-projects-recycle-modal .ant-modal-close img {
     display: block;
-    width: 18px;
-    height: 18px;
+    width: 12px;
+    height: 12px;
 }
-
-.canvas-projects-recycle-modal__close::before,
-.canvas-projects-recycle-modal__close::after {
-    position: absolute;
-    top: 8px;
-    left: 1px;
-    width: 16px;
-    height: 2px;
-    background: currentColor;
-    content: "";
-}
-
-.canvas-projects-recycle-modal__close::before { transform: rotate(45deg); }
-.canvas-projects-recycle-modal__close::after { transform: rotate(-45deg); }
 
 .canvas-projects-recycle-modal__shell {
     display: grid;

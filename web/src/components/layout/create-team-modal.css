@@ -41,8 +41,12 @@
     background: transparent;
 }
 
-.create-team-modal__header button:hover { background: #ffffff12; }
-.create-team-modal__header svg { width: 17px; height: 17px; }
+.create-team-modal__header button:hover { background: transparent; }
+.create-team-modal__header button img {
+    display: block;
+    width: 12px;
+    height: 12px;
+}
 
 .create-team-modal__body {
     display: grid;

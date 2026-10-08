@@ -168,7 +168,7 @@ export function ProductAccountMenu({
 
     const teamSettings = activeTeam ? (
         <div className="product-team-settings" aria-label="团队设置">
-            <button type="button" onClick={() => closeAndRun(onOpenTeamMembers ? () => onOpenTeamMembers(activeTeam) : undefined)}>成员管理</button>
+            <button type="button" onClick={() => closeAndRun(onOpenTeamMembers ? () => onOpenTeamMembers(activeTeam) : () => navigate(`/team-settings/${encodeURIComponent(activeTeam.id)}/members`, { state: { team: activeTeam } }))}>成员管理</button>
             <button type="button" onClick={() => closeAndRun(onOpenTeamCredits ? () => onOpenTeamCredits(activeTeam) : () => navigate(`/team-settings/${encodeURIComponent(activeTeam.id)}/credits`, { state: { team: activeTeam } }))}>积分管理</button>
         </div>
     ) : null;

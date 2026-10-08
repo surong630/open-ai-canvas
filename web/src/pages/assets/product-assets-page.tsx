@@ -37,6 +37,7 @@ import { App, Button, Drawer, Dropdown, Form, Input, Modal, Popconfirm, Progress
 import type { MenuProps } from "antd";
 import { useLocation, useNavigate } from "react-router";
 
+import modalCloseIcon from "@/assets/team/modal-close.svg";
 import { AssetMediaPreview } from "@/components/asset-media-preview";
 import { AssetLibraryCard, AssetLibraryCardMedia } from "@/components/assets/asset-library-card";
 import { Switch } from "@/components/ui/base/switch";
@@ -1132,7 +1133,7 @@ function SaveAssetsModal({
                 <header className="asset-save-dialog__header">
                     <h2>保存资产</h2>
                     <button type="button" aria-label="关闭保存资产弹窗" disabled={saving} onClick={onCancel}>
-                        ×
+                        <img src={modalCloseIcon} alt="" />
                     </button>
                 </header>
                 <div className="asset-save-dialog__body">

@@ -9,6 +9,8 @@ import projectCover from "@/assets/canvas-projects/project-cover@2x.png";
 import recycleCheckboxNormal from "@/assets/canvas-projects/recycle-checkbox-normal@2x.png";
 import recycleCheckboxSelected from "@/assets/canvas-projects/recycle-checkbox-selected@2x.png";
 import recycleSelectAll from "@/assets/canvas-projects/recycle-select-all@2x.png";
+import tipIcon from "@/assets/canvas-projects/icon-tip-orange@2x.png";
+import modalCloseIcon from "@/assets/team/modal-close.svg";
 import { ProjectPreview, projectPreviewMedia } from "@/components/canvas/canvas-project-card";
 import { ProductPageHeader } from "@/components/layout/product-page-header";
 import { ProductPrimarySidebar } from "@/components/layout/product-primary-sidebar";
@@ -205,7 +207,31 @@ export default function CanvasProjectsPage() {
                 onClose={() => setRecycleBinOpen(false)}
                 onRestore={() => message.info(selectedRecycleProjectIds.size ? "恢复功能等待回收站接口接入" : "请先选择要恢复的项目")}
             />
+            <OtherProjectNoticeModal open={false} />
         </main>
+    );
+}
+
+function OtherProjectNoticeModal({ open }: { open: boolean }) {
+    return (
+        <AppModal
+            open={open}
+            centered
+            flush
+            title={null}
+            footer={null}
+            closable={false}
+            mask={false}
+            keyboard={false}
+            maskClosable={false}
+            width={421}
+            rootClassName="canvas-projects-other-project-notice"
+        >
+            <div className="canvas-projects-other-project-notice__content" role="status">
+                <img className="canvas-projects-other-project-notice__icon" src={tipIcon} alt="" />
+                <span>无法操作其他成员创建的项目</span>
+            </div>
+        </AppModal>
     );
 }
 
@@ -243,7 +269,7 @@ function RecycleBinModal({
             width="min(1029px, calc(100vw - 32px))"
             rootClassName="canvas-projects-recycle-modal"
             styles={{ body: { height: "100%" } }}
-            closeIcon={<span className="canvas-projects-recycle-modal__close" aria-hidden="true" />}
+            closeIcon={<img src={modalCloseIcon} alt="" />}
             onCancel={onClose}
         >
             <div className="canvas-projects-recycle-modal__shell">

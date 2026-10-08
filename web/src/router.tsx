@@ -43,6 +43,8 @@ const ProductHomePage = lazy(() => import("@/pages/product-home"));
 const CanvasProjectsPage = lazy(() => import("@/pages/canvas-projects"));
 const CreditsPage = lazy(() => import("@/pages/credits"));
 const TeamCreditDetailsPage = lazy(() => import("@/pages/team-settings/team-credit-details"));
+const TeamMembersPage = lazy(() => import("@/pages/team-settings/team-members"));
+const TeamInvitePage = lazy(() => import("@/pages/team-invite"));
 const LoginPage = lazy(() => import("@/pages/auth/login"));
 const EmailCodeLoginPage = lazy(() => import("@/pages/auth/email-code-login"));
 const RegisterPage = lazy(() => import("@/pages/auth/register"));
@@ -105,6 +107,8 @@ export const router = createBrowserRouter([
     { path: "/product-assets/library", element: <RequireAuth loginPath="/email-login">{fullScreenDeferred(<ProductAssetsPage />)}</RequireAuth>, errorElement: <RouteErrorPage /> },
     { path: "/credits", element: <RequireAuth>{fullScreenDeferred(<CreditsPage />)}</RequireAuth>, errorElement: <RouteErrorPage /> },
     { path: "/team-settings/:teamId/credits", element: <RequireAuth>{fullScreenDeferred(<TeamCreditDetailsPage />)}</RequireAuth>, errorElement: <RouteErrorPage /> },
+    { path: "/team-settings/:teamId/members", element: <RequireAuth>{fullScreenDeferred(<TeamMembersPage />)}</RequireAuth>, errorElement: <RouteErrorPage /> },
+    { path: "/team-invite/:inviteToken", element: fullScreenDeferred(<TeamInvitePage />), errorElement: <RouteErrorPage /> },
     {
         element: <AuthScene />,
         errorElement: <RouteErrorPage />,

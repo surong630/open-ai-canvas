@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Pagination } from "antd";
-import { Search, X } from "lucide-react";
+import { Search } from "lucide-react";
 
 import pageDropIcon from "@/assets/credits/icon-page-drop@2x.png";
 import pageLeftDisabled from "@/assets/credits/page-left-disabled@2x.png";
 import pageRight from "@/assets/credits/page-right@2x.png";
+import closeIcon from "@/assets/team/modal-close.svg";
 import { AppModal } from "@/components/ui/product/app-modal";
 import { DeleteTagConfirmModal } from "./delete-tag-confirm-modal";
 
@@ -95,7 +96,7 @@ export function LanhuTagManagerModal({
             width={723}
             centered
             flush
-            closeIcon={<X size={12} />}
+            closeIcon={<img src={closeIcon} alt="" />}
             className="lanhu-tag-manager-modal"
         >
             <section className="lanhu-tag-manager-shell" aria-labelledby="lanhu-tag-manager-title">

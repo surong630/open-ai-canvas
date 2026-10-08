@@ -11,8 +11,14 @@
     right: 24px;
     width: 12px;
     height: 12px;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
     color: rgba(255, 255, 255, 1);
 }
+
+.lanhu-tag-manager-modal .ant-modal-close:hover { background: transparent; }
+.lanhu-tag-manager-modal .ant-modal-close img { display: block; width: 12px; height: 12px; }
 
 .lanhu-tag-manager-shell {
     position: relative;

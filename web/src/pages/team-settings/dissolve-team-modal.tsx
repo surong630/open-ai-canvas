@@ -1,5 +1,4 @@
-import { X } from "lucide-react";
-
+import closeIcon from "@/assets/team/modal-close.svg";
 import { AppModal } from "@/components/ui/product/app-modal";
 
 import "./dissolve-team-modal.css";
@@ -19,7 +18,7 @@ export function DissolveTeamModal({ open, onCancel, onConfirm }: DissolveTeamMod
             width={420}
             title={null}
             footer={null}
-            closeIcon={<X aria-hidden="true" />}
+            closeIcon={<img src={closeIcon} alt="" />}
             onCancel={onCancel}
             rootClassName="dissolve-team-modal"
         >

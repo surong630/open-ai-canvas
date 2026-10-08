@@ -1,8 +1,8 @@
 import { App } from "antd";
 import copy from "copy-to-clipboard";
-import { X } from "lucide-react";
 import { useMemo } from "react";
 
+import closeIcon from "@/assets/team/modal-close.svg";
 import { AppModal } from "@/components/ui/product/app-modal";
 
 import type { ProductAccountTeam } from "./product-account-menu";
@@ -55,7 +55,7 @@ export function InviteMembersModal({ team, onClose }: InviteMembersModalProps) {
             <section className="invite-members-modal__shell" aria-label="邀请成员">
                 <header className="invite-members-modal__header">
                     <h2>邀请成员</h2>
-                    <button type="button" aria-label="关闭" onClick={onClose}><X aria-hidden="true" /></button>
+                    <button type="button" aria-label="关闭" onClick={onClose}><img src={closeIcon} alt="" /></button>
                 </header>
                 <div className="invite-members-modal__body">
                     <div className="invite-members-modal__tabs">

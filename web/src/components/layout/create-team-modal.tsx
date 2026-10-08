@@ -1,8 +1,9 @@
 import { App } from "antd";
-import { UsersRound, X } from "lucide-react";
+import { UsersRound } from "lucide-react";
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
 
 import tipIcon from "@/assets/team/icon-tip-orange@2x.png";
+import closeIcon from "@/assets/team/modal-close.svg";
 import { AppModal } from "@/components/ui/product/app-modal";
 import { XingpeiInput } from "@/components/ui/product/xingpei-input";
 
@@ -19,9 +20,13 @@ type CreateTeamModalProps = {
     open: boolean;
     onCancel: () => void;
     onConfirm: (draft: CreateTeamDraft) => void;
+    title?: string;
+    initialName?: string;
+    initialAvatarUrl?: string;
+    showNotice?: boolean;
 };
 
-export function CreateTeamModal({ open, onCancel, onConfirm }: CreateTeamModalProps) {
+export function CreateTeamModal({ open, onCancel, onConfirm, title = "创建团队", initialName = "", initialAvatarUrl, showNotice = true }: CreateTeamModalProps) {
     const { message } = App.useApp();
     const [name, setName] = useState("");
     const [avatarUrl, setAvatarUrl] = useState<string>();
@@ -31,8 +36,11 @@ export function CreateTeamModal({ open, onCancel, onConfirm }: CreateTeamModalPr
         if (!open) {
             setName("");
             setAvatarUrl(undefined);
+        } else {
+            setName(initialName);
+            setAvatarUrl(initialAvatarUrl);
         }
-    }, [open]);
+    }, [initialAvatarUrl, initialName, open]);
 
     const submit = () => {
         const normalizedName = name.trim();
@@ -75,15 +83,15 @@ export function CreateTeamModal({ open, onCancel, onConfirm }: CreateTeamModalPr
         >
             <form className="create-team-modal__shell" onSubmit={(event) => { event.preventDefault(); submit(); }}>
                 <header className="create-team-modal__header">
-                    <h2>创建团队</h2>
-                    <button type="button" aria-label="关闭" onClick={onCancel}><X aria-hidden="true" /></button>
+                    <h2>{title}</h2>
+                    <button type="button" aria-label="关闭" onClick={onCancel}><img src={closeIcon} alt="" /></button>
                 </header>
 
                 <div className="create-team-modal__body">
-                    <div className="create-team-modal__notice">
+                    {showNotice ? <div className="create-team-modal__notice">
                         <img src={tipIcon} alt="" aria-hidden="true" />
                         <span>新团队拥有独立的计费账户，初始积分为0。</span>
-                    </div>
+                    </div> : null}
                     <label className="create-team-modal__field">
                         <span><i aria-hidden="true">*</i>团队名称</span>
                         <XingpeiInput

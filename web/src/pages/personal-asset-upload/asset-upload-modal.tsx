@@ -5,6 +5,7 @@ import uploadAudioPlaceholder from "./assets/asset-upload-audio-placeholder.svg"
 import uploadAudioTypeIcon from "./assets/asset-upload-audio-type.svg";
 import uploadImageTypeIcon from "./assets/asset-upload-image-type.svg";
 import uploadVideoTypeIcon from "./assets/asset-upload-video-type.svg";
+import closeIcon from "@/assets/team/modal-close.svg";
 import { AppModal } from "@/components/ui/product/app-modal/app-modal";
 import { AssetMetadataFields } from "@/components/ui/product/asset-metadata-fields";
 import "./asset-upload-modal.css";
@@ -132,7 +133,7 @@ export function LanhuAssetUploadModal({
             width={723}
             centered
             flush
-            closeIcon={<X size={12} />}
+            closeIcon={<img src={closeIcon} alt="" />}
             className="lanhu-asset-upload-modal"
         >
             <section className="lanhu-asset-upload-shell" aria-labelledby="lanhu-asset-upload-title">

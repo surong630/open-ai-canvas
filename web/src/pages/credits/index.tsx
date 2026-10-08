@@ -57,7 +57,7 @@ function CreditsSidebar({ brandName }: { brandName: string }) {
             <nav aria-label="首页导航">
                 <NavLink to="/home" className="active"><NavIcon normal={navHomeNormal} selected={navHome} />首页</NavLink>
                 <NavLink to="/canvas-projects"><NavIcon normal={navProjects} selected={navProjectsSelected} />项目</NavLink>
-                <NavLink to="/assets"><NavIcon normal={navAssets} selected={navAssetsSelected} />资产</NavLink>
+                <NavLink to="/product-assets"><NavIcon normal={navAssets} selected={navAssetsSelected} />资产</NavLink>
             </nav>
         </aside>
     );

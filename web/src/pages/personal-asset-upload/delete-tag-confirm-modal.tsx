@@ -1,5 +1,4 @@
-import { X } from "lucide-react";
-
+import closeIcon from "@/assets/team/modal-close.svg";
 import { AppModal } from "@/components/ui/product/app-modal";
 
 import "./delete-tag-confirm-modal.css";
@@ -19,7 +18,7 @@ export function DeleteTagConfirmModal({ open, onCancel, onConfirm }: DeleteTagCo
             width={604}
             centered
             flush
-            closeIcon={<X size={12} />}
+            closeIcon={<img src={closeIcon} alt="" />}
             className="lanhu-delete-tag-confirm-modal"
         >
             <section className="lanhu-delete-tag-confirm-shell" aria-labelledby="lanhu-delete-tag-confirm-title">
