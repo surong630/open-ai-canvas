@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import "./product-card-more-menu.css";
 
 const menuStyle = {
+    "--product-card-more-bg": "#363636",
+    "--product-card-more-hover": "#4a4a4a",
     "--popover": "#363636",
     "--popover-foreground": "#ffffff",
     "--workspace-overlay-bg-strong": "#363636",
@@ -36,6 +38,7 @@ export function ProductCardMoreMenu({ ariaLabel, items, buttonClassName, placeme
                 items,
                 onClick: ({ domEvent }) => domEvent.stopPropagation(),
             }}
+            popupRender={(menu) => <div className="product-card-more-menu__popup">{menu}</div>}
         >
             <button
                 type="button"

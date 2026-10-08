@@ -1,0 +1,41 @@
+.xingpei-input-root.ant-input,
+.xingpei-input-root.ant-input-affix-wrapper {
+    width: 100%;
+    height: 32px;
+    border: 1px solid #272727 !important;
+    border-radius: 10px !important;
+    background: #2c2c2c !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    font-size: 13px;
+}
+
+.xingpei-input-root.ant-input { padding: 0 11px; }
+.xingpei-input-root.ant-input-affix-wrapper { padding: 0 11px; }
+.xingpei-input-root.ant-input-affix-wrapper .ant-input {
+    height: 30px;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    padding: 0;
+}
+
+.xingpei-input-root.ant-input:hover,
+.xingpei-input-root.ant-input-affix-wrapper:hover {
+    border-color: #3a3a3a !important;
+}
+
+.xingpei-input-root.ant-input:focus,
+.xingpei-input-root.ant-input-focused,
+.xingpei-input-root.ant-input-affix-wrapper-focused {
+    border: 1px solid #a998ff !important;
+    box-shadow: none !important;
+}
+
+.xingpei-input-root.ant-input::placeholder,
+.xingpei-input-root.ant-input-affix-wrapper .ant-input::placeholder,
+.xingpei-input-root .ant-input-show-count-suffix {
+    color: #818181 !important;
+}

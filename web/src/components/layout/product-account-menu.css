@@ -1,5 +1,4 @@
-.product-account-menu-popover .ant-popover-container,
-.product-team-settings-popover .ant-popover-container {
+.product-account-menu-popover .ant-popover-container {
     border: 1px solid #4b4b4b !important;
     border-radius: 12px !important;
     background: #1c1c1c !important;
@@ -13,7 +12,11 @@
     padding: 16px !important;
 }
 
-.product-account-switcher-popover .ant-popover-container {
+.product-account-switcher-layer {
+    position: absolute;
+    top: -16px;
+    right: calc(100% + 20px);
+    z-index: 1;
     width: 324px;
     max-width: calc(100vw - var(--space-6));
     border: 1px solid #4b4b4b !important;
@@ -23,8 +26,22 @@
     padding: 16px !important;
     box-shadow: 0 4px 10px #0000004d !important;
 }
-.product-account-menu-popover .ant-popover-inner-content,
-.product-team-settings-popover .ant-popover-inner-content { color: #ffffff; }
+.product-account-menu-stack { position: relative; }
+
+.product-team-settings-layer {
+    position: absolute;
+    top: -16px;
+    right: calc(100% + 20px);
+    z-index: 1;
+    width: 140px;
+    border: 1px solid #4b4b4b;
+    border-radius: 12px;
+    background: #1c1c1c;
+    padding: 8px;
+    box-shadow: 0 4px 10px #0000004d;
+}
+
+.product-account-menu-popover .ant-popover-inner-content { color: #ffffff; }
 .product-account-menu,
 .product-account-switcher { color: #ffffff; }
 
@@ -116,6 +133,7 @@
 .product-account-menu__identity-action svg,
 .product-account-menu__actions button > svg,
 .product-account-switcher__create svg { width: 16px; height: 16px; }
+.product-account-menu__actions button > img { width: 16px; height: 16px; object-fit: contain; }
 
 .product-account-menu__actions { display: grid; gap: 2px; padding-top: 8px; }
 .product-account-menu__actions button {
@@ -134,7 +152,6 @@
 .product-account-menu__actions button:disabled { cursor: wait; opacity: 0.6; }
 .product-account-menu__chevron { margin-left: auto; }
 
-.product-team-settings-popover .ant-popover-container { width: 140px; padding: 8px !important; }
 .product-team-settings { display: grid; gap: 2px; }
 .product-team-settings button {
     min-height: 34px;
@@ -223,5 +240,15 @@
 
 @media (max-width: 560px) {
     .product-account-menu-popover .ant-popover-container { width: min(430px, calc(100vw - 24px)); }
-    .product-account-switcher-popover .ant-popover-container { width: min(324px, calc(100vw - 24px)); }
+    .product-account-switcher-layer {
+        top: calc(100% + 12px);
+        right: auto;
+        left: 0;
+        width: min(324px, calc(100vw - 56px));
+    }
+    .product-team-settings-layer {
+        top: calc(100% + 12px);
+        right: auto;
+        left: 0;
+    }
 }

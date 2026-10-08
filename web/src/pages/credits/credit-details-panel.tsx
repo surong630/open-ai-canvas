@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { DatePicker, Pagination, Select, Table, type TableColumnsType } from "antd";
+import { Pagination, Table, type TableColumnsType } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useMemo, useState } from "react";
 
@@ -8,6 +8,8 @@ import pageDropIcon from "@/assets/credits/icon-page-drop@2x.png";
 import pageLeftDisabled from "@/assets/credits/page-left-disabled@2x.png";
 import pageRight from "@/assets/credits/page-right@2x.png";
 import { formatCredits } from "@/constant/credits";
+import { XingpeiSelect } from "@/components/ui/product/xingpei-select";
+import { XingpeiRangePicker } from "@/components/ui/product/xingpei-range-picker";
 import type { CreditLedgerEntry, WalletSummary } from "@/services/api/wallet";
 
 export type LedgerTab = "income" | "consume" | "refund";
@@ -107,9 +109,7 @@ export function CreditDetailsPanel({ balanceLabel, balanceIcon, balance, enabled
             <div className="credits-page__filters">
                 <div className="credits-page__filter-fields">
                     <span>{tab === "income" ? "获取时间" : tab === "consume" ? "消耗时间" : "返还时间"}：</span>
-                    <DatePicker.RangePicker
-                        className="credits-page__date-range"
-                        classNames={{ popup: { root: "credits-page__date-popup" } }}
+                    <XingpeiRangePicker
                         allowClear
                         format="YYYY-MM-DD"
                         placeholder={["开始时间", "结束时间"]}
@@ -125,7 +125,7 @@ export function CreditDetailsPanel({ balanceLabel, balanceIcon, balance, enabled
                     {members && tab !== "income" ? (
                         <label className="credits-page__member-filter">
                             <span>选择成员：</span>
-                            <Select
+                            <XingpeiSelect
                                 allowClear
                                 value={memberId}
                                 placeholder="请选择成员"

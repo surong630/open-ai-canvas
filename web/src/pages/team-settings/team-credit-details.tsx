@@ -1,5 +1,6 @@
 import { App } from "antd";
 import { X } from "lucide-react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
 import balanceIcon from "@/assets/credits/core-icon-number@2x.png";
@@ -7,6 +8,7 @@ import type { CreditLedgerEntry, WalletSummary } from "@/services/api/wallet";
 
 import { CreditDetailsPanel, type CreditDetailsQuery, type CreditDetailsMember } from "../credits/credit-details-panel";
 import "../credits/credits-page.css";
+import { DissolveTeamModal } from "./dissolve-team-modal";
 import "./team-credit-details.css";
 
 const demoMembers: CreditDetailsMember[] = [
@@ -25,6 +27,12 @@ export default function TeamCreditDetailsPage() {
     const { message } = App.useApp();
     const navigate = useNavigate();
     const { teamId = "team" } = useParams();
+    const [dissolveModalOpen, setDissolveModalOpen] = useState(false);
+
+    const confirmDissolveTeam = () => {
+        setDissolveModalOpen(false);
+        message.info("解散团队功能尚未接入");
+    };
 
     return (
         <main className="credits-page team-credits-page">
@@ -35,7 +43,7 @@ export default function TeamCreditDetailsPage() {
 
             <section className="credits-page__workspace">
                 <header className="team-credits-page__header">
-                    <button type="button" className="team-credits-page__dissolve" onClick={() => message.info("解散团队功能尚未接入")}>解散团队</button>
+                    <button type="button" className="team-credits-page__dissolve" onClick={() => setDissolveModalOpen(true)}>解散团队</button>
                     <button type="button" aria-label="关闭团队积分管理" onClick={() => navigate("/home")}><X aria-hidden="true" /></button>
                 </header>
                 <div className="credits-page__content team-credits-page__content">
@@ -50,6 +58,11 @@ export default function TeamCreditDetailsPage() {
                     />
                 </div>
             </section>
+            <DissolveTeamModal
+                open={dissolveModalOpen}
+                onCancel={() => setDissolveModalOpen(false)}
+                onConfirm={confirmDissolveTeam}
+            />
         </main>
     );
 }

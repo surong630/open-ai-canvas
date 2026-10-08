@@ -104,16 +104,6 @@
     margin-left: 18px;
 }
 
-.credits-page__member-filter .ant-select {
-    width: 200px;
-}
-
-.credits-page__member-filter .ant-select-selector {
-    border-color: #424242 !important;
-    background: #1b1b1b !important;
-    color: #ffffff !important;
-}
-
 @media (max-width: 900px) {
     .credits-page__filter-fields {
         align-items: flex-start;
