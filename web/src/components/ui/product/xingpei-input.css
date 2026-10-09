@@ -66,5 +66,12 @@
 
 .xingpei-input-root.team-settings-input.ant-input:hover,
 .xingpei-input-root.team-settings-input.ant-input-affix-wrapper:hover {
-    border-color: #a998ff !important;
+    border: 1px solid #a998ff !important;
+}
+
+.xingpei-input-root.team-settings-input.ant-input:focus,
+.xingpei-input-root.team-settings-input.ant-input-focused,
+.xingpei-input-root.team-settings-input.ant-input-affix-wrapper-focused {
+    border: 1px solid #a998ff !important;
+    box-shadow: none !important;
 }

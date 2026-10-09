@@ -155,7 +155,7 @@ export default function TeamMembersPage() {
                             成员积分配置
                         </button>
                         <button type="button" onClick={() => setPendingOpen((current) => !current)}>
-                            待处理申请 <b>{pendingApplications.length}</b>
+                            待处理申请
                         </button>
                         <button type="button" className="is-primary" onClick={() => setInviteMembersOpen(true)}>
                             邀请成员

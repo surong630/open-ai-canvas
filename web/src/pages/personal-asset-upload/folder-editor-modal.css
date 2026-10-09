@@ -48,6 +48,7 @@
     position: absolute;
     top: 73px;
     left: 24px;
+    width: calc(100% - 48px);
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -57,24 +58,10 @@
     line-height: 20px;
 }
 
-.lanhu-folder-editor-field input {
-    width: 556px;
-    height: 32px;
-    padding: 0 6px;
-    border: 0;
-    border-radius: 8px;
-    outline: 0;
-    background: #373737;
-    color: rgba(255, 255, 255, 1);
+.lanhu-folder-editor-field .xingpei-input-root {
+    width: 100%;
     font-family: inherit;
-    font-size: 14px;
     font-weight: 500;
-    line-height: 20px;
-}
-
-.lanhu-folder-editor-field input::placeholder {
-    color: #8a8a8a;
-    opacity: 1;
 }
 
 .lanhu-folder-editor-footer {
@@ -119,7 +106,4 @@
         width: min(604px, calc(100vw - 24px));
     }
 
-    .lanhu-folder-editor-field input {
-        width: calc(100vw - 72px);
-    }
 }

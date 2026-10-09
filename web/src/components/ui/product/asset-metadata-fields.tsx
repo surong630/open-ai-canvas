@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 import "./asset-metadata-fields.css";
 import { ProductBlackSelect } from "./product-black-select";
+import { XingpeiInput } from "./xingpei-input";
 
 export type AssetMetadataOption = {
     label: ReactNode;
@@ -90,12 +91,13 @@ export function AssetMetadataFields({
             {showName ? (
                 <label className="asset-metadata-fields__field is-required">
                     <span>*<span>{nameLabel}</span></span>
-                    <input
+                    <XingpeiInput
+                        rootClassName="team-settings-input asset-metadata-fields__name-input"
                         value={name}
                         maxLength={nameMaxLength}
                         autoFocus={nameAutoFocus}
                         placeholder={namePlaceholder}
-                        onChange={(event) => onNameChange?.(event.currentTarget.value)}
+                        onChange={(event) => onNameChange?.(event.target.value)}
                     />
                 </label>
             ) : null}

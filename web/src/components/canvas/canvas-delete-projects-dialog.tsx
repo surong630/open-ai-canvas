@@ -1,6 +1,7 @@
-import { App, Button, Modal } from "antd";
+import { App } from "antd";
 import { useState } from "react";
 
+import { DeleteConfirmModal } from "@/components/ui/product/delete-confirm-modal";
 import { useAssetStore } from "@/stores/use-asset-store";
 import { useCanvasUiStore } from "@/stores/canvas/use-canvas-ui-store";
 import { deleteCanvasProjectsWithRemoteSync } from "@/services/user-data-sync";
@@ -26,22 +27,5 @@ export function CanvasDeleteProjectsDialog() {
         }
     };
 
-    return (
-        <Modal
-            title="删除画布？"
-            open={ids.length > 0}
-            centered
-            onCancel={() => setDeleteIds([])}
-            footer={
-                <>
-                    <Button onClick={() => setDeleteIds([])}>取消</Button>
-                    <Button danger type="primary" loading={deleting} onClick={() => void confirm()}>
-                        删除
-                    </Button>
-                </>
-            }
-        >
-            <p className="text-sm text-stone-500">将删除 {ids.length} 个画布，里面的节点和连线也会一起移除。</p>
-        </Modal>
-    );
+    return <DeleteConfirmModal open={ids.length > 0} confirming={deleting} onCancel={() => setDeleteIds([])} onConfirm={() => void confirm()} />;
 }

@@ -23,20 +23,8 @@
     color: rgba(129, 129, 129, 1);
 }
 
-.asset-metadata-fields__field > input {
+.asset-metadata-fields__name-input {
     width: 100%;
-    height: 32px;
-    border: 0;
-    border-radius: 6px;
-    outline: 0;
-    background: rgba(55, 55, 55, 1);
-    padding: 0 10px;
-    color: rgba(255, 255, 255, 1);
-    font: inherit;
-}
-
-.asset-metadata-fields__field > input::placeholder {
-    color: rgba(137, 137, 137, 1);
 }
 
 .asset-metadata-fields__select .ant-select-suffix img {

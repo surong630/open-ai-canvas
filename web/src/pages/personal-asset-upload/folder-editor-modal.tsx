@@ -1,5 +1,6 @@
 import closeIcon from "@/assets/team/modal-close.svg";
 import { AppModal } from "@/components/ui/product/app-modal";
+import { XingpeiInput } from "@/components/ui/product/xingpei-input";
 
 import "./folder-editor-modal.css";
 
@@ -49,12 +50,13 @@ export function LanhuFolderEditorModal({
 
                 <label className="lanhu-folder-editor-field">
                     <span>*<span className="text-[#818181]">文件夹名称</span></span>
-                    <input
+                    <XingpeiInput
+                        rootClassName="team-settings-input"
                         autoFocus
                         maxLength={40}
                         value={value}
                         placeholder="请输入文件夹名称"
-                        onChange={(event) => onChange(event.currentTarget.value)}
+                        onChange={(event) => onChange(event.target.value)}
                     />
                 </label>
 

@@ -119,6 +119,14 @@
 .member-credit-config-input.ant-input-affix-wrapper .ant-input {
     font-size: 12px;
 }
+.member-credit-config-input.ant-input:hover,
+.member-credit-config-input.ant-input-affix-wrapper:hover,
+.member-credit-config-input.ant-input:focus,
+.member-credit-config-input.ant-input-focused,
+.member-credit-config-input.ant-input-affix-wrapper-focused {
+    border: 1px solid #a998ff !important;
+    box-shadow: none !important;
+}
 .member-credit-config-modal__usage {
     display: inline-flex;
     align-items: baseline;

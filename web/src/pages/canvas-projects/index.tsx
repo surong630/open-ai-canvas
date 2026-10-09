@@ -16,10 +16,13 @@ import { ProductPageHeader } from "@/components/layout/product-page-header";
 import { ProductPrimarySidebar } from "@/components/layout/product-primary-sidebar";
 import { AppModal } from "@/components/ui/product/app-modal";
 import { ProductCardMoreMenu } from "@/components/ui/product/product-card-more-menu";
+import { DeleteConfirmModal } from "@/components/ui/product/delete-confirm-modal";
+import { XingpeiInput } from "@/components/ui/product/xingpei-input";
 import { loadCanvasProjectPage } from "@/lib/workspace-route-modules";
 import { listRemoteCanvasProjectsPage, type CanvasLibrarySummary } from "@/services/api/user-data";
-import { createCanvasProjectWithRemoteSync, loadCanvasProjectForEditing, saveRemoteUserDataNow } from "@/services/user-data-sync";
+import { createCanvasProjectWithRemoteSync, deleteCanvasProjectsWithRemoteSync, loadCanvasProjectForEditing, saveRemoteUserDataNow } from "@/services/user-data-sync";
 import { useCanvasStore } from "@/stores/canvas/use-canvas-store";
+import { useAssetStore } from "@/stores/use-asset-store";
 import { useUserStore } from "@/stores/use-user-store";
 
 import "./canvas-projects.css";
@@ -53,8 +56,12 @@ export default function CanvasProjectsPage() {
     const [folderStylePreviews, setFolderStylePreviews] = useState<FolderPreview[]>(() => initialFolderStylePreviews.map((folder) => ({ ...folder })));
     const [recycleBinOpen, setRecycleBinOpen] = useState(false);
     const [selectedRecycleProjectIds, setSelectedRecycleProjectIds] = useState<Set<string>>(() => new Set());
+    const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null);
+    const [deletingFolderId, setDeletingFolderId] = useState<string | null>(null);
+    const [deleting, setDeleting] = useState(false);
     const user = useUserStore((state) => state.user);
     const renameStoredCanvasProject = useCanvasStore((state) => state.renameProject);
+    const cleanupImages = useAssetStore((state) => state.cleanupImages);
     const projectsQuery = useQuery({
         queryKey: ["canvas-projects-page", user?.id],
         queryFn: ({ signal }) => loadAllCanvasProjects(signal),
@@ -92,6 +99,25 @@ export default function CanvasProjectsPage() {
     };
 
     const folderPlaceholder = () => message.info("文件夹功能等待后端接入");
+    const confirmDeleteProject = async () => {
+        if (!deletingProjectId || deleting) return;
+        setDeleting(true);
+        try {
+            await deleteCanvasProjectsWithRemoteSync([deletingProjectId]);
+            void cleanupImages();
+            setDeletingProjectId(null);
+            await projectsQuery.refetch();
+        } catch (error) {
+            message.error(error instanceof Error ? error.message : "删除项目失败");
+        } finally {
+            setDeleting(false);
+        }
+    };
+    const confirmDeleteFolder = () => {
+        if (!deletingFolderId) return;
+        setFolderStylePreviews((current) => current.filter((folder) => folder.id !== deletingFolderId));
+        setDeletingFolderId(null);
+    };
     const renameFolder = async (folderIdToRename: string, title: string) => {
         setFolderStylePreviews((current) => current.map((folder) => (folder.id === folderIdToRename ? { ...folder, title } : folder)));
         return true;
@@ -174,7 +200,7 @@ export default function CanvasProjectsPage() {
 
                         {!isFolderView
                             ? visibleFolderPreviews.map((folder) => (
-                                  <FolderStyleCard key={folder.id} folder={folder} onOpen={() => navigate(`/canvas-projects/folders/${folder.id}`)} onRename={(title) => renameFolder(folder.id, title)} onUnavailable={folderPlaceholder} />
+                                  <FolderStyleCard key={folder.id} folder={folder} onOpen={() => navigate(`/canvas-projects/folders/${folder.id}`)} onRename={(title) => renameFolder(folder.id, title)} onDelete={() => setDeletingFolderId(folder.id)} onUnavailable={folderPlaceholder} />
                               ))
                             : null}
 
@@ -189,6 +215,7 @@ export default function CanvasProjectsPage() {
                                 project={project}
                                 insideFolder={isFolderView}
                                 onRename={(title) => renameCanvasProject(project.id, title)}
+                                onDelete={() => setDeletingProjectId(project.id)}
                                 onOpen={() => {
                                     void loadCanvasProjectPage();
                                     navigate(`/canvas/${project.id}`);
@@ -197,6 +224,8 @@ export default function CanvasProjectsPage() {
                         ))}
                     </section>
                 </div>
+                <DeleteConfirmModal open={Boolean(deletingProjectId)} confirming={deleting} onCancel={() => setDeletingProjectId(null)} onConfirm={() => void confirmDeleteProject()} />
+                <DeleteConfirmModal open={Boolean(deletingFolderId)} onCancel={() => setDeletingFolderId(null)} onConfirm={confirmDeleteFolder} />
             </section>
 
             <RecycleBinModal
@@ -313,9 +342,9 @@ function RecycleBinModal({
     );
 }
 
-function FolderStyleCard({ folder, onOpen, onRename, onUnavailable }: { folder: FolderPreview; onOpen: () => void; onRename: (title: string) => Promise<boolean>; onUnavailable: () => void }) {
+function FolderStyleCard({ folder, onOpen, onRename, onDelete, onUnavailable }: { folder: FolderPreview; onOpen: () => void; onRename: (title: string) => Promise<boolean>; onDelete: () => void; onUnavailable: () => void }) {
     const [editing, setEditing] = useState(false);
-    const items: MenuProps["items"] = [{ key: "open", label: "打开", onClick: onOpen }, { key: "rename", label: "重命名", onClick: () => setEditing(true) }, ...["更换封面", "删除文件夹"].map((label) => ({ key: label, label, onClick: onUnavailable }))];
+    const items: MenuProps["items"] = [{ key: "open", label: "打开", onClick: onOpen }, { key: "rename", label: "重命名", onClick: () => setEditing(true) }, { key: "cover", label: "更换封面", onClick: onUnavailable }, { key: "delete", label: "删除文件夹", danger: true, onClick: onDelete }];
     return (
         <article className="canvas-projects-page__card group relative self-start">
             <button type="button" className="block w-full text-left" disabled={editing} onClick={onOpen}>
@@ -334,7 +363,7 @@ function FolderStyleCard({ folder, onOpen, onRename, onUnavailable }: { folder: 
     );
 }
 
-function CanvasProjectItem({ project, onOpen, onRename, insideFolder }: { project: CanvasLibrarySummary; onOpen: () => void; onRename: (title: string) => Promise<boolean>; insideFolder: boolean }) {
+function CanvasProjectItem({ project, onOpen, onRename, onDelete, insideFolder }: { project: CanvasLibrarySummary; onOpen: () => void; onRename: (title: string) => Promise<boolean>; onDelete: () => void; insideFolder: boolean }) {
     const { message } = App.useApp();
     const [editing, setEditing] = useState(false);
     const previewMedia = projectPreviewMedia(project.previewNodes, true);
@@ -354,7 +383,7 @@ function CanvasProjectItem({ project, onOpen, onRename, insideFolder }: { projec
                       { key: "folder-2", label: "文件夹2", onClick: unavailable },
                   ],
               },
-        { key: "delete", label: "删除项目", onClick: unavailable },
+        { key: "delete", label: "删除项目", danger: true, onClick: onDelete },
     ];
     return (
         <article className="canvas-projects-page__card group relative self-start text-left">
@@ -429,10 +458,10 @@ function InlineEditableTitle({
     return (
         <div className={`canvas-projects-page__editable-title${reserveMoreSpace ? " has-more-action" : ""}`}>
             {editing ? (
-                <Input
+                <XingpeiInput
                     autoFocus
                     maxLength={80}
-                    className="canvas-projects-page__title-input"
+                    rootClassName="canvas-projects-page__title-input"
                     value={draft}
                     onChange={(event) => setDraft(event.target.value)}
                     onBlur={() => void save()}

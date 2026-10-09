@@ -62,7 +62,9 @@ import { AssetPreviewModal } from "./asset-image-preview-modal";
 import { useAppearanceStore } from "@/stores/use-appearance-store";
 import { Select } from "@/components/ui/base/select";
 import { AppModal } from "@/components/ui/product/app-modal";
+import { DeleteConfirmModal } from "@/components/ui/product/delete-confirm-modal";
 import { ProductBlackSelect } from "@/components/ui/product/product-black-select";
+import { XingpeiInput } from "@/components/ui/product/xingpei-input";
 import selectArrowIcon from "@/assets/product-assets/select-arrow.svg";
 import { AssetHistoryMedia, AssetHistoryPage, groupAssetsByDate } from "./asset-history-page";
 import { PersonalAssetsPage, PersonalAssetsTagModal } from "./personal-assets-page";
@@ -1038,60 +1040,26 @@ export default function ProductAssetsPage() {
                 }}
             />
 
-            <Modal
-                className="library-modal library-confirm-modal"
-                title="移入回收站"
+            <DeleteConfirmModal
                 open={Boolean(archivingAsset)}
                 onCancel={() => setArchivingAsset(null)}
-                onOk={() => {
+                onConfirm={() => {
                     if (archivingAsset) {
                         void archiveAsset(archivingAsset);
                         setArchivingAsset(null);
                     }
                 }}
-                okText="移入回收站"
-                cancelText="取消"
-            >
-                确定将「{archivingAsset?.title}」移入回收站吗？移入后不会出现在正常素材库中，可在回收站随时还原。
-            </Modal>
-            <Modal
-                className="library-modal library-confirm-modal"
-                title="批量移入回收站"
+            />
+            <DeleteConfirmModal
                 open={batchArchiveOpen}
                 onCancel={() => setBatchArchiveOpen(false)}
-                onOk={() => {
+                onConfirm={() => {
                     void batchArchive();
                     setBatchArchiveOpen(false);
                 }}
-                okText="移入回收站"
-                cancelText="取消"
-            >
-                确定将已选择的 {selectedAssets.length} 个素材移入回收站吗？移入后可随时在回收站批量还原。
-            </Modal>
-            <Modal
-                className="library-modal library-confirm-modal"
-                title="彻底删除素材"
-                open={Boolean(deletingAsset)}
-                onCancel={() => setDeletingAsset(null)}
-                onOk={() => void confirmDelete()}
-                okText="彻底删除"
-                okButtonProps={{ danger: true }}
-                cancelText="取消"
-            >
-                确定彻底删除「{deletingAsset?.title}」吗？未被其他素材复用的服务器文件会直接释放，原画布或任务中的旧引用可能失效，操作不可恢复。
-            </Modal>
-            <Modal
-                className="library-modal library-confirm-modal"
-                title="批量彻底删除素材"
-                open={batchDeleteOpen}
-                onCancel={() => setBatchDeleteOpen(false)}
-                onOk={() => void confirmBatchDelete()}
-                okText="彻底删除"
-                okButtonProps={{ danger: true }}
-                cancelText="取消"
-            >
-                确定彻底删除已选择的 {selectedAssets.length} 个素材吗？未被其他素材复用的服务器文件会直接释放，原画布或任务中的旧引用可能失效，操作不可恢复。
-            </Modal>
+            />
+            <DeleteConfirmModal open={Boolean(deletingAsset)} onCancel={() => setDeletingAsset(null)} onConfirm={() => void confirmDelete()} />
+            <DeleteConfirmModal open={batchDeleteOpen} onCancel={() => setBatchDeleteOpen(false)} onConfirm={() => void confirmBatchDelete()} />
         </>
     );
 }
@@ -1155,7 +1123,14 @@ function SaveAssetsModal({
                                         *<span className="text-[#818181]">资产名称</span>
                                     </span>
                                 </label>
-                                    <input className="bg-[#373737] px-1.5 py-1.5 outline-0 rounded-[8px]" value={name} maxLength={80} autoFocus placeholder="请输入资产名称" onChange={(event) => onNameChange(event.target.value)} />
+                                <XingpeiInput
+                                    rootClassName="team-settings-input asset-save-dialog__name-input"
+                                    value={name}
+                                    maxLength={80}
+                                    autoFocus
+                                    placeholder="请输入资产名称"
+                                    onChange={(event) => onNameChange(event.target.value)}
+                                />
                             </div>
                         ) : null}
                         <div className="asset-save-dialog__field">
