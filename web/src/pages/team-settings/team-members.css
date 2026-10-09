@@ -78,7 +78,6 @@
 .team-members-page__header button {
     display: grid;
     width: 28px;
-    height: 28px;
     place-items: center;
     border: 0;
     background: transparent;
@@ -89,9 +88,12 @@
 }
 .team-members-page__dissolve {
     width: auto !important;
-    padding: 0 4px;
+    border-radius: 6px;
+    background: transparent;
+    padding: 6px 12px;
     color: #ffffff;
 }
+.team-members-page__dissolve:hover { background: rgba(45, 46, 46, 1); }
 .team-members-page__content {
     position: relative;
     min-width: 900px;

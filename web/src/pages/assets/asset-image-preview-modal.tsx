@@ -1,6 +1,7 @@
-import { AudioLines, Copy, Download, FolderOpen, Music2, Star, Trash2, X } from "lucide-react";
+import { AudioLines, Copy, Download, Music2, Star } from "lucide-react";
 
 import emptyPreviewImage from "@/assets/product-assets/asset-preview-empty@2x.png";
+import closeIcon from "@/assets/team/modal-close.svg";
 import { CachedResourceImage } from "@/components/cached-resource-image";
 import { AppModal } from "@/components/ui/product/app-modal";
 import type { AudioAsset, ImageAsset, VideoAsset } from "@/stores/use-asset-store";
@@ -50,7 +51,7 @@ export function AssetPreviewModal({ asset, creatorName, onClose, onCopy, onSave,
                     <aside className="asset-preview__details">
                         <header className="asset-preview__header">
                             <h2>{assetKindLabel[asset.kind]}</h2>
-                            <button type="button" aria-label={`关闭${assetKindLabel[asset.kind]}预览`} onClick={onClose}><X aria-hidden /></button>
+                            <button type="button" aria-label={`关闭${assetKindLabel[asset.kind]}预览`} onClick={onClose}><img src={closeIcon} alt="" aria-hidden="true" /></button>
                         </header>
 
                         <dl className="asset-preview__facts">

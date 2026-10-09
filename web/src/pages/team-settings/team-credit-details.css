@@ -69,12 +69,15 @@
 
 .team-credits-page__header .team-credits-page__dissolve {
     width: auto;
-    padding: 0 4px;
+    border-radius: 6px;
+    background: transparent;
+    padding: 6px 12px;
     color: #ffffff;
     font-size: 14px;
 }
 
 .team-credits-page__header .team-credits-page__dissolve:hover {
+    background: rgba(45, 46, 46, 1);
     color: #ffffff;
 }
 
