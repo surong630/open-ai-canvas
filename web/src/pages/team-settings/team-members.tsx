@@ -1,9 +1,10 @@
 import { App, Pagination, Table, type TableColumnsType } from "antd";
-import { Copy, Edit3, UsersRound, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import creditNavIcon from "@/assets/team-invite/icon-money-normal@2x.png";
+import memberNavActiveIcon from "@/assets/team-settings/icon-member-active@2x.png";
+import creditNavNormalIcon from "@/assets/team-settings/icon-credit-normal@2x.png";
 import { CreateTeamModal, type CreateTeamDraft } from "@/components/layout/create-team-modal";
 import { UserAvatar } from "@/components/layout/user-avatar";
 import { useUserStore } from "@/stores/use-user-store";
@@ -11,12 +12,18 @@ import balanceIcon from "@/assets/credits/core-icon-number@2x.png";
 import pageDropIcon from "@/assets/credits/icon-page-drop@2x.png";
 import pageLeftDisabled from "@/assets/credits/page-left-disabled@2x.png";
 import pageRight from "@/assets/credits/page-right@2x.png";
+import editTeamIcon from "@/assets/team/edit-team.svg";
+import copyTeamIdIcon from "@/assets/team/copy-team-id.svg";
 
 import "./team-members.css";
 import "../credits/credits-page.css";
 import { DissolveTeamModal } from "./dissolve-team-modal";
 import { EditMemberRemarkModal } from "./edit-member-remark-modal";
 import { TransferTeamOwnerModal } from "./transfer-team-owner-modal";
+import { MemberCreditConfigModal } from "./member-credit-config-modal";
+import { RemoveMemberModal } from "./remove-member-modal";
+import { InviteMembersModal } from "@/components/layout/invite-members-modal";
+import { PendingApplicationsPopover, type PendingApplication } from "./pending-applications-popover";
 
 type Member = { id: string; name: string; username?: string; email: string; usage: string; role: "owner" | "member" };
 
@@ -39,12 +46,69 @@ export default function TeamMembersPage() {
     const [memberRows, setMemberRows] = useState(members);
     const [editingMember, setEditingMember] = useState<Member | null>(null);
     const [transferOwnerOpen, setTransferOwnerOpen] = useState(false);
+    const [memberCreditConfigOpen, setMemberCreditConfigOpen] = useState(false);
+    const [removeMember, setRemoveMember] = useState<Member | null>(null);
+    const [inviteMembersOpen, setInviteMembersOpen] = useState(false);
+    const teamIdText = "58eddbdc1a2d22222222222222222222";
+    const copyTeamId = async () => {
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(teamIdText);
+            } else {
+                const textarea = document.createElement("textarea");
+                textarea.value = teamIdText;
+                textarea.setAttribute("readonly", "");
+                textarea.style.position = "fixed";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.select();
+                const copied = document.execCommand("copy");
+                textarea.remove();
+                if (!copied) throw new Error("copy failed");
+            }
+            message.success("团队ID已复制");
+        } catch {
+            try {
+                const textarea = document.createElement("textarea");
+                textarea.value = teamIdText;
+                textarea.setAttribute("readonly", "");
+                textarea.style.position = "fixed";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.select();
+                const copied = document.execCommand("copy");
+                textarea.remove();
+                if (copied) {
+                    message.success("团队ID已复制");
+                    return;
+                }
+            } catch {
+                // Fall through to the user-facing failure message.
+            }
+            message.error("复制失败，请手动复制");
+        }
+    };
+    const [pendingOpen, setPendingOpen] = useState(false);
+    const [pendingApplications, setPendingApplications] = useState<PendingApplication[]>([
+        { id: "application-1", name: "微信用户454q", time: "2026-09-20 14：21" },
+        { id: "application-2", name: "谭艳丽+王森", time: "2026-09-20 14：21" },
+        { id: "application-3", name: "谭艳丽+王森", time: "2026-09-20 14：21" },
+    ]);
+    const pendingToolbarRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        if (!pendingOpen) return;
+        const handlePointerDown = (event: PointerEvent) => {
+            if (!pendingToolbarRef.current?.contains(event.target as Node)) setPendingOpen(false);
+        };
+        document.addEventListener("pointerdown", handlePointerDown);
+        return () => document.removeEventListener("pointerdown", handlePointerDown);
+    }, [pendingOpen]);
     const columns: TableColumnsType<Member> = [
         { title: "成员", key: "member", render: (_, member) => <div className="team-members-page__member"><UserAvatar user={user!} className="team-members-page__member-avatar" fallbackVariant="product" /><span><strong>{member.name}</strong>{member.username ? <small>{member.username}</small> : null}</span></div> },
         { title: "邮箱", dataIndex: "email", key: "email" },
         { title: "月积分消耗/额度", dataIndex: "usage", key: "usage" },
         { title: "角色", key: "role", render: (_, member) => <span className={`team-members-page__role is-${member.role}`}>{member.role === "owner" ? "团队负责人" : "团队成员"}</span> },
-        { title: "操作", key: "actions", render: (_, member) => <div className="team-members-page__actions"><button type="button" onClick={() => setEditingMember(member)}>修改备注</button><button type="button" onClick={() => member.role === "owner" ? setTransferOwnerOpen(true) : setDissolveTeamOpen(true)}>{member.role === "owner" ? "转让团队负责人" : "解散团队"}</button></div> },
+        { title: "操作", key: "actions", render: (_, member) => <div className="team-members-page__actions"><button type="button" onClick={() => setEditingMember(member)}>修改备注</button><button type="button" onClick={() => member.role === "owner" ? setTransferOwnerOpen(true) : setRemoveMember(member)}>{member.role === "owner" ? "转让团队负责人" : "移除成员"}</button></div> },
     ];
     const jumpToPage = () => setPage(Math.max(1, Number.parseInt(jumpPage || "1", 10)));
 
@@ -52,11 +116,11 @@ export default function TeamMembersPage() {
         <main className="team-members-page">
             <aside className="team-members-page__sidebar" aria-label="团队设置">
                 <button type="button" className="is-active" aria-current="page">
-                    <UsersRound aria-hidden="true" />
+                    <img src={memberNavActiveIcon} alt="" />
                     成员管理
                 </button>
                 <button type="button" onClick={() => navigate(`/team-settings/${encodeURIComponent(teamId)}/credits`)}>
-                    <img src={creditNavIcon} alt="" />
+                    <img src={creditNavNormalIcon} alt="" />
                     积分管理
                 </button>
             </aside>
@@ -74,10 +138,10 @@ export default function TeamMembersPage() {
                         <UserAvatar user={user!} className="team-members-page__team-avatar" fallbackVariant="product" />
                         <div>
                             <div className="team-members-page__team-name">
-                                <button type="button" className="team-members-page__edit-team" onClick={() => setEditTeamOpen(true)}> {teamName} <Edit3 aria-hidden="true" /></button>
+                                <button type="button" className="team-members-page__edit-team" onClick={() => setEditTeamOpen(true)}> {teamName} <img src={editTeamIcon} alt="" /></button>
                             </div>
                             <div className="team-members-page__team-id">
-                                团队ID：58eddbdc1a2d22222222222222222222 <Copy aria-hidden="true" />
+                                团队ID：{teamIdText} <button type="button" aria-label="复制团队ID" onClick={() => void copyTeamId()}><img src={copyTeamIdIcon} alt="" /></button>
                             </div>
                         </div>
                     </div>
@@ -86,16 +150,17 @@ export default function TeamMembersPage() {
                         <strong>10000</strong>
                         <em>当前团队剩余积分</em>
                     </div>
-                    <div className="team-members-page__toolbar">
-                        <button type="button" onClick={() => message.info("成员积分配置功能尚未接入")}>
+                    <div ref={pendingToolbarRef} className="team-members-page__toolbar">
+                        <button type="button" onClick={() => setMemberCreditConfigOpen(true)}>
                             成员积分配置
                         </button>
-                        <button type="button" onClick={() => message.info("待处理申请功能尚未接入")}>
-                            待处理申请 <b>1</b>
+                        <button type="button" onClick={() => setPendingOpen((current) => !current)}>
+                            待处理申请 <b>{pendingApplications.length}</b>
                         </button>
-                        <button type="button" className="is-primary" onClick={() => message.info("邀请成员功能尚未接入")}>
+                        <button type="button" className="is-primary" onClick={() => setInviteMembersOpen(true)}>
                             邀请成员
                         </button>
+                        {pendingOpen ? <PendingApplicationsPopover applications={pendingApplications} onReject={(id) => setPendingApplications((current) => current.filter((item) => item.id !== id))} onApprove={(id) => setPendingApplications((current) => current.filter((item) => item.id !== id))} /> : null}
                     </div>
                     <Table<Member> className="credits-page__table" columns={columns} dataSource={memberRows} pagination={false} rowKey="id" tableLayout="fixed" />
                     <footer className="credits-page__footer">
@@ -134,6 +199,18 @@ export default function TeamMembersPage() {
                     message.success("团队负责人已转让");
                 }}
             />
+            <MemberCreditConfigModal
+                open={memberCreditConfigOpen}
+                members={memberRows}
+                onCancel={() => setMemberCreditConfigOpen(false)}
+                onConfirm={(limits) => {
+                    setMemberRows((current) => current.map((member) => ({ ...member, usage: `${member.usage.split("/")[0]}/${limits[member.id] || member.usage.split("/")[1]}` })));
+                    setMemberCreditConfigOpen(false);
+                    message.success("成员积分配置已保存");
+                }}
+            />
+            <RemoveMemberModal key={removeMember?.id ?? "closed"} open={Boolean(removeMember)} members={memberRows} initialMemberId={removeMember?.id} onCancel={() => setRemoveMember(null)} onConfirm={(memberId) => { setMemberRows((current) => current.filter((member) => member.id !== memberId)); setRemoveMember(null); message.success("成员已移除"); }} />
+            <InviteMembersModal team={inviteMembersOpen ? { id: teamId, name: teamName, role: "owner" } : undefined} onClose={() => setInviteMembersOpen(false)} />
         </main>
     );
 }

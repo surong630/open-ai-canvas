@@ -1,0 +1,197 @@
+.member-credit-config-modal .ant-modal-container {
+    overflow: hidden;
+    border: 1px solid #535353;
+    border-radius: 12px;
+    background: #262626;
+    color: #fff;
+}
+.member-credit-config-modal .ant-modal-close {
+    top: 18px;
+    right: 24px;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+}
+.member-credit-config-modal .ant-modal-close:hover {
+    background: transparent;
+}
+.member-credit-config-modal .ant-modal-close img {
+    display: block;
+    width: 12px;
+    height: 12px;
+}
+.member-credit-config-modal__shell {
+    width: 604px;
+    color: #fff;
+    font-family: "Alibaba PuHuiTi 3.0", "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+}
+.member-credit-config-modal__header {
+    display: flex;
+    height: 49px;
+    align-items: center;
+    border-bottom: 1px solid #3c3c3c;
+    padding: 0 24px;
+}
+.member-credit-config-modal__header h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 21px;
+}
+.member-credit-config-modal__body {
+    position: relative;
+    padding: 16px 24px 8px;
+}
+.member-credit-config-modal__description {
+    margin: 0 0 12px;
+    color: #929292;
+    font-size: 12px;
+    line-height: 18px;
+}
+.member-credit-config-modal__summary {
+    margin-bottom: 8px;
+    color: #929292;
+    font-size: 12px;
+    text-align: right;
+}
+.member-credit-config-modal__summary strong {
+    color: #6d6dff;
+    font-weight: 500;
+}
+.member-credit-config-modal__list {
+    overflow: hidden;
+    border: 1px solid #3c3c3c;
+    border-radius: 8px;
+    background: #262626;
+}
+.member-credit-config-modal__row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 150px;
+    min-height: 56px;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid #3c3c3c;
+    padding: 8px 12px;
+    color: #fff;
+    font-size: 13px;
+}
+.member-credit-config-modal__row:last-child {
+    border-bottom: 0;
+}
+.member-credit-config-modal__member {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+}
+.member-credit-config-modal__member > span:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+.member-credit-config-modal__member strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 500;
+}
+.member-credit-config-modal__member small {
+    color: #818181;
+    font-size: 11px;
+}
+.member-credit-config-modal__avatar {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #c9d2ff, #8898ed);
+}
+.member-credit-config-modal__row .xingpei-input {
+    width: 100%;
+}
+.member-credit-config-modal__usage {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    white-space: nowrap;
+}
+.member-credit-config-modal__usage small {
+    color: #929292;
+    font-size: 11px;
+}
+.member-credit-config-modal__usage strong {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+}
+.member-credit-config-modal__row .xingpei-input-root.ant-input-affix-wrapper {
+    padding-right: 8px;
+}
+.member-credit-config-modal__row .xingpei-input-root.ant-input-affix-wrapper .ant-input-suffix {
+    color: #929292;
+    font-size: 11px;
+}
+.member-credit-config-modal__warning {
+    margin: 8px 0 0;
+    color: #e68a16;
+    font-size: 11px;
+    line-height: 18px;
+}
+.member-credit-config-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 24px 22px;
+}
+.member-credit-config-modal__footer button {
+    width: 52px;
+    height: 32px;
+    border: 0;
+    border-radius: 5px;
+    font: 400 13px/20px inherit;
+    cursor: pointer;
+}
+.member-credit-config-modal__cancel {
+    background: #363636;
+    color: #fff;
+}
+.member-credit-config-modal__confirm {
+    background: #fff;
+    color: #262626;
+}
+.member-credit-config-modal__cancel:hover {
+    background: #414141;
+}
+.member-credit-config-modal__confirm:hover {
+    background: #e7e7e7;
+}
+@media (max-width: 640px) {
+    .member-credit-config-modal__shell {
+        width: 100%;
+    }
+    .member-credit-config-modal__row {
+        grid-template-columns: 1.3fr 1fr 120px;
+        gap: 8px;
+    }
+    .member-credit-config-modal__row .xingpei-input {
+        width: 120px;
+    }
+}
+
+.member-credit-config-confirm-modal .ant-modal-container { overflow: hidden; border: 1px solid #535353; border-radius: 12px; background: #262626; color: #fff; }
+.member-credit-config-confirm-modal .ant-modal-close { top: 18px; right: 24px; width: 12px; height: 12px; padding: 0; border-radius: 0; background: transparent; }
+.member-credit-config-confirm-modal .ant-modal-close:hover { background: transparent; }
+.member-credit-config-confirm-modal .ant-modal-close img { display: block; width: 12px; height: 12px; }
+.member-credit-config-confirm-modal__shell { width: 420px; color: #fff; font-family: inherit; }
+.member-credit-config-confirm-modal__shell header { display: flex; height: 49px; align-items: center; border-bottom: 1px solid #3c3c3c; padding: 0 24px; }
+.member-credit-config-confirm-modal__shell h2 { margin: 0; font-size: 15px; font-weight: 700; line-height: 21px; }
+.member-credit-config-confirm-modal__shell p { margin: 0; padding: 24px 24px 8px; color: #929292; font-size: 14px; line-height: 20px; }
+.member-credit-config-confirm-modal__members { display: block; padding: 0 24px 24px; color: #fff; font-size: 14px; font-weight: 400; line-height: 20px; }
+.member-credit-config-confirm-modal__shell footer { display: flex; justify-content: flex-end; gap: 10px; padding: 0 24px 22px; }
+.member-credit-config-confirm-modal__shell footer button { width: 52px; height: 32px; border: 0; border-radius: 5px; background: #363636; color: #fff; font: 400 13px/20px inherit; cursor: pointer; }
+.member-credit-config-confirm-modal__shell footer button:last-child { background: #fff; color: #262626; }

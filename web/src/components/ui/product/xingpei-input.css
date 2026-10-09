@@ -39,3 +39,25 @@
 .xingpei-input-root .ant-input-show-count-suffix {
     color: #818181 !important;
 }
+
+/* Team name and member remark fields share one explicit input contract. */
+.xingpei-input-root.team-settings-input.ant-input,
+.xingpei-input-root.team-settings-input.ant-input-affix-wrapper {
+    box-sizing: border-box;
+    height: 32px;
+    min-height: 32px;
+    border-radius: 10px !important;
+    background: #2c2c2c !important;
+    color: #ffffff !important;
+    font-size: 13px;
+}
+
+.xingpei-input-root.team-settings-input.ant-input-affix-wrapper .ant-input {
+    height: 30px;
+    font-size: 13px;
+}
+
+.xingpei-input-root.team-settings-input.ant-input:hover,
+.xingpei-input-root.team-settings-input.ant-input-affix-wrapper:hover {
+    border-color: #a998ff !important;
+}

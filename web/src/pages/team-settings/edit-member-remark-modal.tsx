@@ -49,7 +49,7 @@ export function EditMemberRemarkModal({ open, username, remark, onCancel, onConf
                     </label>
                     <label>
                         <span>备注名</span>
-                        <XingpeiInput value={draftRemark} maxLength={30} autoFocus aria-label="备注名" onChange={(event) => setDraftRemark(event.target.value)} />
+                        <XingpeiInput rootClassName="team-settings-input" value={draftRemark} maxLength={30} autoFocus aria-label="备注名" onChange={(event) => setDraftRemark(event.target.value)} />
                     </label>
                 </div>
                 <footer className="edit-member-remark-modal__footer">

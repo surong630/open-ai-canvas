@@ -13,7 +13,10 @@
 }
 
 .team-credits-page__sidebar button {
+    display: flex;
     height: 42px;
+    align-items: center;
+    gap: 10px;
     border: 0;
     border-radius: 8px;
     text-align: left;
@@ -24,6 +27,13 @@
     padding: 10px 12px;
     width: 213px;
     cursor: pointer;
+}
+
+.team-credits-page__sidebar img {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    object-fit: contain;
 }
 
 .team-credits-page__sidebar button:hover,

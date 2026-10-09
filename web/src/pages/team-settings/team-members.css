@@ -51,8 +51,8 @@
 }
 .team-members-page__sidebar svg,
 .team-members-page__sidebar img {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     object-fit: contain;
 }
 .team-members-page__workspace {
@@ -153,6 +153,9 @@
     height: 16px;
     color: #8c8c8c;
 }
+.team-members-page__team-name img { width: 14px; height: 14px; }
+.team-members-page__team-id img { width: 12px; height: 12px; }
+.team-members-page__team-id button { display: inline-flex; align-items: center; border: 0; background: transparent; padding: 0; }
 .team-members-page__team-id {
     display: flex;
     align-items: center;
@@ -188,6 +191,7 @@
     line-height: 17px;
 }
 .team-members-page__toolbar {
+    position: relative;
     display: flex;
     margin-bottom: 16px;
     justify-content: flex-end;

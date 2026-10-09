@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
 import balanceIcon from "@/assets/credits/core-icon-number@2x.png";
+import memberNavNormalIcon from "@/assets/team-settings/icon-member-normal@2x.png";
+import creditNavActiveIcon from "@/assets/team-settings/icon-credit-active@2x.png";
 import type { CreditLedgerEntry, WalletSummary } from "@/services/api/wallet";
 
 import { CreditDetailsPanel, type CreditDetailsQuery, type CreditDetailsMember } from "../credits/credit-details-panel";
@@ -37,8 +39,14 @@ export default function TeamCreditDetailsPage() {
     return (
         <main className="credits-page team-credits-page">
             <aside className="team-credits-page__sidebar" aria-label="团队设置">
-                <button type="button" onClick={() => navigate(-1)}>成员管理</button>
-                <button type="button" aria-current="page">积分管理</button>
+                <button type="button" onClick={() => navigate(-1)}>
+                    <img src={memberNavNormalIcon} alt="" />
+                    成员管理
+                </button>
+                <button type="button" aria-current="page">
+                    <img src={creditNavActiveIcon} alt="" />
+                    积分管理
+                </button>
             </aside>
 
             <section className="credits-page__workspace">

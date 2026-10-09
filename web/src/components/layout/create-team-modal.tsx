@@ -96,6 +96,7 @@ export function CreateTeamModal({ open, onCancel, onConfirm, title = "创建团�
                         <span><i aria-hidden="true">*</i>团队名称</span>
                         <XingpeiInput
                             autoFocus
+                            rootClassName="team-settings-input"
                             value={name}
                             maxLength={MAX_TEAM_NAME_LENGTH}
                             placeholder="请输入团队名称"

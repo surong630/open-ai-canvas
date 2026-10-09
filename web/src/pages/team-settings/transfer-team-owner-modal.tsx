@@ -66,10 +66,10 @@ function TransferTeamOwnerForm({ candidates, onCancel, onConfirm }: { candidates
     );
 }
 
-function MemberOption({ member }: { member: TransferTeamOwnerModalProps["members"][number] }) {
+export function MemberOption({ member }: { member: TransferTeamOwnerModalProps["members"][number] }) {
     return <span className="transfer-team-owner-modal__member-option"><span className="transfer-team-owner-modal__avatar"><UserRound aria-hidden="true" /></span><span className="transfer-team-owner-modal__member-copy"><strong>{member.name}</strong><small>{member.username ?? ""}</small></span>{member.role === "owner" ? <em>团队负责人</em> : null}</span>;
 }
 
-function CompactMemberOption({ member }: { member: TransferTeamOwnerModalProps["members"][number] }) {
+export function CompactMemberOption({ member }: { member: TransferTeamOwnerModalProps["members"][number] }) {
     return <span className="transfer-team-owner-modal__member-option"><span className="transfer-team-owner-modal__avatar"><UserRound aria-hidden="true" /></span><strong>{member.name}</strong></span>;
 }
