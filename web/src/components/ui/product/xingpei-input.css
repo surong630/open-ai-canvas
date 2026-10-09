@@ -49,12 +49,19 @@
     border-radius: 10px !important;
     background: #2c2c2c !important;
     color: #ffffff !important;
-    font-size: 13px;
+    font-size: 14px;
+}
+
+.xingpei-input-root.team-settings-input.ant-input::placeholder,
+.xingpei-input-root.team-settings-input.ant-input-affix-wrapper .ant-input::placeholder,
+.xingpei-input-root.team-settings-input .ant-input-show-count-suffix {
+    color: #929292 !important;
+    font-size: 14px;
 }
 
 .xingpei-input-root.team-settings-input.ant-input-affix-wrapper .ant-input {
     height: 30px;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .xingpei-input-root.team-settings-input.ant-input:hover,

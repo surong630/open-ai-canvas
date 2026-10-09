@@ -153,8 +153,8 @@
 
 .product-home__recent { margin-top: 30px; }
 .product-home__recent > header { display: flex; height: 22px; align-items: center; justify-content: space-between; margin-bottom: 18px; padding: 0 8px; }
-.product-home__recent h2 { margin: 0; color: #ffffff; font-size: 16px; font-weight: 700; line-height: 22px; }
-.product-home__recent > header button { display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; color: #c9c9c9; font-size: 12px; cursor: pointer; }
+.product-home__recent h2 { margin: 0; color: #f5f5f5; font-size: 16px; font-weight: 700; line-height: 22px; }
+.product-home__recent > header button { display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; color: #e8e8e8; font-size: 12px; cursor: pointer; }
 .product-home__recent > header svg { width: 12px; height: 12px; }
 .product-home__recent-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 264px)); gap: 20px; }
 .product-home__project {
@@ -177,8 +177,8 @@
 .product-home__project-empty { display: grid; place-items: center; color: #565656; }
 .product-home__project-empty svg { width: 14px; height: 14px; stroke-width: 1.5; }
 .product-home__project-copy { display: flex; min-width: 0; justify-content: center; flex-direction: column; padding: 0 16px; }
-.product-home__project-copy strong { overflow: hidden; font-size: 14px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
-.product-home__project-copy time { margin-top: 4px; color: #828282; font-size: 11px; font-weight: 300; }
+.product-home__project-copy strong { overflow: hidden; color: #eeeeee; font-size: 15px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.product-home__project-copy time { margin-top: 4px; color: #aaaaaa; font-size: 12px; font-weight: 400; }
 .product-home__recent-state { display: flex; min-height: 84px; align-items: center; justify-content: center; gap: 8px; border: 1px solid #303030; border-radius: 22px; color: #828282; font-size: 12px; }
 .product-home__recent-state button { border: 0; background: transparent; color: var(--home-accent); cursor: pointer; }
 .product-home__spinner { animation: product-home-spin 0.8s linear infinite; }

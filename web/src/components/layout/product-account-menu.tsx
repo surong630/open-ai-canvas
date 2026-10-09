@@ -123,7 +123,7 @@ export function ProductAccountMenu({
                 <div className="product-account-switcher__label">个人账户</div>
                 <button
                     type="button"
-                    className={cn("product-account-switcher__account", !activeTeam && "is-active")}
+                    className={cn("product-account-switcher__account", "is-personal", !activeTeam && "is-active")}
                     onClick={() => selectAccount(null)}
                 >
                     <UserAvatar user={user} className="product-account-switcher__personal-avatar" fallbackVariant="product" />

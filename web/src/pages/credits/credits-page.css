@@ -187,7 +187,7 @@
     justify-content: center;
     border: 0;
     background: transparent;
-    color: #909090;
+    color: #929292;
     padding: 14px 0 0;
     font-size: 14px;
     font-weight: 700;
@@ -416,11 +416,11 @@ body .credits-page__date-popup .ant-picker-range-arrow::after { background: #202
 }
 .credits-page__table .ant-table-placeholder .ant-table-cell {
     height: 244px;
-    color: #909090;
+    color: #a0a0a0;
     text-align: center;
 }
 .credits-page__table .ant-empty-description {
-    color: #909090;
+    color: #a0a0a0;
 }
 .credits-page__table .ant-spin-container::after {
     background: #1f1f1f;

@@ -6,7 +6,7 @@
     display: flex;
     min-height: 100dvh;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
     border-right: 1px solid var(--credits-border);
     background: var(--credits-bg);
     padding: 20px 8px;
@@ -14,14 +14,14 @@
 
 .team-credits-page__sidebar button {
     display: flex;
-    height: 42px;
+    height: 36px;
     align-items: center;
     gap: 10px;
     border: 0;
     border-radius: 8px;
     text-align: left;
     background: transparent;
-    color: #e5e5e5;
+    color: #e8e8e8;
     font-size: 14px;
     font-weight: 700;
     padding: 10px 12px;
@@ -38,7 +38,7 @@
 
 .team-credits-page__sidebar button:hover,
 .team-credits-page__sidebar button[aria-current="page"] {
-    background: #2c2c2c;
+    background: #1e1e1e;
 }
 
 .team-credits-page__header {
@@ -54,7 +54,7 @@
     gap: 16px;
     padding: 0 20px;
     color: #e5e5e5;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .team-credits-page__header button {
@@ -70,8 +70,8 @@
 .team-credits-page__header .team-credits-page__dissolve {
     width: auto;
     padding: 0 4px;
-    color: #e5e5e5;
-    font-size: 13px;
+    color: #ffffff;
+    font-size: 14px;
 }
 
 .team-credits-page__header .team-credits-page__dissolve:hover {

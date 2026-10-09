@@ -7,11 +7,11 @@
 .remove-member-modal__shell h2 { margin: 0; font-size: 15px; font-weight: 700; line-height: 21px; }
 .remove-member-modal__body { display: grid; gap: 18px; padding: 22px 24px 24px; }
 .remove-member-modal__description { margin: 0; color: #929292; font-size: 14px; line-height: 20px; }
-.remove-member-modal__body label { display: grid; width: 100%; gap: 8px; color: #d8d8d8; font-size: 13px; line-height: 18px; }
+.remove-member-modal__body label { display: grid; width: 100%; gap: 8px; color: #d8d8d8; font-size: 14px; line-height: 20px; }
 .remove-member-modal__body .xingpei-select { width: 100% !important; }
 .remove-member-modal__body .xingpei-select .ant-select-selector { border-color: #373737 !important; border-radius: 8px !important; background: #373737 !important; }
 .remove-member-modal__shell footer { display: flex; justify-content: flex-end; gap: 10px; padding: 0 24px 22px; }
-.remove-member-modal__shell footer button { width: 52px; height: 32px; border: 0; border-radius: 5px; background: #363636; color: #fff; font: 400 13px/20px inherit; cursor: pointer; }
+.remove-member-modal__shell footer button { width: 52px; height: 32px; border: 0; border-radius: 5px; background: #363636; color: #fff; font: 400 14px/20px inherit; cursor: pointer; }
 .remove-member-modal__shell footer button:last-child { background: #fff; color: #262626; }
 .remove-member-modal__shell footer button:disabled { cursor: not-allowed; opacity: .45; }
 @media (max-width: 460px) { .remove-member-modal__shell { width: 100%; } }

@@ -47,13 +47,13 @@
 .member-credit-config-modal__description {
     margin: 0 0 12px;
     color: #929292;
-    font-size: 12px;
-    line-height: 18px;
+    font-size: 14px;
+    line-height: 20px;
 }
 .member-credit-config-modal__summary {
     margin-bottom: 8px;
     color: #929292;
-    font-size: 12px;
+    font-size: 14px;
     text-align: right;
 }
 .member-credit-config-modal__summary strong {
@@ -75,7 +75,7 @@
     border-bottom: 1px solid #3c3c3c;
     padding: 8px 12px;
     color: #fff;
-    font-size: 13px;
+    font-size: 12px;
 }
 .member-credit-config-modal__row:last-child {
     border-bottom: 0;
@@ -96,12 +96,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 400;
 }
 .member-credit-config-modal__member small {
     color: #818181;
-    font-size: 11px;
+    font-size: 12px;
 }
 .member-credit-config-modal__avatar {
     display: inline-block;
@@ -114,6 +114,11 @@
 .member-credit-config-modal__row .xingpei-input {
     width: 100%;
 }
+.member-credit-config-input.ant-input,
+.member-credit-config-input.ant-input-affix-wrapper,
+.member-credit-config-input.ant-input-affix-wrapper .ant-input {
+    font-size: 12px;
+}
 .member-credit-config-modal__usage {
     display: inline-flex;
     align-items: baseline;
@@ -122,25 +127,25 @@
 }
 .member-credit-config-modal__usage small {
     color: #929292;
-    font-size: 11px;
+    font-size: 12px;
 }
 .member-credit-config-modal__usage strong {
     color: #fff;
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 400;
 }
 .member-credit-config-modal__row .xingpei-input-root.ant-input-affix-wrapper {
     padding-right: 8px;
 }
 .member-credit-config-modal__row .xingpei-input-root.ant-input-affix-wrapper .ant-input-suffix {
     color: #929292;
-    font-size: 11px;
+    font-size: 12px;
 }
 .member-credit-config-modal__warning {
     margin: 8px 0 0;
     color: #e68a16;
-    font-size: 11px;
-    line-height: 18px;
+    font-size: 14px;
+    line-height: 20px;
 }
 .member-credit-config-modal__footer {
     display: flex;
@@ -153,7 +158,7 @@
     height: 32px;
     border: 0;
     border-radius: 5px;
-    font: 400 13px/20px inherit;
+    font: 400 14px/20px inherit;
     cursor: pointer;
 }
 .member-credit-config-modal__cancel {

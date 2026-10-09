@@ -37,7 +37,7 @@ export function MemberCreditConfigModal({ open, members, onCancel, onConfirm }: 
                             <div className="member-credit-config-modal__row" key={member.id}>
                                 <div className="member-credit-config-modal__member"><span className="member-credit-config-modal__avatar" aria-hidden="true" /><span><strong>{member.name}</strong><small>{member.username ?? member.email}</small></span></div>
                                 <span className="member-credit-config-modal__usage"><small>本月已用</small><strong>{member.usage.split("/")[0]}</strong><small>积分</small></span>
-                                <XingpeiInput value={limits[member.id] ?? ""} suffix="积分" inputMode="numeric" onChange={(event) => setLimits((current) => ({ ...current, [member.id]: event.target.value.replace(/\D/g, "") }))} />
+                                <XingpeiInput rootClassName="member-credit-config-input" value={limits[member.id] ?? ""} suffix="积分" inputMode="numeric" onChange={(event) => setLimits((current) => ({ ...current, [member.id]: event.target.value.replace(/\D/g, "") }))} />
                             </div>
                         ))}
                     </div>

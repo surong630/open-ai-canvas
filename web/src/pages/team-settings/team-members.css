@@ -25,7 +25,7 @@
 .team-members-page__sidebar {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
     min-height: 100dvh;
     border-right: 1px solid #303030;
     padding: 20px 8px;
@@ -33,21 +33,21 @@
 .team-members-page__sidebar button {
     display: flex;
     width: 213px;
-    height: 42px;
+    height: 36px;
     align-items: center;
     gap: 10px;
     border: 0;
     border-radius: 8px;
     background: transparent;
     padding: 10px 12px;
-    color: #e5e5e5;
+    color: #e8e8e8;
     font-size: 14px;
     font-weight: 700;
     text-align: left;
 }
 .team-members-page__sidebar button.is-active,
 .team-members-page__sidebar button:hover {
-    background: #2c2c2c;
+    background: #1e1e1e;
 }
 .team-members-page__sidebar svg,
 .team-members-page__sidebar img {
@@ -73,7 +73,7 @@
     gap: 16px;
     padding: 0 20px;
     color: #e5e5e5;
-    font-size: 13px;
+    font-size: 14px;
 }
 .team-members-page__header button {
     display: grid;
@@ -90,6 +90,7 @@
 .team-members-page__dissolve {
     width: auto !important;
     padding: 0 4px;
+    color: #ffffff;
 }
 .team-members-page__content {
     position: relative;
@@ -141,9 +142,9 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
-    line-height: 28px;
+    line-height: 20px;
 }
 .team-members-page__edit-team { display: inline-flex; align-items: center; gap: 8px; border: 0; background: transparent; padding: 0; font: inherit; }
 .team-members-page__edit-team:hover { color: #ffffff; }
@@ -200,7 +201,7 @@
 }
 .team-members-page__toolbar button {
     display: inline-flex;
-    height: 36px;
+    height: 32px;
     align-items: center;
     gap: 6px;
     border: 0;
@@ -209,6 +210,7 @@
     padding: 0 14px;
     color: #fff;
     font-size: 14px;
+    font-weight: 500;
 }
 .team-members-page__toolbar button.is-primary {
     background: #fff;
@@ -283,7 +285,7 @@
     gap: 2px;
 }
 .team-members-page__member strong {
-    font-size: 15px;
+    font-size: 14px;
 }
 .team-members-page__member small {
     color: #7d7d7d;
@@ -292,7 +294,7 @@
 .team-members-page__role {
     border-radius: 5px;
     padding: 4px 8px;
-    font-size: 13px;
+    font-size: 12px;
 }
 .team-members-page__role.is-owner {
     background: rgba(54, 98, 236, 0.08);
@@ -311,7 +313,7 @@
     background: transparent;
     padding: 0;
     color: #917dfd;
-    font-size: 14px;
+    font-size: 13px;
     white-space: nowrap;
 }
 .team-members-page__pagination {

@@ -63,7 +63,7 @@
     border-radius: 6px;
     background: #212121;
     color: #a4a4a4;
-    font-size: 13px;
+    font-size: 14px;
     padding: 0 16px;
 }
 
@@ -78,7 +78,7 @@
     display: grid;
     gap: 10px;
     color: #d8d8d8;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .create-team-modal__field i {
@@ -115,7 +115,8 @@
     border-radius: 6px;
     background: #363636;
     padding: 6px 12px;
-    font-size: 13px;
+    font-size: 14px;
+    font-weight: 700;
 }
 
 .create-team-modal__avatar-row button:hover { background: #414141; }
