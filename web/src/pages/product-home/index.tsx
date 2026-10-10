@@ -11,6 +11,7 @@ import { NODE_DEFAULT_SIZE } from "@/constant/canvas";
 import { createCanvasNode } from "@/lib/canvas/canvas-project-domain";
 import { loadCanvasProjectPage } from "@/lib/workspace-route-modules";
 import { listRemoteCanvasProjectsPage } from "@/services/api/user-data";
+import { createProductProject, listProductProjects } from "@/services/api/product-projects";
 import { createCanvasProjectWithRemoteSync } from "@/services/user-data-sync";
 import { useUserStore } from "@/stores/use-user-store";
 import { CanvasNodeType } from "@/types/canvas";
@@ -42,7 +43,15 @@ export default function ProductHomePage() {
     const user = useUserStore((state) => state.user);
     const recentQuery = useQuery({
         queryKey: ["product-home", "recent-canvases", user?.id],
-        queryFn: () => listRemoteCanvasProjectsPage({ page: 1, pageSize: 4, sort: "updated" }),
+        queryFn: async () => {
+            // 二开接口先探测，暂不替换旧接口的数据来源，避免影响现有首页展示。
+            try {
+                await listProductProjects({ recycle: false });
+            } catch (error) {
+                console.warn("二开项目列表请求失败，继续使用旧项目接口", error);
+            }
+            return listRemoteCanvasProjectsPage({ page: 1, pageSize: 4, sort: "updated" });
+        },
         enabled: Boolean(user?.id),
         staleTime: 30_000,
         refetchOnMount: "always",
@@ -59,11 +68,18 @@ export default function ProductHomePage() {
         try {
             const count = recentQuery.data?.total || 0;
             const starterNode = starter ? createHomeStarterNode(starter.nodeType, starter.nodeTitle) : undefined;
-            const { id, syncError } = await createCanvasProjectWithRemoteSync(
-                `${starter?.projectTitle || "自由画布"} ${count + 1}`,
+            const projectName = `${starter?.projectTitle || "自由画布"} ${count + 1}`;
+            // 二开项目创建与旧画布创建并行发起；二开失败不阻断旧流程，也不替换旧数据源。
+            const productProjectRequest = createProductProject({ itemType: 2, name: projectName }).catch((error) => {
+                console.warn("二开项目创建失败，继续使用旧画布创建接口", error);
+                return undefined;
+            });
+            const legacyProjectRequest = createCanvasProjectWithRemoteSync(
+                projectName,
                 undefined,
                 starterNode ? { nodes: [starterNode] } : undefined,
             );
+            const [{ id, syncError }] = await Promise.all([legacyProjectRequest, productProjectRequest]);
             if (syncError) message.warning(syncError instanceof Error ? `画布已在本地创建，云端同步失败：${syncError.message}` : "画布已在本地创建，云端同步失败");
             void loadCanvasProjectPage();
             navigate(`/canvas/${id}`);

@@ -2,8 +2,7 @@ import { App } from "antd";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 
-import { getAuthSession, getAuthSettings } from "@/services/api/auth";
-import { emptyVerification, loginVerification, startVerification } from "@/services/api/verification";
+import { loginProductWithEmail, sendProductEmailCaptcha } from "@/services/api/product-auth";
 import { useAppearanceStore } from "@/stores/use-appearance-store";
 import { useUserStore } from "@/stores/use-user-store";
 
@@ -19,11 +18,9 @@ export default function EmailCodeLoginPage() {
     const sendInFlight = useRef(false);
     const [email, setEmail] = useState("");
     const [emailCode, setEmailCode] = useState("");
-    const [ticket, setTicket] = useState("");
     const [remaining, setRemaining] = useState(0);
     const [sending, setSending] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-    const [emailLoginEnabled, setEmailLoginEnabled] = useState<boolean | null>(null);
     const [videoFailed, setVideoFailed] = useState(false);
     const [posterFailed, setPosterFailed] = useState(false);
     const next = safeNext(params.get("next"));
@@ -31,15 +28,6 @@ export default function EmailCodeLoginPage() {
     useEffect(() => {
         if (hydrated && user) navigate(next, { replace: true });
     }, [hydrated, navigate, next, user]);
-
-    useEffect(() => {
-        void getAuthSettings()
-            .then((settings) => setEmailLoginEnabled(settings.emailLogin))
-            .catch((error) => {
-                console.warn("读取邮箱验证码登录配置失败", error);
-                setEmailLoginEnabled(false);
-            });
-    }, []);
 
     useEffect(() => {
         if (remaining <= 0) return;
@@ -54,7 +42,6 @@ export default function EmailCodeLoginPage() {
 
     const changeEmail = (value: string) => {
         setEmail(value);
-        setTicket("");
         setEmailCode("");
     };
 
@@ -65,21 +52,14 @@ export default function EmailCodeLoginPage() {
             message.warning("请输入正确的邮箱账号");
             return;
         }
-        if (!emailLoginEnabled) {
-            message.warning(emailLoginEnabled === null ? "正在读取登录配置" : "管理员暂未开启邮箱验证码登录");
-            return;
-        }
         sendInFlight.current = true;
         setSending(true);
         setRemaining(60);
-        setTicket("");
         setEmailCode("");
         try {
-            const result = await startVerification({ purpose: "login", method: "email", email: normalizedEmail });
+            await sendProductEmailCaptcha(normalizedEmail);
             setEmail(normalizedEmail);
-            setTicket(result.ticket);
-            setRemaining(result.retryAfter);
-            message.success("如该邮箱已验证且账号可用，验证码将发送至该邮箱");
+            message.success("验证码已发送，请查收邮箱");
         } catch (error) {
             message.error(error instanceof Error ? error.message : "发送失败，请稍后重试");
         } finally {
@@ -90,21 +70,16 @@ export default function EmailCodeLoginPage() {
 
     const submit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (!ticket) {
-            message.warning("请先获取本次登录验证码");
-            return;
-        }
         if (emailCode.length !== 6) {
             message.warning("请输入 6 位邮件验证码");
             return;
         }
         setSubmitting(true);
         try {
-            await loginVerification({ ...emptyVerification, email: email.trim().toLowerCase(), emailCode, ticket });
-            const { applyUserSession } = await import("@/lib/user-session");
-            await applyUserSession(await getAuthSession());
+            await loginProductWithEmail({ email: email.trim().toLowerCase(), captcha: emailCode });
             message.success("登录成功");
-            navigate(next, { replace: true });
+            // 二开接口当前只返回 token/workspace，不返回源仓库所需的用户 session，
+            // 因此暂不调用源仓库的 applyUserSession，避免覆盖二开 token。
         } catch (error) {
             message.error(error instanceof Error ? error.message : "登录失败");
         } finally {
@@ -172,17 +147,16 @@ export default function EmailCodeLoginPage() {
                                 disabled={sending || submitting}
                                 required
                             />
-                            <button type="button" onClick={() => void sendCode()} disabled={sending || submitting || remaining > 0 || emailLoginEnabled !== true}>
+                            <button type="button" onClick={() => void sendCode()} disabled={sending || submitting || remaining > 0}>
                                 {sending ? "正在发送" : remaining > 0 ? `${remaining} 秒` : "获取验证码"}
                             </button>
                         </span>
                     </label>
 
-                    <button className="email-code-login__submit" type="submit" disabled={submitting || emailLoginEnabled !== true}>
+                    <button className="email-code-login__submit" type="submit" disabled={submitting}>
                         <span>{submitting ? "正在验证身份…" : "登录/注册"}</span>
                     </button>
 
-                    {/* {emailLoginEnabled === false ? <p className="email-code-login__status" role="status">管理员暂未开启邮箱验证码登录</p> : null} */}
                 </form>
             </section>
         </main>

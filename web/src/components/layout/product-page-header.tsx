@@ -1,9 +1,11 @@
 import { Zap } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { useWalletBalance } from "@/hooks/use-wallet-balance";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/use-user-store";
+import { getProductCurrentWorkspace } from "@/services/api/product-workspace";
 
 import { ProductAccountMenu, type ProductAccountTeam } from "./product-account-menu";
 import "./product-page-header.css";
@@ -35,9 +37,36 @@ export function ProductPageHeader({
 }: ProductPageHeaderProps) {
     const navigate = useNavigate();
     const user = useUserStore((state) => state.user);
+    const [productAccount, setProductAccount] = useState<Pick<NonNullable<typeof user>, "id" | "username" | "displayName" | "avatarUrl" | "email">>();
     const creditsEnabled = useUserStore((state) => state.features.creditsEnabled);
     const { availableMicrocredits } = useWalletBalance(user?.id, creditsEnabled && balanceText === undefined);
     const balance = balanceText ?? (availableMicrocredits === null ? "--" : (availableMicrocredits / 1_000_000).toLocaleString("zh-CN", { maximumFractionDigits: 2 }));
+
+    useEffect(() => {
+        if (!user) {
+            setProductAccount(undefined);
+            return;
+        }
+        let cancelled = false;
+        void getProductCurrentWorkspace()
+            .then((payload) => {
+                if (cancelled) return;
+                const account = payload.user || payload.account || payload;
+                setProductAccount({
+                    id: String(account.userId ?? account.id ?? user.id),
+                    username: account.username || user.username,
+                    displayName: account.displayName || account.nickname || account.name || user.displayName,
+                    avatarUrl: account.avatarUrl || user.avatarUrl,
+                    email: account.email || user.email,
+                });
+            })
+            .catch((error) => {
+                if (!cancelled) console.warn("二开个人信息获取失败，继续使用旧用户信息", error);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [user]);
 
     return (
         <header className={cn("product-page-header", className)}>
@@ -59,6 +88,7 @@ export function ProductPageHeader({
                         onOpenTeamMembers={onOpenTeamMembers}
                         onOpenTeamCredits={onOpenTeamCredits}
                         onSwitchAccount={onSwitchAccount}
+                        accountOverride={productAccount}
                     />
                 </>
             ) : (

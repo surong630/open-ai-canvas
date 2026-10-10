@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { App, Button, Input, type MenuProps } from "antd";
 import { FolderPlus, Image as ImageIcon, LoaderCircle, Plus, Search, SquarePlus, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
@@ -20,6 +20,18 @@ import { DeleteConfirmModal } from "@/components/ui/product/delete-confirm-modal
 import { XingpeiInput } from "@/components/ui/product/xingpei-input";
 import { loadCanvasProjectPage } from "@/lib/workspace-route-modules";
 import { listRemoteCanvasProjectsPage, type CanvasLibrarySummary } from "@/services/api/user-data";
+import {
+    createProductProject,
+    deleteProductProject,
+    listProductProjects,
+    moveProductProject,
+    renameProductProject,
+    restoreProductProject,
+    restoreProductProjects,
+    type ProductProjectItem,
+    updateProductProjectCover,
+    uploadProductFile,
+} from "@/services/api/product-projects";
 import { createCanvasProjectWithRemoteSync, deleteCanvasProjectsWithRemoteSync, loadCanvasProjectForEditing, saveRemoteUserDataNow } from "@/services/user-data-sync";
 import { useCanvasStore } from "@/stores/canvas/use-canvas-store";
 import { useAssetStore } from "@/stores/use-asset-store";
@@ -34,9 +46,16 @@ const initialFolderStylePreviews: FolderPreview[] = [
     { id: "folder-style-preview-2", title: "未命名项目", updatedAt: "2026-09-18" },
 ];
 
-async function loadAllCanvasProjects(signal?: AbortSignal) {
+async function loadAllCanvasProjects(signal?: AbortSignal, productParentId?: string) {
     const pageSize = 100;
     let page = 1;
+    let productProjects: ProductProjectItem[] = [];
+    // 二开接口先请求；旧接口仍是原有项目数据源，二开项目单独追加展示。
+    try {
+        productProjects = await listProductProjects({ recycle: false, parentId: productParentId });
+    } catch (error) {
+        console.warn("二开项目列表请求失败，继续使用旧项目接口", error);
+    }
     let result = await listRemoteCanvasProjectsPage({ page, pageSize, sort: "updated", signal });
     const projects = [...result.projects];
     while (result.hasMore) {
@@ -44,7 +63,7 @@ async function loadAllCanvasProjects(signal?: AbortSignal) {
         result = await listRemoteCanvasProjectsPage({ page, pageSize, sort: "updated", signal });
         projects.push(...result.projects);
     }
-    return { ...result, projects, page: 1, pageSize: projects.length };
+    return { ...result, projects, productProjects, page: 1, pageSize: projects.length };
 }
 
 export default function CanvasProjectsPage() {
@@ -53,28 +72,48 @@ export default function CanvasProjectsPage() {
     const { message } = App.useApp();
     const [keyword, setKeyword] = useState("");
     const [creating, setCreating] = useState(false);
+    const [creatingFolder, setCreatingFolder] = useState(false);
     const [folderStylePreviews, setFolderStylePreviews] = useState<FolderPreview[]>(() => initialFolderStylePreviews.map((folder) => ({ ...folder })));
     const [recycleBinOpen, setRecycleBinOpen] = useState(false);
+    const [productRecycleProjects, setProductRecycleProjects] = useState<ProductProjectItem[]>([]);
     const [selectedRecycleProjectIds, setSelectedRecycleProjectIds] = useState<Set<string>>(() => new Set());
     const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null);
+    const [deletingProductProjectId, setDeletingProductProjectId] = useState<string | null>(null);
+    const [deletingProductFolderId, setDeletingProductFolderId] = useState<string | null>(null);
     const [deletingFolderId, setDeletingFolderId] = useState<string | null>(null);
     const [deleting, setDeleting] = useState(false);
     const user = useUserStore((state) => state.user);
+    const queryClient = useQueryClient();
     const renameStoredCanvasProject = useCanvasStore((state) => state.renameProject);
     const cleanupImages = useAssetStore((state) => state.cleanupImages);
     const projectsQuery = useQuery({
-        queryKey: ["canvas-projects-page", user?.id],
-        queryFn: ({ signal }) => loadAllCanvasProjects(signal),
+        queryKey: ["canvas-projects-page", user?.id, folderId || "root"],
+        queryFn: ({ signal }) => loadAllCanvasProjects(signal, folderId),
         enabled: Boolean(user?.id),
         staleTime: 30_000,
         refetchOnMount: "always",
     });
+    useEffect(() => {
+        if (!folderId || !user?.id) return;
+        // 路由在同一页面实例内切换时，显式刷新一次，确保点击文件夹立即带 parentId 请求二开列表。
+        void projectsQuery.refetch();
+    }, [folderId, user?.id]);
     const projects = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLocaleLowerCase("zh-CN");
         const items = projectsQuery.data?.projects || [];
         if (!normalizedKeyword) return items;
         return items.filter((project) => (project.title || "未命名项目").toLocaleLowerCase("zh-CN").includes(normalizedKeyword));
     }, [keyword, projectsQuery.data?.projects]);
+    const productProjects = useMemo(() => {
+        const normalizedKeyword = keyword.trim().toLocaleLowerCase("zh-CN");
+        const items = projectsQuery.data?.productProjects || [];
+        return items.filter((project) => project.itemType === 2 && (!normalizedKeyword || project.name.toLocaleLowerCase("zh-CN").includes(normalizedKeyword)));
+    }, [keyword, projectsQuery.data?.productProjects]);
+    const productFolders = useMemo(() => {
+        const normalizedKeyword = keyword.trim().toLocaleLowerCase("zh-CN");
+        const items = projectsQuery.data?.productProjects || [];
+        return items.filter((folder) => folder.itemType === 1 && (!normalizedKeyword || folder.name.toLocaleLowerCase("zh-CN").includes(normalizedKeyword)));
+    }, [keyword, projectsQuery.data?.productProjects]);
     const visibleFolderPreviews = useMemo(() => {
         const normalizedKeyword = keyword.trim().toLocaleLowerCase("zh-CN");
         return normalizedKeyword ? folderStylePreviews.filter((folder) => folder.title.toLocaleLowerCase("zh-CN").includes(normalizedKeyword)) : folderStylePreviews;
@@ -98,7 +137,21 @@ export default function CanvasProjectsPage() {
         }
     };
 
-    const folderPlaceholder = () => message.info("文件夹功能等待后端接入");
+    const createFolder = async () => {
+        if (creatingFolder) return;
+        setCreatingFolder(true);
+        try {
+            const folder = await createProductProject({ itemType: 1, name: "未命名文件夹" });
+            await projectsQuery.refetch();
+            setFolderStylePreviews((current) => [{ id: String(folder.id), title: folder.name || "未命名文件夹", updatedAt: folder.updateTime || new Date().toISOString() }, ...current]);
+            message.success("文件夹创建成功");
+        } catch (error) {
+            message.error(error instanceof Error ? error.message : "创建文件夹失败");
+        } finally {
+            setCreatingFolder(false);
+        }
+    };
+    const folderPlaceholder = () => message.info("文件夹操作等待接口接入");
     const confirmDeleteProject = async () => {
         if (!deletingProjectId || deleting) return;
         setDeleting(true);
@@ -113,6 +166,50 @@ export default function CanvasProjectsPage() {
             setDeleting(false);
         }
     };
+    const confirmDeleteProductProject = async () => {
+        if (!deletingProductProjectId || deleting) return;
+        setDeleting(true);
+        try {
+            await deleteProductProject(deletingProductProjectId);
+            setDeletingProductProjectId(null);
+            await projectsQuery.refetch();
+        } catch (error) {
+            message.error(error instanceof Error ? error.message : "移入回收站失败");
+        } finally {
+            setDeleting(false);
+        }
+    };
+    const confirmDeleteProductFolder = async () => {
+        if (!deletingProductFolderId || deleting) return;
+        setDeleting(true);
+        try {
+            await deleteProductProject(deletingProductFolderId);
+            setDeletingProductFolderId(null);
+            await projectsQuery.refetch();
+            message.success("文件夹已移入回收站");
+        } catch (error) {
+            message.error(error instanceof Error ? error.message : "移入回收站失败");
+        } finally {
+            setDeleting(false);
+        }
+    };
+    const restoreSelectedProductProjects = async () => {
+        const ids = [...selectedRecycleProjectIds];
+        if (!ids.length) {
+            message.info("请先选择要恢复的项目或文件夹");
+            return;
+        }
+        try {
+            if (ids.length === 1) await restoreProductProject(ids[0]);
+            else await restoreProductProjects(ids);
+            setSelectedRecycleProjectIds(new Set());
+            setRecycleBinOpen(false);
+            await projectsQuery.refetch();
+            message.success("恢复成功");
+        } catch (error) {
+            message.error(error instanceof Error ? error.message : "恢复失败");
+        }
+    };
     const confirmDeleteFolder = () => {
         if (!deletingFolderId) return;
         setFolderStylePreviews((current) => current.filter((folder) => folder.id !== deletingFolderId));
@@ -121,6 +218,48 @@ export default function CanvasProjectsPage() {
     const renameFolder = async (folderIdToRename: string, title: string) => {
         setFolderStylePreviews((current) => current.map((folder) => (folder.id === folderIdToRename ? { ...folder, title } : folder)));
         return true;
+    };
+    const renameProductItem = async (itemId: string, title: string) => {
+        try {
+            await renameProductProject(itemId, title);
+            await projectsQuery.refetch();
+            return true;
+        } catch (error) {
+            message.error(error instanceof Error ? error.message : "重命名失败");
+            return false;
+        }
+    };
+    const moveProductItem = async (itemId: string, parentId: string) => {
+        try {
+            await moveProductProject(itemId, parentId);
+            await projectsQuery.refetch();
+            message.success("移动成功");
+        } catch (error) {
+            message.error(error instanceof Error ? error.message : "移动失败");
+        }
+    };
+    const removeProductItemFromFolder = async (itemId: string) => {
+        try {
+            await moveProductProject(itemId);
+            await Promise.all([
+                projectsQuery.refetch(),
+                queryClient.refetchQueries({ queryKey: ["canvas-projects-page", user?.id, "root"] }),
+            ]);
+            message.success("已移除文件夹");
+        } catch (error) {
+            message.error(error instanceof Error ? error.message : "移除文件夹失败");
+        }
+    };
+    const updateProductCover = async (itemId: string, file: File) => {
+        try {
+            const uploaded = await uploadProductFile(file);
+            if (!uploaded.url) throw new Error("上传成功但未返回文件地址");
+            await updateProductProjectCover(itemId, uploaded.url);
+            await projectsQuery.refetch();
+            message.success("封面更新成功");
+        } catch (error) {
+            message.error(error instanceof Error ? error.message : "封面更新失败");
+        }
     };
     const renameCanvasProject = async (projectId: string, title: string) => {
         try {
@@ -134,9 +273,15 @@ export default function CanvasProjectsPage() {
             return false;
         }
     };
-    const openRecycleBin = () => {
+    const openRecycleBin = async () => {
         setSelectedRecycleProjectIds(new Set());
         setRecycleBinOpen(true);
+        try {
+            setProductRecycleProjects(await listProductProjects({ recycle: true }));
+        } catch (error) {
+            setProductRecycleProjects([]);
+            message.error(error instanceof Error ? error.message : "回收站加载失败");
+        }
     };
 
     return (
@@ -170,7 +315,7 @@ export default function CanvasProjectsPage() {
                                 placeholder="请输入名称进行搜索"
                                 aria-label="搜索项目"
                             />
-                            <Button className="canvas-projects-page__toolbar-button" type="text" icon={<Trash2 className="size-[14px]" />} onClick={openRecycleBin}>
+                            <Button className="canvas-projects-page__toolbar-button" type="text" icon={<Trash2 className="size-[14px]" />} onClick={() => void openRecycleBin()}>
                                 回收站
                             </Button>
                             {isFolderView ? (
@@ -178,7 +323,7 @@ export default function CanvasProjectsPage() {
                                     新建项目
                                 </Button>
                             ) : (
-                                <Button className="canvas-projects-page__toolbar-button" type="text" icon={<FolderPlus className="size-[15px]" />} onClick={folderPlaceholder}>
+                                <Button className="canvas-projects-page__toolbar-button" type="text" icon={<FolderPlus className="size-[15px]" />} loading={creatingFolder} onClick={() => void createFolder()}>
                                     新建文件夹
                                 </Button>
                             )}
@@ -200,41 +345,78 @@ export default function CanvasProjectsPage() {
 
                         {!isFolderView
                             ? visibleFolderPreviews.map((folder) => (
-                                  <FolderStyleCard key={folder.id} folder={folder} onOpen={() => navigate(`/canvas-projects/folders/${folder.id}`)} onRename={(title) => renameFolder(folder.id, title)} onDelete={() => setDeletingFolderId(folder.id)} onUnavailable={folderPlaceholder} />
+                                  <FolderStyleCard
+                                      key={folder.id}
+                                      folder={folder}
+                                      onOpen={() => navigate(`/canvas-projects/folders/${folder.id}`)}
+                                      onRename={(title) => renameFolder(folder.id, title)}
+                                      onDelete={() => setDeletingFolderId(folder.id)}
+                                      onUnavailable={folderPlaceholder}
+                                  />
                               ))
                             : null}
 
                         {projectsQuery.isLoading ? <ProjectStateCard icon={<LoaderCircle className="size-5 animate-spin" />} label="正在加载项目" /> : null}
                         {projectsQuery.isError ? <ProjectStateCard icon={<ImageIcon className="size-5" />} label="项目加载失败" actionLabel="重新加载" onAction={() => void projectsQuery.refetch()} /> : null}
-                        {!projectsQuery.isLoading && !projectsQuery.isError && projects.length === 0 && (isFolderView || visibleFolderPreviews.length === 0) ? (
+                        {!projectsQuery.isLoading && !projectsQuery.isError && projects.length === 0 && productProjects.length === 0 && (isFolderView || visibleFolderPreviews.length === 0) ? (
                             <ProjectStateCard icon={<ImageIcon className="size-5" />} label={keyword ? "没有匹配的项目" : "还没有画布项目"} />
                         ) : null}
-                        {projects.map((project) => (
-                            <CanvasProjectItem
-                                key={project.id}
+                        {!isFolderView &&
+                            projects.map((project) => (
+                                <CanvasProjectItem
+                                    key={project.id}
+                                    project={project}
+                                    insideFolder={isFolderView}
+                                    onRename={(title) => renameCanvasProject(project.id, title)}
+                                    onDelete={() => setDeletingProjectId(project.id)}
+                                    onOpen={() => {
+                                        void loadCanvasProjectPage();
+                                        navigate(`/canvas/${project.id}`);
+                                    }}
+                                />
+                            ))}
+                        {productProjects.map((project) => (
+                            <ProductProjectItemCard
+                                key={`product-${project.id}`}
                                 project={project}
+                                folders={productFolders}
+                                onOpen={() => navigate(`/canvas/${project.canvasId || project.id}`)}
+                                onRename={(title) => renameProductItem(String(project.id), title)}
+                                onMove={(parentId) => moveProductItem(String(project.id), parentId)}
                                 insideFolder={isFolderView}
-                                onRename={(title) => renameCanvasProject(project.id, title)}
-                                onDelete={() => setDeletingProjectId(project.id)}
-                                onOpen={() => {
-                                    void loadCanvasProjectPage();
-                                    navigate(`/canvas/${project.id}`);
-                                }}
+                                onRemoveFolder={() => removeProductItemFromFolder(String(project.id))}
+                                onCoverChange={(file) => updateProductCover(String(project.id), file)}
+                                onDelete={() => setDeletingProductProjectId(String(project.id))}
                             />
                         ))}
+                        {!isFolderView
+                            ? productFolders.map((folder) => (
+                                  <FolderStyleCard
+                                      key={`product-folder-${folder.id}`}
+                                      folder={{ id: String(folder.id), title: folder.name || "未命名文件夹", updatedAt: folder.updateTime || "" }}
+                                      onOpen={() => navigate(`/canvas-projects/folders/${folder.id}`)}
+                                      onRename={(title) => renameProductItem(String(folder.id), title)}
+                                      onCoverChange={(file) => updateProductCover(String(folder.id), file)}
+                                      onDelete={() => setDeletingProductFolderId(String(folder.id))}
+                                      onUnavailable={folderPlaceholder}
+                                  />
+                              ))
+                            : null}
                     </section>
                 </div>
                 <DeleteConfirmModal open={Boolean(deletingProjectId)} confirming={deleting} onCancel={() => setDeletingProjectId(null)} onConfirm={() => void confirmDeleteProject()} />
+                <DeleteConfirmModal open={Boolean(deletingProductProjectId)} confirming={deleting} onCancel={() => setDeletingProductProjectId(null)} onConfirm={() => void confirmDeleteProductProject()} />
+                <DeleteConfirmModal open={Boolean(deletingProductFolderId)} confirming={deleting} onCancel={() => setDeletingProductFolderId(null)} onConfirm={() => void confirmDeleteProductFolder()} />
                 <DeleteConfirmModal open={Boolean(deletingFolderId)} onCancel={() => setDeletingFolderId(null)} onConfirm={confirmDeleteFolder} />
             </section>
 
             <RecycleBinModal
                 open={recycleBinOpen}
-                projects={projectsQuery.data?.projects || []}
+                projects={productRecycleProjects}
                 selectedProjectIds={selectedRecycleProjectIds}
                 onSelectionChange={setSelectedRecycleProjectIds}
                 onClose={() => setRecycleBinOpen(false)}
-                onRestore={() => message.info(selectedRecycleProjectIds.size ? "恢复功能等待回收站接口接入" : "请先选择要恢复的项目")}
+                onRestore={() => void restoreSelectedProductProjects()}
             />
             <OtherProjectNoticeModal open={false} />
         </main>
@@ -243,19 +425,7 @@ export default function CanvasProjectsPage() {
 
 function OtherProjectNoticeModal({ open }: { open: boolean }) {
     return (
-        <AppModal
-            open={open}
-            centered
-            flush
-            title={null}
-            footer={null}
-            closable={false}
-            mask={false}
-            keyboard={false}
-            maskClosable={false}
-            width={421}
-            rootClassName="canvas-projects-other-project-notice"
-        >
+        <AppModal open={open} centered flush title={null} footer={null} closable={false} mask={false} keyboard={false} maskClosable={false} width={421} rootClassName="canvas-projects-other-project-notice">
             <div className="canvas-projects-other-project-notice__content" role="status">
                 <img className="canvas-projects-other-project-notice__icon" src={tipIcon} alt="" />
                 <span>无法操作其他成员创建的项目</span>
@@ -273,20 +443,20 @@ function RecycleBinModal({
     onRestore,
 }: {
     open: boolean;
-    projects: CanvasLibrarySummary[];
+    projects: ProductProjectItem[];
     selectedProjectIds: Set<string>;
     onSelectionChange: (ids: Set<string>) => void;
     onClose: () => void;
     onRestore: () => void;
 }) {
-    const allSelected = projects.length > 0 && projects.every((project) => selectedProjectIds.has(project.id));
+    const allSelected = projects.length > 0 && projects.every((project) => selectedProjectIds.has(String(project.id)));
     const toggleProject = (projectId: string) => {
         const next = new Set(selectedProjectIds);
         if (next.has(projectId)) next.delete(projectId);
         else next.add(projectId);
         onSelectionChange(next);
     };
-    const toggleAll = () => onSelectionChange(allSelected ? new Set() : new Set(projects.map((project) => project.id)));
+    const toggleAll = () => onSelectionChange(allSelected ? new Set() : new Set(projects.map((project) => String(project.id))));
 
     return (
         <AppModal
@@ -310,16 +480,20 @@ function RecycleBinModal({
                     {projects.length ? (
                         <div className="canvas-projects-recycle-modal__grid">
                             {projects.map((project) => {
-                                const selected = selectedProjectIds.has(project.id);
-                                const previewMedia = projectPreviewMedia(project.previewNodes, true);
+                                const projectId = String(project.id);
+                                const selected = selectedProjectIds.has(projectId);
                                 return (
-                                    <button key={project.id} type="button" role="checkbox" aria-checked={selected} className="canvas-projects-recycle-card" onClick={() => toggleProject(project.id)}>
+                                    <button key={project.id} type="button" role="checkbox" aria-checked={selected} className="canvas-projects-recycle-card" onClick={() => toggleProject(projectId)}>
                                         <span className="canvas-projects-recycle-card__cover">
-                                            {previewMedia ? <ProjectPreview project={{ id: project.id, nodes: project.previewNodes }} preferLatestImage /> : <img className="canvas-projects-recycle-card__placeholder" src={projectCover} alt="" />}
+                                            {project.coverUrl ? (
+                                                <img className="canvas-projects-recycle-card__placeholder object-cover" src={project.coverUrl} alt="" />
+                                            ) : (
+                                                <img className="canvas-projects-recycle-card__placeholder" src={projectCover} alt="" />
+                                            )}
                                             <img className="canvas-projects-recycle-card__checkbox" src={selected ? recycleCheckboxSelected : recycleCheckboxNormal} alt="" />
                                         </span>
-                                        <strong title={project.title || "未命名项目"}>{project.title || "未命名项目"}</strong>
-                                        <time dateTime={project.updatedAt}>{formatDate(project.updatedAt)} · 剩余30天</time>
+                                        <strong title={project.name || "未命名项目"}>{project.name || "未命名项目"}</strong>
+                                        <time dateTime={project.updateTime}>{project.updateTime ? formatDate(project.updateTime) : "时间不可用"} · 剩余30天</time>
                                     </button>
                                 );
                             })}
@@ -342,9 +516,29 @@ function RecycleBinModal({
     );
 }
 
-function FolderStyleCard({ folder, onOpen, onRename, onDelete, onUnavailable }: { folder: FolderPreview; onOpen: () => void; onRename: (title: string) => Promise<boolean>; onDelete: () => void; onUnavailable: () => void }) {
+function FolderStyleCard({
+    folder,
+    onOpen,
+    onRename,
+    onDelete,
+    onUnavailable,
+    onCoverChange,
+}: {
+    folder: FolderPreview;
+    onOpen: () => void;
+    onRename: (title: string) => Promise<boolean>;
+    onDelete: () => void;
+    onUnavailable: () => void;
+    onCoverChange?: (file: File) => Promise<void>;
+}) {
     const [editing, setEditing] = useState(false);
-    const items: MenuProps["items"] = [{ key: "open", label: "打开", onClick: onOpen }, { key: "rename", label: "重命名", onClick: () => setEditing(true) }, { key: "cover", label: "更换封面", onClick: onUnavailable }, { key: "delete", label: "删除文件夹", danger: true, onClick: onDelete }];
+    const coverInputRef = useRef<HTMLInputElement>(null);
+    const items: MenuProps["items"] = [
+        { key: "open", label: "打开", onClick: onOpen },
+        { key: "rename", label: "重命名", onClick: () => setEditing(true) },
+        { key: "cover", label: "更换封面", onClick: () => (onCoverChange ? coverInputRef.current?.click() : onUnavailable()) },
+        { key: "delete", label: "删除文件夹", danger: true, onClick: onDelete },
+    ];
     return (
         <article className="canvas-projects-page__card group relative self-start">
             <button type="button" className="block w-full text-left" disabled={editing} onClick={onOpen}>
@@ -354,11 +548,84 @@ function FolderStyleCard({ folder, onOpen, onRename, onDelete, onUnavailable }: 
             <time className="mt-[3px] block px-2 text-[13px] leading-[18px] font-normal text-[#969799]" dateTime={folder.updatedAt}>
                 {folder.updatedAt}
             </time>
-            <ProductCardMoreMenu
-                ariaLabel={`${folder.title} 文件夹操作`}
-                items={items}
-                buttonClassName="absolute top-[123px] right-1 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+            <input
+                ref={coverInputRef}
+                className="hidden"
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    event.target.value = "";
+                    if (file && onCoverChange) void onCoverChange(file);
+                }}
             />
+            <ProductCardMoreMenu ariaLabel={`${folder.title} 文件夹操作`} items={items} buttonClassName="absolute top-[123px] right-1 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100" />
+        </article>
+    );
+}
+
+function ProductProjectItemCard({
+    project,
+    folders,
+    onOpen,
+    onRename,
+    onMove,
+    insideFolder,
+    onRemoveFolder,
+    onCoverChange,
+    onDelete,
+}: {
+    project: ProductProjectItem;
+    folders: ProductProjectItem[];
+    onOpen: () => void;
+    onRename: (title: string) => Promise<boolean>;
+    onMove: (parentId: string) => Promise<void>;
+    insideFolder: boolean;
+    onRemoveFolder: () => Promise<void>;
+    onCoverChange: (file: File) => Promise<void>;
+    onDelete: () => void;
+}) {
+    const updatedAt = project.updateTime || "";
+    const coverInputRef = useRef<HTMLInputElement>(null);
+    const items: MenuProps["items"] = [
+        { key: "open", label: "打开", onClick: onOpen },
+        { key: "rename", label: "重命名", onClick: () => setEditing(true) },
+        { key: "cover", label: "更换封面", onClick: () => coverInputRef.current?.click() },
+        insideFolder
+            ? { key: "remove-folder", label: "移除文件夹", onClick: () => void onRemoveFolder() }
+            : {
+                  key: "move",
+                  label: "移动文件夹",
+                  popupClassName: "product-card-more-submenu",
+                  disabled: folders.length === 0,
+                  children: folders.map((folder) => ({ key: `folder-${folder.id}`, label: folder.name || "未命名文件夹", onClick: () => void onMove(String(folder.id)) })),
+              },
+        { key: "delete", label: "移入回收站", danger: true, onClick: onDelete },
+    ];
+    const [editing, setEditing] = useState(false);
+    return (
+        <article className="canvas-projects-page__card group relative self-start text-left">
+            <button type="button" className="block w-full text-left" disabled={editing} onClick={onOpen}>
+                <span className="block h-[118px] w-[212px] overflow-hidden rounded-[10px] bg-[#222222]">
+                    {project.coverUrl ? <img className="size-full object-cover" src={project.coverUrl} alt="" /> : <img className="size-full object-cover" src={projectCover} alt="" />}
+                </span>
+            </button>
+            <InlineEditableTitle title={project.name || "未命名项目"} editing={editing} onEditingChange={setEditing} onSave={onRename} reserveMoreSpace />
+            <time className="mt-[3px] block px-2 text-[13px] leading-[18px] font-normal text-[#969799]" dateTime={updatedAt}>
+                {updatedAt ? formatDate(updatedAt) : "时间不可用"}
+            </time>
+            <input
+                ref={coverInputRef}
+                className="hidden"
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    event.target.value = "";
+                    if (file) void onCoverChange(file);
+                }}
+            />
+            <ProductCardMoreMenu ariaLabel={`${project.name || "未命名项目"} 项目操作`} items={items} buttonClassName="absolute top-[123px] right-1 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100" />
         </article>
     );
 }
@@ -396,11 +663,7 @@ function CanvasProjectItem({ project, onOpen, onRename, onDelete, insideFolder }
             <time className="mt-[3px] block px-2 text-[13px] leading-[18px] font-normal text-[#969799]" dateTime={project.updatedAt}>
                 {formatDate(project.updatedAt)}
             </time>
-            <ProductCardMoreMenu
-                ariaLabel={`${project.title || "未命名项目"} 项目操作`}
-                items={items}
-                buttonClassName="absolute top-[123px] right-1 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
-            />
+            <ProductCardMoreMenu ariaLabel={`${project.title || "未命名项目"} 项目操作`} items={items} buttonClassName="absolute top-[123px] right-1 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100" />
         </article>
     );
 }

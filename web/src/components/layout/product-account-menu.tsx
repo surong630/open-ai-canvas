@@ -7,6 +7,7 @@ import logoutIcon from "@/assets/account/logout@2x.png";
 import { useWorkspaceLogout } from "@/hooks/use-workspace-logout";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/use-user-store";
+import type { LocalUser } from "@/stores/use-user-store";
 
 import { UserAvatar } from "./user-avatar";
 import { CreateTeamModal, type CreateTeamDraft } from "./create-team-modal";
@@ -30,6 +31,7 @@ type ProductAccountMenuProps = {
     onOpenTeamMembers?: (team: ProductAccountTeam) => void;
     onOpenTeamCredits?: (team: ProductAccountTeam) => void;
     onSwitchAccount?: (teamId: string | null) => void;
+    accountOverride?: Pick<LocalUser, "id" | "username" | "displayName" | "avatarUrl" | "email">;
 };
 
 const MOCK_TEAMS: ProductAccountTeam[] = [
@@ -47,10 +49,12 @@ export function ProductAccountMenu({
     onOpenTeamMembers,
     onOpenTeamCredits,
     onSwitchAccount,
+    accountOverride,
 }: ProductAccountMenuProps) {
     const { message } = App.useApp();
     const navigate = useNavigate();
     const user = useUserStore((state) => state.user);
+    const accountUser = user && accountOverride ? { ...user, ...accountOverride } : user;
     const [open, setOpen] = useState(false);
     const [accountSwitcherOpen, setAccountSwitcherOpen] = useState(false);
     const [teamSettingsOpen, setTeamSettingsOpen] = useState(false);
@@ -66,9 +70,9 @@ export function ProductAccountMenu({
         [visibleActiveTeamId, visibleTeams],
     );
 
-    if (!user) return null;
+    if (!user || !accountUser) return null;
 
-    const name = user.displayName || user.username;
+    const name = accountUser.displayName || accountUser.username;
     const notifyUnavailable = () => message.info("团队功能即将开放");
     const closeAndRun = (action?: () => void) => {
         setOpen(false);
@@ -126,7 +130,7 @@ export function ProductAccountMenu({
                     className={cn("product-account-switcher__account", "is-personal", !activeTeam && "is-active")}
                     onClick={() => selectAccount(null)}
                 >
-                    <UserAvatar user={user} className="product-account-switcher__personal-avatar" fallbackVariant="product" />
+                    <UserAvatar user={accountUser} className="product-account-switcher__personal-avatar" fallbackVariant="product" />
                     <span className="product-account-switcher__account-name">{name}</span>
                     {!activeTeam ? <Check aria-hidden="true" /> : null}
                 </button>
@@ -176,7 +180,7 @@ export function ProductAccountMenu({
     const accountMenuContent = (
         <section className="product-account-menu" aria-label="账户菜单">
             <div className="product-account-menu__identity">
-                <UserAvatar user={user} className="product-account-menu__avatar" fallbackVariant="product" />
+                                <UserAvatar user={accountUser} className="product-account-menu__avatar" fallbackVariant="product" />
                 <span className="product-account-menu__identity-copy">
                     <strong>{name}</strong>
                     {activeTeam ? <span>团队：{activeTeam.name}</span> : null}
@@ -259,7 +263,7 @@ export function ProductAccountMenu({
             content={accountMenu}
         >
             <button type="button" className={triggerClassName} aria-label="打开账户菜单" aria-expanded={open} title={name}>
-                <UserAvatar user={user} className="size-full" fallbackVariant="product" />
+                            <UserAvatar user={accountUser} className="size-full" fallbackVariant="product" />
             </button>
         </Popover>
         <CreateTeamModal open={createTeamOpen} onCancel={() => setCreateTeamOpen(false)} onConfirm={confirmCreateTeam} />
