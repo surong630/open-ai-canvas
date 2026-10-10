@@ -14,7 +14,7 @@ import { CanvasResourceMentionTextarea } from "@/components/canvas/canvas-resour
 import { VoiceRecordingButton } from "@/components/conversation/voice-recording-button";
 import { HoverBorderGradient } from "@/components/ui/aceternity/hover-border-gradient";
 import { SpotlightSurface } from "@/components/ui/aceternity/spotlight-surface";
-import { ModelPicker } from "@/components/model-picker";
+import { CanvasProductModelPicker } from "@/components/canvas/canvas-product-model-picker";
 import { aceternityMotion } from "@/lib/aceternity-motion";
 import { CreditSymbol, requestCreditCost } from "@/constant/credits";
 import { ASSET_CATEGORY_LABELS } from "@/lib/asset-category";
@@ -385,7 +385,7 @@ export function CreationComposer(props: ComposerProps) {
                         <span>优化</span>
                     </button>
                 </Tooltip> : null}
-				<ModelPicker config={props.config} value={props.model} onChange={props.onModelChange} capability={props.mode} requirements={props.modelRequirements} className="creation-model-picker" placeholder={`选择${modeLabels[props.mode]}模型`} showSelectedPrice={false} showOptionPrices variant="creation" />
+				<CanvasProductModelPicker config={props.config} value={props.model} onChange={props.onModelChange} capability={props.mode} requirements={props.modelRequirements} className="creation-model-picker" placeholder={`选择${modeLabels[props.mode]}模型`} />
                 {props.mode === "video" || (props.mode === "image" && imageSettingsSupported) ? <GenerationSettingsMenu {...props} /> : null}
                 {props.mode === "video" ? <DurationMenu profile={props.videoProfile} seconds={props.seconds} onChange={props.setSeconds} /> : null}
                 {props.mode === "text" ? <>

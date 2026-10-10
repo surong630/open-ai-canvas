@@ -1,4 +1,5 @@
 import { CanvasNodeContextMenu } from "@/components/canvas/canvas-context-menu";
+import { CanvasDoubleClickCreateMenu } from "@/components/canvas/canvas-double-click-create-menu";
 import { CanvasNodeType, type CanvasNodeData, type CanvasNodeTypeId, type CanvasWorkspaceMode, type ContextMenuState, type Position } from "@/types/canvas";
 
 type CanvasAssetCategory = NonNullable<NonNullable<CanvasNodeData["metadata"]>["assetCategory"]>;
@@ -47,6 +48,10 @@ type CanvasProjectContextMenuProps = {
 
 export function CanvasProjectContextMenu({ menu, node, screenToCanvas, ...props }: CanvasProjectContextMenuProps) {
     if (!menu) return null;
+    if (menu.type === "canvas" && menu.createOpen) {
+        const position = screenToCanvas(menu.x, menu.y);
+        return <CanvasDoubleClickCreateMenu position={{ left: menu.x, top: menu.y }} onAddNode={(type) => props.onAddNode(type, position)} onUpload={() => props.onUpload(undefined, position)} onOpenAssets={() => props.onOpenAssets(position)} onClose={props.onClose} />;
+    }
     const menuPosition = () => menu.type === "canvas" ? menu.position : screenToCanvas(menu.x, menu.y);
     return (
         <CanvasNodeContextMenu

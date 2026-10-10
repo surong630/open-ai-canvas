@@ -162,7 +162,7 @@ export const CanvasFrameNode = React.memo(function CanvasFrameNode({
             tabIndex={folder && collapsed ? 0 : undefined}
             aria-label={folder && collapsed ? `${data.title}，文件夹，${childNodes.length} 项内容。按回车打开` : undefined}
             className={`absolute z-0 select-none${folder && collapsed ? " canvas-folder-node" : ""} ${dragOffset ? "cursor-grabbing" : "cursor-default"}`}
-            style={{ transform: `translate(${data.position.x + (dragOffset?.x || 0)}px, ${data.position.y + (dragOffset?.y || 0)}px)`, width: data.width, height: data.height, contain: "layout style" }}
+            style={{ transform: `translate(calc(${data.position.x + (dragOffset?.x || 0)}px + var(--canvas-drag-preview-x, 0px)), calc(${data.position.y + (dragOffset?.y || 0)}px + var(--canvas-drag-preview-y, 0px)))`, width: data.width, height: data.height, contain: "layout style" }}
             onMouseDown={(event) => onMouseDown(event, data.id)}
             onDoubleClick={(event) => {
                 if (!collapsed || (event.target instanceof Element && event.target.closest("button,input"))) return;

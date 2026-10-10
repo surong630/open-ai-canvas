@@ -124,6 +124,22 @@ export function parseAssetRecordList(values: unknown): Asset[] {
     });
 }
 
+/**
+ * 列表接口的兼容解析：历史数据可能混入资源存储记录。
+ * 这类记录不满足 Asset 合同时跳过，避免单条坏记录阻断整页展示。
+ * 写入、同步和详情读取仍使用严格的 parseAssetRecordList。
+ */
+export function parseAssetRecordListRecovering(values: unknown): Asset[] {
+    if (!Array.isArray(values)) throw new Error("素材列表无效");
+    return values.flatMap((item) => {
+        try {
+            return [parseAssetRecord(item)];
+        } catch {
+            return [];
+        }
+    });
+}
+
 function requireMediaLocator(primary: string, storageKey: string | undefined, label: string, primaryKey: string) {
     if (!primary.trim() && !storageKey?.trim()) {
         throw new Error(`${label}素材缺少 ${primaryKey} 或 storageKey`);

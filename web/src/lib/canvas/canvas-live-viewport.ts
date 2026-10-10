@@ -89,7 +89,9 @@ export function applyCanvasNodeDragPreview(container: HTMLDivElement | null, pre
     }
 
     for (const nodeId of state.previousIds) {
-        state.elementsById.get(nodeId)?.style.removeProperty("translate");
+        const element = state.elementsById.get(nodeId);
+        element?.style.removeProperty("--canvas-drag-preview-x");
+        element?.style.removeProperty("--canvas-drag-preview-y");
     }
     state.selectionBounds?.style.removeProperty("translate");
 
@@ -107,7 +109,12 @@ export function applyCanvasNodeDragPreview(container: HTMLDivElement | null, pre
         for (const nodeId of preview.nodeIds) {
             const element = state.elementsById.get(nodeId);
             if (!element || !element.isConnected) continue;
-            element.style.setProperty("translate", `${preview.x}px ${preview.y}px`);
+            // Keep the drag delta in the node's existing transform instead of
+            // applying a second CSS translate layer. A second compositor layer
+            // can temporarily freeze an active hardware-decoded video while
+            // its canvas node is being dragged.
+            element.style.setProperty("--canvas-drag-preview-x", `${preview.x}px`);
+            element.style.setProperty("--canvas-drag-preview-y", `${preview.y}px`);
             state.previousIds.add(nodeId);
         }
         if (!state.selectionBounds?.isConnected) {

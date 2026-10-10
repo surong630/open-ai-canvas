@@ -3,7 +3,7 @@ import { Tooltip } from "@/components/ui/base/tooltip";
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import { ArrowUp, ChevronDown, FileText, ImagePlus, LayoutList, LoaderCircle, Maximize2, Music2, SlidersHorizontal, Video, WandSparkles, X } from "lucide-react";
 
-import { ModelPicker } from "@/components/model-picker";
+import { CanvasProductModelPicker } from "@/components/canvas/canvas-product-model-picker";
 import { modelOptionName, resolveModelChannel, useEffectiveConfig } from "@/stores/use-config-store";
 import { canonicalGenerationMetadata, nodeGenerationPrompt } from "@/lib/canvas/generation-contract";
 import { PROMPT_EDITOR_VIEWPORT_MARGIN } from "@/lib/canvas/canvas-prompt-editor-size";
@@ -440,7 +440,7 @@ export function CanvasNodePromptPanel({ projectId, node, isRunning, onPromptChan
         ) : (
             <div className="canvas-node-composer-footer">
                 <div className={expanded ? "min-w-0 flex-1" : "canvas-node-composer-model"}>
-                    <ModelPicker
+                    <CanvasProductModelPicker
                         className="!h-7 !w-full !min-w-0 !text-[var(--fs-tiny)] !font-normal [&_img]:!size-3 [&_.lucide]:!size-3"
                         fullWidth
                         config={config}
@@ -449,10 +449,6 @@ export function CanvasNodePromptPanel({ projectId, node, isRunning, onPromptChan
                         capability={mode}
                         requirements={resolvedRequirements}
                         onMissingConfig={() => navigateToSettings({ continueCreation: true })}
-                        showSelectedPrice={false}
-                        showOptionPrices={creditsEnabled}
-                        variant="creation"
-                        showConfiguredModelName
                     />
                 </div>
                 <div className="ml-auto flex min-w-0 shrink-0 items-center gap-1">

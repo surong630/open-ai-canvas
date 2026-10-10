@@ -10,6 +10,13 @@ type RasterCommand = {
     sampling: ImageUpscaleAlgorithm;
 };
 
+export type ImageAngleTransform = {
+    horizontalAngle: number;
+    pitchAngle: number;
+    cameraDistance: number;
+    wideAngle: boolean;
+};
+
 /** One raster pass shared by crop, grid extraction and resize. Failures never return the original as success. */
 function renderPng(source: HTMLImageElement, command: RasterCommand): string {
     const output = document.createElement("canvas");
@@ -21,6 +28,34 @@ function renderPng(source: HTMLImageElement, command: RasterCommand): string {
     painter.imageSmoothingQuality = sampling === "high" ? "high" : "low";
     painter.drawImage(source, region.x, region.y, region.width, region.height, 0, 0, output.width, output.height);
     const result = output.toDataURL("image/png");
+    if (!result.startsWith("data:image/png")) throw new Error("图片导出失败");
+    return result;
+}
+
+export type ImageRotateParams = {
+    degrees: 0 | 90 | 180 | 270;
+    flipHorizontal: boolean;
+    flipVertical: boolean;
+};
+
+export function rotatedImageSize(width: number, height: number, degrees: ImageRotateParams["degrees"]) {
+    return degrees === 90 || degrees === 270 ? { width: height, height: width } : { width, height };
+}
+
+export async function rotateImageDataUrl(source: string, params: ImageRotateParams) {
+    if (params.degrees === 0 && !params.flipHorizontal && !params.flipVertical) return source;
+    const image = await loadRasterImage(source);
+    const size = rotatedImageSize(image.naturalWidth, image.naturalHeight, params.degrees);
+    const canvas = document.createElement("canvas");
+    canvas.width = size.width;
+    canvas.height = size.height;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("无法处理图片：浏览器画布不可用");
+    context.translate(size.width / 2, size.height / 2);
+    context.scale(params.flipHorizontal ? -1 : 1, params.flipVertical ? -1 : 1);
+    context.rotate((params.degrees * Math.PI) / 180);
+    context.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
+    const result = canvas.toDataURL("image/png");
     if (!result.startsWith("data:image/png")) throw new Error("图片导出失败");
     return result;
 }

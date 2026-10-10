@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { CanvasWorkspaceAssetPanel } from "./canvas-workspace-asset-panel";
+import { CanvasProductAssetPanel } from "./canvas-product-asset-panel";
 import { CanvasWorkspaceHistoryPanel } from "./canvas-workspace-history-panel";
 import type { InsertAssetPayload } from "./asset-picker-modal";
 import { useDeferredValue, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
@@ -65,7 +65,7 @@ export function CanvasWorkspacePanel({
             {tab === "nodes" && (
                 <CanvasWorkspaceNodeListPanel nodes={nodes} config={config} results={searchCanvasNodes(nodes, deferredQuery, nodes.length, config)} query={query} deferredQuery={deferredQuery} selectedNodeIds={selectedNodeIds} onQueryChange={setQuery} onFocus={onFocus} />
             )}
-            {tab === "assets" && <CanvasWorkspaceAssetPanel onInsert={onInsertAssets} onManage={onAssets} onProjectAssets={onProjectAssets} />}
+            {tab === "assets" && <CanvasProductAssetPanel onInsert={onInsertAssets} onManage={onAssets} onProjectAssets={onProjectAssets} />}
             {(tab === "tasks" || history) && (
                 <>
                     {tasks.error ? (

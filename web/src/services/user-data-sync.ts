@@ -17,7 +17,7 @@ import { canvasContentHash, sameCanvasContent } from "@/lib/canvas/canvas-conten
 import { getActiveUserScope } from "@/lib/user-scope";
 import { preserveCanvasSyncDraft, readCanvasSyncDrafts } from "@/services/canvas-sync-drafts";
 import { appQueryClient } from "@/lib/query-client";
-import { parseAssetRecordList } from "@/lib/asset-record";
+import { parseAssetRecordList, parseAssetRecordListRecovering } from "@/lib/asset-record";
 import { assetForRemoteSync } from "@/lib/asset-remote-sync";
 import type { Asset } from "@/stores/use-asset-store";
 import { flushAssetStorePersistence, getGenerationAssetDefaults, useAssetStore } from "@/stores/use-asset-store";
@@ -287,7 +287,9 @@ export async function loadAssetLibraryPage(options: Parameters<typeof listRemote
     // 分页列表是展示数据，不是同步快照。不要把每一页都合并进全局
     // asset store，否则滚动/翻页会不断重建并持久化整个素材数组。
     // 真正被画布引用的素材仍由 loadAssetsForUse 按 ID 拉取并写入 store。
-    return { ...result, assets: parseAssetRecordList(result.assets) };
+    // 列表接口兼容历史资源记录：不符合 Asset 合同的条目跳过，不能让单条坏数据
+    // 阻断整页展示。严格解析仍保留给同步、写入和详情路径。
+    return { ...result, assets: parseAssetRecordListRecovering(result.assets) };
 }
 
 function acceptRemoteAssets(remoteAssets: Asset[]) {

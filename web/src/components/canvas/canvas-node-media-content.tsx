@@ -94,8 +94,9 @@ export function EmptyImageContent({ node, theme, isBatchRoot, batchCount, batchP
     return content;
 }
 
-export function VideoNodeContent({ node, theme, mediaActive = false, onMediaPlayRequest }: CanvasNodeContentProps) {
+export function VideoNodeContent({ node, theme, mediaActive = false, isDragging = false, onMediaPlayRequest }: CanvasNodeContentProps) {
     const playerBoxRef = useRef<HTMLDivElement>(null);
+    const wasPlayingBeforeDragRef = useRef(false);
     const { updateMediaNode } = useCanvasNodeActions();
     const { url, loading, onError } = useVideoPlaybackUrl(node, mediaActive);
     const preview = canvasNodeVideoPreviewReference(node);
@@ -130,6 +131,22 @@ export function VideoNodeContent({ node, theme, mediaActive = false, onMediaPlay
             video.removeEventListener("loadedmetadata", handleLoadedMetadata);
         };
     }, [node.id, node.metadata?.naturalHeight, node.metadata?.naturalWidth, subtitleEntries.length, updateMediaNode, url]);
+
+    useEffect(() => {
+        const video = playerBoxRef.current?.querySelector("video");
+        if (!video) return;
+        if (isDragging) {
+            wasPlayingBeforeDragRef.current = !video.paused && !video.ended;
+            return;
+        }
+        if (!wasPlayingBeforeDragRef.current) return;
+        wasPlayingBeforeDragRef.current = false;
+        // A transformed media layer can lose its compositor frame during a
+        // drag. Re-assert playback after the node returns to its committed
+        // position, without changing the user's paused state.
+        if (video.ended) video.currentTime = 0;
+        void video.play().catch(() => undefined);
+    }, [isDragging, url]);
 
     if (!node.metadata?.content && !node.metadata?.storageKey) return <EmptyMediaContent icon={<Video className="size-7 opacity-35" />} label="空视频节点" color={theme.node.placeholder} />;
     if (!mediaActive) return <InactiveVideoPreview node={node} theme={theme} onPlay={() => onMediaPlayRequest?.(node.id)} />;

@@ -197,7 +197,7 @@ export const CanvasNode = React.memo(function CanvasNode({
             data-node-lod={effectiveRenderLOD}
             className={`node-element absolute flex select-none flex-col ${dragOffset ? "cursor-grabbing" : data.type === CanvasNodeType.Drawing ? "cursor-pointer" : "cursor-default"} ${isSelected && data.type === CanvasNodeType.Video ? "z-[var(--z-node-toolbar)]" : isSelected || isFocusRelated || isConnectionTarget ? "z-[var(--z-node-active)]" : "z-[var(--z-node)]"}`}
             style={{
-                transform: `translate(${data.position.x + (dragOffset?.x || 0)}px, ${data.position.y + (dragOffset?.y || 0)}px)`,
+                transform: `translate(calc(${data.position.x + (dragOffset?.x || 0)}px + var(--canvas-drag-preview-x, 0px)), calc(${data.position.y + (dragOffset?.y || 0)}px + var(--canvas-drag-preview-y, 0px)))`,
                 width: data.width,
                 height: data.height,
                 contain: "layout style",
@@ -318,6 +318,7 @@ export const CanvasNode = React.memo(function CanvasNode({
                         onToggleBatch={() => onToggleBatch?.(data.id)}
                         reduceMediaEffects={reduceMediaEffects}
                         mediaActive={mediaActive}
+                        isDragging={Boolean(dragOffset)}
                         onMediaPlayRequest={onMediaPlayRequest}
                     />
                 </div>

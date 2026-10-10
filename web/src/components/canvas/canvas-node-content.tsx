@@ -54,6 +54,7 @@ export type CanvasNodeContentProps = {
     onToggleBatch?: () => void;
     reduceMediaEffects?: boolean;
     mediaActive?: boolean;
+    isDragging?: boolean;
     onMediaPlayRequest?: (nodeId: string) => void;
 };
 

@@ -15,6 +15,7 @@ export type RemoteUserDataSummary = {
 export type AssetFolder = {
     id: string;
     name: string;
+    parentId?: string;
     position: number;
     createdAt: string;
     updatedAt: string;

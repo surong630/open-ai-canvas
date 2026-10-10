@@ -88,8 +88,14 @@ export const CanvasProjectWorldLayers = memo(function CanvasProjectWorldLayers(p
     const { viewportScale } = props;
     const [activeMediaNodeId, setActiveMediaNodeId] = useState<string | null>(null);
     useEffect(() => {
-        if (activeMediaNodeId && !props.nodeById.has(activeMediaNodeId)) setActiveMediaNodeId(null);
-    }, [activeMediaNodeId, props.nodeById]);
+        // A node can briefly disappear from the derived map while a drag is
+        // being committed/reparented. Do not tear down its active VideoPlayer
+        // during that transition; doing so loses the controls and playback
+        // position, especially after switching between two video nodes.
+        if (activeMediaNodeId && !props.nodeById.has(activeMediaNodeId) && !props.isNodeDragging && !props.dragPreview) {
+            setActiveMediaNodeId(null);
+        }
+    }, [activeMediaNodeId, props.dragPreview, props.isNodeDragging, props.nodeById]);
     const orderedVisibleNodes = useMemo(() => [
         ...props.visibleNodes.filter(isFrameNode),
         ...sortCanvasNodesByStackOrder(props.visibleNodes.filter((node) => !isFrameNode(node)), props.nodeStackOrder),

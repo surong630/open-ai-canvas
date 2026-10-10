@@ -7,8 +7,7 @@ import { FloatingDock } from "@/components/ui/aceternity/floating-dock";
 import { SpotlightSurface } from "@/components/ui/aceternity/spotlight-surface";
 import { CanvasAppearanceControls } from "@/components/canvas/canvas-appearance-controls";
 import { useCanvasOverlayLayer } from "@/components/canvas/canvas-overlay-layer";
-import { CanvasCreateMenu, type CanvasCreateCommand } from "@/components/canvas/canvas-create-menu";
-import { useCanvasCreateCommands } from "@/components/canvas/use-canvas-create-commands";
+import { CanvasDoubleClickCreateMenu } from "@/components/canvas/canvas-double-click-create-menu";
 import { ToolbarSettingsModal } from "@/components/canvas/toolbars/toolbar-settings-modal";
 import { aceternityMotion } from "@/lib/aceternity-motion";
 import { canvasDockStyle } from "@/lib/canvas/canvas-aceternity-style";
@@ -112,11 +111,6 @@ export function CanvasToolbar({
     }, [settingsOpen]);
 
     const placePanel = (event: ReactMouseEvent<HTMLElement>) => setPanelX(getPanelX(dockRef.current, event.currentTarget));
-    const runAddAction = (action: () => void) => {
-        action();
-        setAddOpen(false);
-    };
-
     // 点击外部关闭浮层面板
     useEffect(() => {
         if (!addOpen && !appearanceOpen) return;
@@ -191,19 +185,13 @@ export function CanvasToolbar({
 
     const items = resolveToolbarEntries("main", ctx, prefs ?? defaultToolbarPrefs("main"));
 
-    // 中央空白起点与主工具栏共用同一份命令解析，避免素材类型和插件节点逐渐分叉。
-    const createCommands = useCanvasCreateCommands(ctx, runAddAction);
-
     return (
         <div ref={rootRef} data-canvas-no-zoom className="pointer-events-none absolute inset-x-[var(--canvas-inset-x)] bottom-[var(--canvas-inset-y)] flex justify-center" style={{ zIndex }} onPointerDownCapture={bringToFront} onFocusCapture={bringToFront}>
             <AnimatePresence>
-                {addOpen ? (
-                    <AddNodeMenu
-                        x={panelX}
-                        theme={theme}
-                        commands={createCommands}
-                    />
-                ) : null}
+                {addOpen ? <CanvasDoubleClickCreateMenu position={{ left: panelX, top: 0 }} inline onAddNode={(type) => {
+                    const actions: Partial<Record<CanvasNodeTypeId, () => void>> = { text: onAddText, image: onAddImage, video: onAddVideo, audio: onAddAudio };
+                    actions[type]?.();
+                }} onUpload={onUpload} onOpenAssets={onOpenMyAssets} onClose={() => setAddOpen(false)} /> : null}
             </AnimatePresence>
 
             <FloatingDock ref={dockRef} items={items} className="canvas-floating-dock pointer-events-auto max-w-full" style={canvasDockStyle(theme)} />
@@ -225,20 +213,6 @@ export function CanvasToolbar({
 
             <ToolbarSettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} toolbar="main" />
         </div>
-    );
-}
-
-function AddNodeMenu({ x, theme, commands }: {
-    x: number;
-    theme: CanvasTheme;
-    commands: CanvasCreateCommand[];
-}) {
-    return (
-        <motion.div initial={{ opacity: 0, scaleY: 0.9, y: 8 }} animate={{ opacity: 1, scaleY: 1, y: 0 }} exit={{ opacity: 0, scaleY: 0.92, y: 6 }} transition={{ duration: aceternityMotion.duration.panel, ease: aceternityMotion.easing.enter }} className="pointer-events-auto absolute bottom-[var(--canvas-dock-popover-offset)] z-[var(--dock-z-popover)] w-[420px] max-w-[calc(100vw-24px)]" style={{ left: x || "50%", transformOrigin: "bottom center", x: "-50%" }}>
-            <SpotlightSurface spotlightColor={theme.toolbar.itemHover} initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.97, transition: { duration: 0 } }} transition={{ duration: aceternityMotion.duration.instant, ease: aceternityMotion.easing.enter }} className="aceternity-floating-panel overflow-hidden rounded-[var(--panel-radius)] border p-2 backdrop-blur-2xl" style={{ background: theme.spatial.elevated, borderColor: theme.toolbar.border, color: theme.node.text }} onWheel={(event) => event.stopPropagation()}>
-                <CanvasCreateMenu commands={commands} />
-            </SpotlightSurface>
-        </motion.div>
     );
 }
 

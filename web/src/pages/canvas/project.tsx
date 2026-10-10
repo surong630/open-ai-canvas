@@ -3,7 +3,6 @@ import { isCanvasNodeGenerating } from "@/lib/canvas/canvas-node-task-state";
 import { createCanvasStateWriter } from "@/lib/canvas/canvas-editor-state";
 import { canCancelGenerationTask } from "@/lib/generation-task-display";
 import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { MouseEvent as ReactMouseEvent } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams, useSearchParams } from "react-router";
 import { loadAssetsForUse } from "@/services/user-data-sync";
@@ -1860,41 +1859,6 @@ function CanvasViewportPage() {
         [modal, uploadNodeImageToArkPrivateAsset],
     );
 
-    const handleCanvasContextMenu = useCallback(
-        (event: ReactMouseEvent) => {
-            const target = event.target instanceof Element ? event.target : null;
-            if (target?.closest("[data-node-id],[data-connection-id]")) return;
-
-            event.preventDefault();
-            event.stopPropagation();
-            if (target?.closest("[data-canvas-no-zoom],.ant-modal,.ant-popover,.ant-dropdown")) {
-                setContextMenu(null);
-                return;
-            }
-
-            closeConnectionCreateMenu();
-            setContextMenu({ type: "canvas", x: event.clientX, y: event.clientY, position: screenToCanvas(event.clientX, event.clientY) });
-        },
-        [closeConnectionCreateMenu, screenToCanvas],
-    );
-
-    const handleNodeContextMenu = useCallback(
-        (event: ReactMouseEvent, id: string) => {
-            event.preventDefault();
-            event.stopPropagation();
-            setSelectedNodeIds((current) => {
-                if (current.has(id) && current.size > 1) return current;
-                return new Set([id]);
-            });
-            setSelectedConnectionId(null);
-            closeConnectionCreateMenu();
-            setToolbarNodeId(null);
-            setDialogNodeId(null);
-            setContextMenu({ type: "node", x: event.clientX, y: event.clientY, nodeId: id });
-        },
-        [closeConnectionCreateMenu],
-    );
-
     const handleGenerateNode = useCanvasGenerationExecutor({
         projectId,
         domainProjectId: currentProject?.projectId,
@@ -2653,7 +2617,7 @@ function CanvasViewportPage() {
                                     boxSelectEnabled={canvasTool === "box-select"}
                                     onCanvasDoubleClick={handleCanvasDoubleClick}
                                     onCanvasDeselect={deselectCanvas}
-                                    onContextMenu={handleCanvasContextMenu}
+                                    onContextMenu={(event) => event.preventDefault()}
                                     onDrop={handleDrop}
                                     onFileDragEnter={handleFileDragEnter}
                                     onFileDragLeave={handleFileDragLeave}
@@ -2705,12 +2669,7 @@ function CanvasViewportPage() {
                                                     setSelectedNodeIds(new Set());
                                                     setContextMenu(null);
                                                 }}
-                                                onConnectionContextMenu={(event, connectionId) => {
-                                                    setSelectedConnectionId(connectionId);
-                                                    setSelectedNodeIds(new Set());
-                                                    closeConnectionCreateMenu();
-                                                    setContextMenu({ type: "connection", x: event.clientX, y: event.clientY, connectionId });
-                                                }}
+                                                onConnectionContextMenu={(event) => event.preventDefault()}
                                                 onNodeMouseDown={handleNodeMouseDown}
                                                 onNodeHoverStart={handleCanvasNodeHoverStart}
                                                 onNodeHoverEnd={handleCanvasNodeHoverEnd}
@@ -2720,7 +2679,7 @@ function CanvasViewportPage() {
                                                 onFolderStyleChange={handleFolderStyleChange}
                                                 onFolderThemeChange={handleFolderThemeChange}
                                                 onNodeTitleChange={handleNodeTitleChange}
-                                                onNodeContextMenu={handleNodeContextMenu}
+                                                onNodeContextMenu={(event) => event.preventDefault()}
                                                 onNodeContentChange={handleNodeContentChange}
                                                 onToggleBatch={toggleBatchExpanded}
                                                 onSetBatchPrimary={setBatchPrimary}

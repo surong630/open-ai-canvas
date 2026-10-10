@@ -447,7 +447,7 @@ func systemChannelIDFromBaseURL(baseURL string) string {
 			continue
 		}
 		switch strings.ToLower(id) {
-		case "v1", "v1beta", "v2", "v3", "plan", "ai":
+		case "v1", "v1beta", "v2", "v3", "plan", "ai", "openai":
 			continue
 		default:
 			return id
