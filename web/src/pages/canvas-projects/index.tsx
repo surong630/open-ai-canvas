@@ -127,7 +127,12 @@ export default function CanvasProjectsPage() {
         setCreating(true);
         try {
             const count = projectsQuery.data?.total || 0;
-            const { id, syncError } = await createCanvasProjectWithRemoteSync(`自由画布 ${count + 1}`);
+            const productProjectRequest = createProductProject({ itemType: 2, name: `自由画布 ${count + 1}`, ...(folderId ? { parentId: folderId } : {}) }).catch((error) => {
+                console.warn("二开项目创建失败，继续使用旧画布创建流程", error);
+                return undefined;
+            });
+            const legacyProjectRequest = createCanvasProjectWithRemoteSync(`自由画布 ${count + 1}`);
+            const [{ id, syncError }] = await Promise.all([legacyProjectRequest, productProjectRequest]);
             if (syncError) message.warning(syncError instanceof Error ? `画布已在本地创建，云端同步失败：${syncError.message}` : "画布已在本地创建，云端同步失败");
             void loadCanvasProjectPage();
             navigate(`/canvas/${id}`);

@@ -7,6 +7,7 @@ import logoutIcon from "@/assets/account/logout@2x.png";
 import { useWorkspaceLogout } from "@/hooks/use-workspace-logout";
 import { cn } from "@/lib/utils";
 import { useUserStore } from "@/stores/use-user-store";
+import { createProductTeam } from "@/services/api/product-workspace";
 import type { LocalUser } from "@/stores/use-user-store";
 
 import { UserAvatar } from "./user-avatar";
@@ -24,6 +25,7 @@ export type ProductAccountTeam = {
 type ProductAccountMenuProps = {
     triggerClassName: string;
     showCreateTeam?: boolean;
+    canSwitchAccount?: boolean;
     teams?: ProductAccountTeam[];
     activeTeamId?: string;
     onCreateTeam?: () => void;
@@ -31,7 +33,9 @@ type ProductAccountMenuProps = {
     onOpenTeamMembers?: (team: ProductAccountTeam) => void;
     onOpenTeamCredits?: (team: ProductAccountTeam) => void;
     onSwitchAccount?: (teamId: string | null) => void;
-    accountOverride?: Pick<LocalUser, "id" | "username" | "displayName" | "avatarUrl" | "email">;
+    personalAccountId?: string;
+    activeWorkspaceId?: string;
+    accountOverride?: Pick<LocalUser, "id" | "username" | "displayName" | "avatarUrl" | "email"> & { workspaceName?: string; points?: number };
 };
 
 const MOCK_TEAMS: ProductAccountTeam[] = [
@@ -42,6 +46,7 @@ const MOCK_TEAMS: ProductAccountTeam[] = [
 export function ProductAccountMenu({
     triggerClassName,
     showCreateTeam = false,
+    canSwitchAccount = false,
     teams,
     activeTeamId,
     onCreateTeam,
@@ -49,6 +54,8 @@ export function ProductAccountMenu({
     onOpenTeamMembers,
     onOpenTeamCredits,
     onSwitchAccount,
+    personalAccountId,
+    activeWorkspaceId,
     accountOverride,
 }: ProductAccountMenuProps) {
     const { message } = App.useApp();
@@ -59,11 +66,12 @@ export function ProductAccountMenu({
     const [accountSwitcherOpen, setAccountSwitcherOpen] = useState(false);
     const [teamSettingsOpen, setTeamSettingsOpen] = useState(false);
     const [mockTeams, setMockTeams] = useState<ProductAccountTeam[]>(MOCK_TEAMS);
+    const [createdTeams, setCreatedTeams] = useState<ProductAccountTeam[]>([]);
     const [mockActiveTeamId, setMockActiveTeamId] = useState<string>();
     const [createTeamOpen, setCreateTeamOpen] = useState(false);
     const [inviteTeam, setInviteTeam] = useState<ProductAccountTeam>();
     const { handleLogout, loggingOut } = useWorkspaceLogout("/email-login");
-    const visibleTeams = teams ?? mockTeams;
+    const visibleTeams = [...(teams ?? mockTeams), ...createdTeams];
     const visibleActiveTeamId = activeTeamId ?? mockActiveTeamId;
     const activeTeam = useMemo(
         () => visibleTeams.find((team) => team.id === visibleActiveTeamId),
@@ -72,7 +80,8 @@ export function ProductAccountMenu({
 
     if (!user || !accountUser) return null;
 
-    const name = accountUser.displayName || accountUser.username;
+    const name = accountOverride?.username || accountUser.username || accountUser.displayName;
+    const workspaceName = accountOverride?.workspaceName || "个人空间";
     const notifyUnavailable = () => message.info("团队功能即将开放");
     const closeAndRun = (action?: () => void) => {
         setOpen(false);
@@ -90,13 +99,19 @@ export function ProductAccountMenu({
         setTeamSettingsOpen(false);
         setCreateTeamOpen(true);
     };
-    const confirmCreateTeam = (draft: CreateTeamDraft) => {
-        const id = `mock-team-${typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : Date.now()}`;
-        const team: ProductAccountTeam = { id, name: draft.name, avatarUrl: draft.avatarUrl, role: "owner" };
-        setMockTeams((current) => [...current, team]);
-        setMockActiveTeamId(id);
-        setCreateTeamOpen(false);
-        message.success("团队创建成功");
+    const confirmCreateTeam = async (draft: CreateTeamDraft) => {
+        try {
+            const created = await createProductTeam({ teamName: draft.name, teamAvatarUrl: draft.avatarUrl });
+            const id = String(created.teamId ?? created.id ?? `product-team-${Date.now()}`);
+            const team: ProductAccountTeam = { id, name: created.teamName || created.name || draft.name, avatarUrl: created.teamAvatarUrl || created.avatarUrl || draft.avatarUrl, role: created.role === "member" ? "member" : "owner" };
+            if (teams === undefined) setMockTeams((current) => [...current, team]);
+            else setCreatedTeams((current) => [...current, team]);
+            setMockActiveTeamId(id);
+            setCreateTeamOpen(false);
+            message.success("团队创建成功");
+        } catch (error) {
+            message.error(error instanceof Error ? `团队创建失败：${error.message}` : "团队创建失败，请稍后重试");
+        }
     };
     const inviteMembers = (team: ProductAccountTeam) => {
         if (onInviteMembers) {
@@ -109,8 +124,13 @@ export function ProductAccountMenu({
         setInviteTeam(team);
     };
     const selectAccount = (teamId: string | null) => {
+        const targetId = teamId ?? personalAccountId ?? null;
+        if (targetId && activeWorkspaceId && targetId === activeWorkspaceId) {
+            setAccountSwitcherOpen(false);
+            return;
+        }
         if (onSwitchAccount) {
-            onSwitchAccount(teamId);
+            onSwitchAccount(targetId);
         } else if (teams === undefined) {
             setMockActiveTeamId(teamId ?? undefined);
         } else {
@@ -183,7 +203,7 @@ export function ProductAccountMenu({
                                 <UserAvatar user={accountUser} className="product-account-menu__avatar" fallbackVariant="product" />
                 <span className="product-account-menu__identity-copy">
                     <strong>{name}</strong>
-                    {activeTeam ? <span>团队：{activeTeam.name}</span> : null}
+                    <span>{activeTeam ? `团队：${activeTeam.name}` : workspaceName}</span>
                 </span>
                 {activeTeam ? (
                     <button
@@ -196,6 +216,11 @@ export function ProductAccountMenu({
                     >
                         <ArrowLeftRight aria-hidden="true" />
                         切换账户
+                    </button>
+                ) : canSwitchAccount ? (
+                    <button type="button" className="product-account-menu__identity-action" onClick={() => setAccountSwitcherOpen((value) => !value)}>
+                        <ArrowLeftRight aria-hidden="true" />
+                        切换团队
                     </button>
                 ) : showCreateTeam ? (
                     <button type="button" className="product-account-menu__identity-action" onClick={createTeam}>
